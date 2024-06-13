@@ -1,0 +1,12 @@
+
+2024/06/13 10:54:35 /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:243
+[info] replacing callback `gorm:create` from /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:243
+
+2024/06/13 10:54:35 /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:246
+[info] replacing callback `gorm:update` from /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:246
+
+2024/06/13 10:54:47 /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:243
+[info] replacing callback `gorm:create` from /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:243
+
+2024/06/13 10:54:47 /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:246
+[info] replacing callback `gorm:update` from /Users/user/go/pkg/mod/github.com/godoes/gorm-oracle@v1.6.9/oracle.go:246
