@@ -11,8 +11,9 @@ type PengadaanRepositoryImpl struct {
 }
 
 type PengadaanRepository interface {
-	FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error)
 	IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error)
 	IndexStatus(c *fiber.Ctx) ([]detailmodel.Status, error)
 	IndexType(c *fiber.Ctx) ([]detailmodel.Type, error)
+	FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error)
+	SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error)
 }

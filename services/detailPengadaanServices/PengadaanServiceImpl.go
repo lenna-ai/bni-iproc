@@ -1,6 +1,7 @@
 package detailpengadaanservices
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,16 +13,6 @@ func NewDetailPengadaanService(repository detailpengadaanrepositories.PengadaanR
 	return &PengadaanServiceImpl{
 		PengadaanFilterRepository: repository,
 	}
-}
-
-func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error) {
-	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, filter)
-	if err != nil {
-		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)
-		return dataFilterDetailPengadaan, err
-	}
-
-	return dataFilterDetailPengadaan, nil
 }
 
 func (repository *PengadaanServiceImpl) IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error) {
@@ -50,4 +41,23 @@ func (repository *PengadaanServiceImpl) IndexType(c *fiber.Ctx) ([]detailmodel.T
 	}
 
 	return dataListType, nil
+}
+func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error) {
+	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, filter)
+	if err != nil {
+		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)
+		return dataFilterDetailPengadaan, err
+	}
+
+	return dataFilterDetailPengadaan, nil
+}
+func (repository *PengadaanServiceImpl) SumPengadaan(c *fiber.Ctx, SUM string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string) ([]detailmodel.DataResultSumPengadaan, error) {
+	var sumSelectStringDetailPengadaan = fmt.Sprintf("SELECT sum(%v) AS NILAI_PENGADAAN_HASIL,%v FROM PENGADAAN WHERE %v = '%v' GROUP BY %v", SUM, GROUP_BY, WHERE_KEY, WHERE_VALUE, GROUP_BY)
+	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.SumPengadaan(c, sumSelectStringDetailPengadaan)
+	if err != nil {
+		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)
+		return dataFilterDetailPengadaan, err
+	}
+
+	return dataFilterDetailPengadaan, nil
 }

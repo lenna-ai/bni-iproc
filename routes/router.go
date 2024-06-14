@@ -10,6 +10,8 @@ func Router(app *fiber.App) {
 	pengadaan := app.Group("pengadaan")
 	pengadaan.Get("/", PengadaanDoneController.IndexPengadaan)
 	pengadaan.Get("/filter", PengadaanDoneController.FilterPengadaan)
+	pengadaan.Get("/sum", PengadaanDoneController.SumPengadaan)
+
 	pengadaan.Get("/status", PengadaanDoneController.IndexStatus)
 	pengadaan.Get("/type_pengadaan", PengadaanDoneController.IndexType)
 

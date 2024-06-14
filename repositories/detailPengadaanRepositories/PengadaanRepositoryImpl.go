@@ -63,3 +63,12 @@ func (repository *PengadaanRepositoryImpl) IndexType(c *fiber.Ctx) ([]detailmode
 
 	return *dataListType, nil
 }
+
+func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error) {
+	dataSumDetailPengadaan := new([]detailmodel.DataResultSumPengadaan)
+	err := repository.DB.Raw(sumSelectStringDetailPengadaan).Scan(&dataSumDetailPengadaan).Error
+	if err != nil {
+		return *dataSumDetailPengadaan, err
+	}
+	return *dataSumDetailPengadaan, nil
+}

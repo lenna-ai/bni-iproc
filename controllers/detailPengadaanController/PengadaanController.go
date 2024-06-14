@@ -10,8 +10,9 @@ type PengadaanControllerImpl struct {
 }
 
 type PengadaanDoneController interface {
-	FilterPengadaan(c *fiber.Ctx) error
 	IndexPengadaan(c *fiber.Ctx) error
 	IndexStatus(c *fiber.Ctx) error
 	IndexType(c *fiber.Ctx) error
+	FilterPengadaan(c *fiber.Ctx) error
+	SumPengadaan(c *fiber.Ctx) error
 }

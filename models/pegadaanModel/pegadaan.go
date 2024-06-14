@@ -27,6 +27,11 @@ type Pengadaan struct {
 	Sla_in_days             string
 }
 
+type DataResultSumPengadaan struct {
+	SUM_NILAI_PENGADAAN_HASIL string `gorm:"column:NILAI_PENGADAAN_HASIL"`
+	GROUP_PENGADAAN           string `gorm:"column:JENIS_PENGADAAN"`
+}
+
 func (Pengadaan) TableName() string {
 	return "PENGADAAN"
 }
