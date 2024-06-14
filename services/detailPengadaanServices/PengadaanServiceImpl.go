@@ -43,7 +43,17 @@ func (repository *PengadaanServiceImpl) IndexType(c *fiber.Ctx) ([]detailmodel.T
 	return dataListType, nil
 }
 func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error) {
-	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, filter)
+	var stringWhere string
+	var loopFilter int
+	for k, v := range filter {
+		if loopFilter < len(filter)-1 {
+			stringWhere += fmt.Sprintf("%v = '%v' AND ", k, v)
+			loopFilter++
+		} else {
+			stringWhere += fmt.Sprintf("%v = '%v'", k, v)
+		}
+	}
+	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, stringWhere)
 	if err != nil {
 		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)
 		return dataFilterDetailPengadaan, err

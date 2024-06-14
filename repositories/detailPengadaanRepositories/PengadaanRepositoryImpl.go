@@ -1,7 +1,6 @@
 package detailpengadaanrepositories
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,18 +14,8 @@ func NewDetailPengadaanRepository(db *gorm.DB) *PengadaanRepositoryImpl {
 	}
 }
 
-func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error) {
+func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.Pengadaan)
-	var stringWhere string
-	var loopFilter int
-	for k, v := range filter {
-		if loopFilter < len(filter)-1 {
-			stringWhere += fmt.Sprintf("%v = '%v' AND ", k, v)
-			loopFilter++
-		} else {
-			stringWhere += fmt.Sprintf("%v = '%v'", k, v)
-		}
-	}
 	if err := repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Error; err != nil {
 		return *dataFilterDetailPengadaan, err
 	}
