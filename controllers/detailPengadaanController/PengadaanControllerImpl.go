@@ -2,6 +2,7 @@ package detailpengadaancontroller
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
@@ -24,8 +25,14 @@ func (FilterController *PengadaanControllerImpl) IndexPengadaan(c *fiber.Ctx) er
 }
 
 func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) error {
-	status := c.Query("status")
-	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c, status)
+	filter := make(map[string]string)
+	status_pengadaan := c.Query("filter")
+	for _, valueSplitStatusPengadaan := range strings.Split(status_pengadaan, ",") {
+		for i := 0; i < len(strings.Split(valueSplitStatusPengadaan, "="))/2; i++ {
+			filter[strings.Split(valueSplitStatusPengadaan, "=")[i]] = strings.Split(valueSplitStatusPengadaan, "=")[i+1]
+		}
+	}
+	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c, filter)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.FilterPengadaan %v", err)
 		return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())

@@ -14,8 +14,8 @@ func NewDetailPengadaanService(repository detailpengadaanrepositories.PengadaanR
 	}
 }
 
-func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, status string) ([]detailmodel.Pengadaan, error) {
-	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, status)
+func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error) {
+	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, filter)
 	if err != nil {
 		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)
 		return dataFilterDetailPengadaan, err
