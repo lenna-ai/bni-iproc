@@ -3,6 +3,7 @@ package detailpengadaanservices
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
@@ -61,8 +62,35 @@ func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map
 
 	return dataFilterDetailPengadaan, nil
 }
-func (repository *PengadaanServiceImpl) SumPengadaan(c *fiber.Ctx, SUM string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string) ([]detailmodel.DataResultSumPengadaan, error) {
-	var sumSelectStringDetailPengadaan = fmt.Sprintf("SELECT sum(%v) AS NILAI_PENGADAAN_HASIL,%v FROM PENGADAAN WHERE %v = '%v' GROUP BY %v", SUM, GROUP_BY, WHERE_KEY, WHERE_VALUE, GROUP_BY)
+func (repository *PengadaanServiceImpl) SumPengadaan(c *fiber.Ctx, SUM1 string, SUM2 string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string, WHERE_SYMBOL string) ([]detailmodel.DataResultSumPengadaan, error) {
+	var dataWhereResultMap = make(map[string][]interface{})
+	whereKeySplit := strings.Split(WHERE_KEY, "-")
+	whereValueSplit := strings.Split(WHERE_VALUE, "-")
+	whereSymbolSplit := strings.Split(WHERE_SYMBOL, "-")
+
+	for wks := 0; wks < len(whereKeySplit); wks++ {
+		for wss := 0; wss < len(whereSymbolSplit); wss++ {
+			dataWhereResultMap[whereKeySplit[wss]] = append(dataWhereResultMap[whereKeySplit[wss]], whereSymbolSplit[wss])
+		}
+		for wvs := 0; wvs < len(whereValueSplit); wvs++ {
+			dataWhereResultMap[whereKeySplit[wvs]] = append(dataWhereResultMap[whereKeySplit[wvs]], whereValueSplit[wvs])
+		}
+		break
+	}
+	tempWhereClauses := ""
+	var countDataWhereResultMap = 0
+	for key, values := range dataWhereResultMap {
+		tempWhereClauses += key
+		for _, value := range values {
+			tempWhereClauses += " " + value.(string)
+		}
+		countDataWhereResultMap++
+		if countDataWhereResultMap < len(dataWhereResultMap) {
+			tempWhereClauses += " AND "
+		}
+	}
+
+	var sumSelectStringDetailPengadaan = fmt.Sprintf("SELECT sum(%v) AS ESTIMASI_NILAI_PENGADAAN, SUM(%v) AS NILAI_SPK,%v FROM PENGADAAN WHERE %v GROUP BY %v", SUM1, SUM2, GROUP_BY, tempWhereClauses, GROUP_BY)
 	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.SumPengadaan(c, sumSelectStringDetailPengadaan)
 	if err != nil {
 		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v", err)

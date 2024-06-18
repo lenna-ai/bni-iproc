@@ -61,16 +61,36 @@ func (FilterController *PengadaanControllerImpl) IndexType(c *fiber.Ctx) error {
 func (FilterController *PengadaanControllerImpl) SumPengadaan(c *fiber.Ctx) error {
 	// var SUM_NILAI_PENGADAAN_HASIL = "NILAI_PENGADAAN_HASIL"
 	// var GROUP_PENGADAAN = "JENIS_PENGADAAN"
-	// var WHERE_KEY = "MATA_ANGGARAN"
-	// var WHERE_VALUE = "Opex"
-	SUM := c.Query("SUM")
+	// var WHERE_KEY = "MATA_ANGGARAN-JENIS_PENGADAAN"
+	// var WHERE_VALUE = "'Opex'-('IT','Non IT','Premises')"
+	// var WHERE_SYMBOL = "=-IN"
+	SUM1 := c.Query("SUM1")
+	SUM2 := c.Query("SUM2")
 	GROUP_BY := c.Query("GROUP_BY")
 	WHERE_KEY := c.Query("WHERE_KEY")
 	WHERE_VALUE := c.Query("WHERE_VALUE")
-	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.SumPengadaan(c, SUM, GROUP_BY, WHERE_KEY, WHERE_VALUE)
+	WHERE_SYMBOL := c.Query("WHERE_SYMBOL")
+
+	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.SumPengadaan(c, SUM1, SUM2, GROUP_BY, WHERE_KEY, WHERE_VALUE, WHERE_SYMBOL)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.FilterPengadaan %v", err)
 		return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c, dataFilterDetailPengadaan)
 }
+
+// func (FilterController *PengadaanControllerImpl) AnggaranPengadaan(c *fiber.Ctx) error {
+// var SUM1 = "NILAI_PENGADAAN_HASIL"
+// var SUM2 = "NILAI_SPK"
+// var GROUP_BY = "JENIS_PENGADAAN"
+// var WHERE_KEY = "MATA_ANGGARAN-JENIS_PENGADAAN"
+// var WHERE_VALUE = "'Opex'-('IT','Non IT','Premises')"
+// var WHERE_SYMBOL = "=-IN"
+
+// dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.SumPengadaan(c, SUM1, SUM2, GROUP_BY, tempWhereClauses)
+// if err != nil {
+// 	log.Printf("error PengadaanFilterService.FilterPengadaan %v", err)
+// 	return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())
+// }
+// return helpers.ResultSuccessJsonApi(c, dataFilterDetailPengadaan)
+// }

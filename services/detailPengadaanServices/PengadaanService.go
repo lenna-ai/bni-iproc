@@ -15,5 +15,5 @@ type PengadaanService interface {
 	IndexStatus(c *fiber.Ctx) ([]detailmodel.Status, error)
 	IndexType(c *fiber.Ctx) ([]detailmodel.Type, error)
 	FilterPengadaan(c *fiber.Ctx, filter map[string]string) ([]detailmodel.Pengadaan, error)
-	SumPengadaan(c *fiber.Ctx, SUM string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string) ([]detailmodel.DataResultSumPengadaan, error)
+	SumPengadaan(c *fiber.Ctx, SUM1 string, SUM2 string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string, WHERE_AND string) ([]detailmodel.DataResultSumPengadaan, error)
 }

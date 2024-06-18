@@ -28,8 +28,9 @@ type Pengadaan struct {
 }
 
 type DataResultSumPengadaan struct {
-	SUM_NILAI_PENGADAAN_HASIL string `gorm:"column:NILAI_PENGADAAN_HASIL"`
-	GROUP_PENGADAAN           string `gorm:"column:JENIS_PENGADAAN"`
+	ESTIMASI_NILAI_PENGADAAN string `gorm:"column:ESTIMASI_NILAI_PENGADAAN"`
+	NILAI_SPK                string `gorm:"column:NILAI_SPK"`
+	GROUP_PENGADAAN          string `gorm:"column:JENIS_PENGADAAN"`
 }
 
 func (Pengadaan) TableName() string {
