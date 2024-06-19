@@ -6,14 +6,17 @@ import (
 )
 
 func Router(app *fiber.App) {
-	PengadaanDoneController := appconfig.InitControllerServiceRepository()
+	pengadaanController, pembayaranMonitoringController := appconfig.InitControllerServiceRepository()
 	pengadaan := app.Group("pengadaan")
-	pengadaan.Get("/", PengadaanDoneController.IndexPengadaan)
-	pengadaan.Get("/filter", PengadaanDoneController.FilterPengadaan)
-	pengadaan.Get("/sum", PengadaanDoneController.SumPengadaan)
-	pengadaan.Get("/efisiensi", PengadaanDoneController.EfisiensiPengadaan)
+	pengadaan.Get("/", pengadaanController.IndexPengadaan)
+	pengadaan.Get("/filter", pengadaanController.FilterPengadaan)
+	pengadaan.Get("/sum", pengadaanController.SumPengadaan)
+	pengadaan.Get("/efisiensi", pengadaanController.EfisiensiPengadaan)
 
-	pengadaan.Get("/status", PengadaanDoneController.IndexStatus)
-	pengadaan.Get("/type_pengadaan", PengadaanDoneController.IndexType)
+	pembayaraan := app.Group("pembayaraan")
+	pembayaraan.Get("rekanan", pembayaranMonitoringController.IndexPengadaan)
+
+	pengadaan.Get("/status", pengadaanController.IndexStatus)
+	pengadaan.Get("/type_pengadaan", pengadaanController.IndexType)
 
 }

@@ -1,4 +1,4 @@
-package detailmodel
+package pegadaanmodel
 
 type Pengadaan struct {
 	Procurement_id          int

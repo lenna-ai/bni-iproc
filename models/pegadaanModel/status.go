@@ -1,4 +1,4 @@
-package detailmodel
+package pegadaanmodel
 
 type Status struct {
 	Id         string
