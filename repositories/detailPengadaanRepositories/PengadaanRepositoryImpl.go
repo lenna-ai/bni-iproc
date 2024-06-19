@@ -17,6 +17,7 @@ func NewDetailPengadaanRepository(db *gorm.DB) *PengadaanRepositoryImpl {
 func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.Pengadaan)
 	if err := repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Error; err != nil {
+		log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n ", err)
 		return *dataFilterDetailPengadaan, err
 	}
 
@@ -26,7 +27,7 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringW
 func (repository *PengadaanRepositoryImpl) IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error) {
 	dataDetailPengadaan := new([]detailmodel.Pengadaan)
 	if err := repository.DB.Find(dataDetailPengadaan).Error; err != nil {
-		log.Printf("error Find(dataDetailPengadaan).Error %v", err)
+		log.Printf("error PengadaanRepositoryImpl.IndexPengadaan.Find(dataDetailPengadaan).Error %v \n", err)
 		return *dataDetailPengadaan, err
 	}
 
@@ -36,7 +37,7 @@ func (repository *PengadaanRepositoryImpl) IndexPengadaan(c *fiber.Ctx) ([]detai
 func (repository *PengadaanRepositoryImpl) IndexStatus(c *fiber.Ctx) ([]detailmodel.Status, error) {
 	dataListStatus := new([]detailmodel.Status)
 	if err := repository.DB.Find(dataListStatus).Error; err != nil {
-		log.Printf("error Find(dataListStatus).Error %v", err)
+		log.Printf("error .PengadaanRepositoryImpl.IndexStatus.Find(dataListStatus).Error %v\n", err)
 		return *dataListStatus, err
 	}
 
@@ -46,7 +47,7 @@ func (repository *PengadaanRepositoryImpl) IndexStatus(c *fiber.Ctx) ([]detailmo
 func (repository *PengadaanRepositoryImpl) IndexType(c *fiber.Ctx) ([]detailmodel.Type, error) {
 	dataListType := new([]detailmodel.Type)
 	if err := repository.DB.Find(dataListType).Error; err != nil {
-		log.Printf("error Find(dataListType).Error %v", err)
+		log.Printf("error PengadaanRepositoryImpl.IndexType.Find(dataListType).Error %v\n", err)
 		return *dataListType, err
 	}
 
@@ -57,6 +58,7 @@ func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectS
 	dataSumDetailPengadaan := new([]detailmodel.DataResultSumPengadaan)
 	err := repository.DB.Raw(sumSelectStringDetailPengadaan).Scan(&dataSumDetailPengadaan).Error
 	if err != nil {
+		log.Printf("error PengadaanRepositoryImpl.SumPengadaan.Scan(dataSumDetailPengadaan).Error %v\n", err)
 		return *dataSumDetailPengadaan, err
 	}
 	return *dataSumDetailPengadaan, nil

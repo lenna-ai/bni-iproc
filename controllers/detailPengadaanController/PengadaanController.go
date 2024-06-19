@@ -15,6 +15,5 @@ type PengadaanDoneController interface {
 	IndexType(c *fiber.Ctx) error
 	FilterPengadaan(c *fiber.Ctx) error
 	SumPengadaan(c *fiber.Ctx) error
-
-	AnggaranPengadaan(c *fiber.Ctx) error
+	EfisiensiPengadaan(c *fiber.Ctx) error
 }
