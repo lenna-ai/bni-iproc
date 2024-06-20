@@ -23,3 +23,17 @@ func (pembayaranMonitoringRepositoryImpl *PembayaranMonitoringRepositoryImpl) In
 	}
 	return *pembayaran, nil
 }
+func (pembayaranMonitoringRepositoryImpl *PembayaranMonitoringRepositoryImpl) FilterPengadaan(c *fiber.Ctx, queryStringWhere string) ([]pembayaranmodel.Pembayaran, error) {
+
+	// var db = config.DB
+	//  := new([])
+
+	// db.Find(pembayaranModelEntity, queryStringWhere)
+	// fmt.Println(pembayaranModelEntity)
+	var pembayaranModelEntity = new([]pembayaranmodel.Pembayaran)
+	if err := pembayaranMonitoringRepositoryImpl.DB.Find(pembayaranModelEntity, queryStringWhere).Error; err != nil {
+		log.Printf("error pembayaranMonitoringRepositoryImpl.DB.Model %v\n ", err)
+		return *pembayaranModelEntity, err
+	}
+	return *pembayaranModelEntity, nil
+}

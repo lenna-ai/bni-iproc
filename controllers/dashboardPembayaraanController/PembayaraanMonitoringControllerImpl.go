@@ -26,10 +26,10 @@ func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) In
 	return helpers.ResultSuccessJsonApi(c, pembayaran)
 }
 
-func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) DetailRekananPembayaran(c *fiber.Ctx) error {
-	jenisPengadaan := c.Query("JENIS_PENGADAAN")
+func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) FilterPengadaan(c *fiber.Ctx) error {
+	jenisPengadaan := c.Query("filter")
 
-	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.IndexRekananPembayaranService(c, jenisPengadaan)
+	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.FilterPengadaan(c, jenisPengadaan)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.IndexStatus %v\n ", err)
 		return helpers.ResultFailedJsonApi(c, pembayaran, err.Error())
