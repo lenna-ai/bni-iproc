@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
-	formatters "github.com/lenna-ai/bni-iproc/models/pegadaanModel/Formatters"
+	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
 	detailpengadaanservices "github.com/lenna-ai/bni-iproc/services/detailPengadaanServices"
 )
 
