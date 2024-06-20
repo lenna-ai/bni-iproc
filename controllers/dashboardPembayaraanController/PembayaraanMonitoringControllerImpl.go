@@ -14,16 +14,26 @@ func NewPembayaranMonitoringController(pembayaranMonitoringServices dashboardpem
 	}
 }
 
-func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) IndexPengadaan(c *fiber.Ctx) error {
+func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) IndexRekananPembayaran(c *fiber.Ctx) error {
 	jenisPengadaan := c.Query("JENIS_PENGADAAN")
 
-	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.IndexPengadaanService(c, jenisPengadaan)
+	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.IndexRekananPembayaranService(c, jenisPengadaan)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.IndexStatus %v\n ", err)
 		return helpers.ResultFailedJsonApi(c, pembayaran, err.Error())
 	}
 
 	return helpers.ResultSuccessJsonApi(c, pembayaran)
+}
 
-	// return nil
+func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) DetailRekananPembayaran(c *fiber.Ctx) error {
+	jenisPengadaan := c.Query("JENIS_PENGADAAN")
+
+	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.IndexRekananPembayaranService(c, jenisPengadaan)
+	if err != nil {
+		log.Printf("error PengadaanFilterService.IndexStatus %v\n ", err)
+		return helpers.ResultFailedJsonApi(c, pembayaran, err.Error())
+	}
+
+	return helpers.ResultSuccessJsonApi(c, pembayaran)
 }

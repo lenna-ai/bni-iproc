@@ -11,5 +11,5 @@ type PembayaranMonitoringRepositoryImpl struct {
 }
 
 type PembayaranMonitoringRepository interface {
-	IndexPembayaranMonitor(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error)
+	IndexRekananPembayaranMonitor(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error)
 }

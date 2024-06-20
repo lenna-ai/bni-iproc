@@ -14,8 +14,8 @@ func NewPembayaranMonitoringServices(PembayaranMonitoringRepository dashboardpem
 	}
 }
 
-func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) IndexPengadaanService(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error) {
-	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexPembayaranMonitor(c, jenisPengadaan)
+func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) IndexRekananPembayaranService(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error) {
+	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexRekananPembayaranMonitor(c, jenisPengadaan)
 	if err != nil {
 		log.Printf("error pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexPembayaranMonitor %v\n", err)
 		return pembayaran, err

@@ -15,7 +15,7 @@ func NewDashboardMonitoringRepository(db *gorm.DB) *PembayaranMonitoringReposito
 	}
 }
 
-func (pembayaranMonitoringRepositoryImpl *PembayaranMonitoringRepositoryImpl) IndexPembayaranMonitor(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error) {
+func (pembayaranMonitoringRepositoryImpl *PembayaranMonitoringRepositoryImpl) IndexRekananPembayaranMonitor(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error) {
 	var pembayaran = new([]formatters.IndexPembayaranMonitor)
 	if err := pembayaranMonitoringRepositoryImpl.DB.Model(&pembayaranmodel.Pembayaran{}).Select("NAMA_VENDOR, COUNT(NAMA_VENDOR) AS total_pekerjaan, sum(NILAI_KONTRAK) AS total_nilai_kontrak").Where("JENIS_PENGADAAN = ?", jenisPengadaan).Group("NAMA_VENDOR").Find(pembayaran).Error; err != nil {
 		log.Printf("error pembayaranMonitoringRepositoryImpl.DB.Model %v\n ", err)
