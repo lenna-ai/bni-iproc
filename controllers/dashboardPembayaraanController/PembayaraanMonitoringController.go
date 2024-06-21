@@ -10,6 +10,7 @@ type PembayaranMonitoringControllerImpl struct {
 }
 
 type PembayaranMonitoringController interface {
+	IndexPembayaran(c *fiber.Ctx) error
 	IndexRekananPembayaran(c *fiber.Ctx) error
 	FilterPengadaan(c *fiber.Ctx) error
 }
