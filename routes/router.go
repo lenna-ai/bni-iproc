@@ -14,6 +14,7 @@ func Router(app *fiber.App) {
 	pengadaan.Get("/efisiensi", pengadaanController.EfisiensiPengadaan)
 
 	pembayaraan := app.Group("pembayaraan")
+	pembayaraan.Get("/", pembayaranMonitoringController.IndexPembayaran)
 	pembayaraan.Get("rekanan", pembayaranMonitoringController.IndexRekananPembayaran)
 	pembayaraan.Get("filter", pembayaranMonitoringController.FilterPengadaan)
 

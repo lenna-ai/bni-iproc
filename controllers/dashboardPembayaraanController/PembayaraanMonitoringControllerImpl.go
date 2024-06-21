@@ -37,3 +37,16 @@ func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) Fi
 
 	return helpers.ResultSuccessJsonApi(c, pembayaran)
 }
+
+func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) IndexPembayaran(c *fiber.Ctx) error {
+	// jenisPengadaan := c.Query("filter")
+
+	// pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.FilterPengadaan(c, jenisPengadaan)
+	// if err != nil {
+	// 	log.Printf("error PengadaanFilterService.IndexStatus %v\n ", err)
+	// 	return helpers.ResultFailedJsonApi(c, pembayaran, err.Error())
+	// }
+
+	// return helpers.ResultSuccessJsonApi(c, pembayaran)
+	return nil
+}
