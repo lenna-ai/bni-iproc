@@ -6,7 +6,7 @@ import (
 )
 
 func Router(app *fiber.App) {
-	pengadaanController, pembayaranMonitoringController := appconfig.InitControllerServiceRepository()
+	pengadaanController, pembayaranMonitoringController, monitoringProsesPengadaanImpl := appconfig.InitControllerServiceRepository()
 	pengadaan := app.Group("pengadaan")
 	pengadaan.Get("/", pengadaanController.IndexPengadaan)
 	pengadaan.Get("/filter", pengadaanController.FilterPengadaan)
@@ -17,6 +17,9 @@ func Router(app *fiber.App) {
 	pembayaraan.Get("/", pembayaranMonitoringController.IndexPembayaran)
 	pembayaraan.Get("rekanan", pembayaranMonitoringController.IndexRekananPembayaran)
 	pembayaraan.Get("filter", pembayaranMonitoringController.FilterPengadaan)
+
+	monitoring := app.Group("monitoring")
+	monitoring.Get("/jenis_pengadaan", monitoringProsesPengadaanImpl.JenisPengadaan)
 
 	pengadaan.Get("/status", pengadaanController.IndexStatus)
 	pengadaan.Get("/type_pengadaan", pengadaanController.IndexType)
