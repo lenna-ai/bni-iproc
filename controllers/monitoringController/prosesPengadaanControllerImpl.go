@@ -46,7 +46,7 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 			if jsonTag == "" {
 				jsonTag = field.Name
 			}
-			return helpers.MessageErrorValidation(c, jsonTag, valueError.Tag())
+			return helpers.MessageErrorValidation(c, jsonTag, valueError.Tag(), valueError.Param())
 		}
 	}
 

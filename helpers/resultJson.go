@@ -25,9 +25,13 @@ func RecoverPanicContext(c *fiber.Ctx) error {
 	return nil
 }
 
-func MessageErrorValidation(c *fiber.Ctx, field string, validateTag string) error {
-
-	errorMessage := fmt.Sprintf("The %v field/key is %v.", field, validateTag)
+func MessageErrorValidation(c *fiber.Ctx, field string, validateTag string, params string) error {
+	var errorMessage string
+	if params != "" {
+		errorMessage = fmt.Sprintf("The %v field/key is %v=%v.", field, validateTag, params)
+	} else {
+		errorMessage = fmt.Sprintf("The %v field/key is %v.", field, validateTag)
+	}
 	return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{
 		"data":   nil,
 		"status": errorMessage,
