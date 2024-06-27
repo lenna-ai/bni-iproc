@@ -3,6 +3,7 @@ package monitoringservices
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
+	formatterProsesPengadaanModel "github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
 )
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengadaan(c *fiber.Ctx) (*[]formatters.JenisPengadaan, error) {
@@ -11,4 +12,17 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 		return jenisPengadaan, nil
 	}
 	return jenisPengadaan, nil
+}
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error) {
+	prosesPengadaanModel, err := monitoringProsesPengadaanImpl.monitoringRepository.GetProsesPengadaan(c)
+	if err != nil {
+		return prosesPengadaanModel, err
+	}
+	return prosesPengadaanModel, nil
+}
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx, prosesPengadaanModel *formatterProsesPengadaanModel.PutPengadaanFormatter) error {
+	if err := monitoringProsesPengadaanImpl.monitoringRepository.PutProsesPengadaan(c, prosesPengadaanModel); err != nil {
+		return err
+	}
+	return nil
 }

@@ -20,6 +20,8 @@ func Router(app *fiber.App) {
 
 	monitoring := app.Group("monitoring")
 	monitoring.Get("/jenis_pengadaan", monitoringProsesPengadaanImpl.JenisPengadaan)
+	monitoring.Get("/proses_pengadaan", monitoringProsesPengadaanImpl.DetailProsesPengadaan)
+	monitoring.Put("/proses_pengadaan", monitoringProsesPengadaanImpl.PutProsesPengadaan)
 
 	pengadaan.Get("/status", pengadaanController.IndexStatus)
 	pengadaan.Get("/type_pengadaan", pengadaanController.IndexType)

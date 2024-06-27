@@ -15,6 +15,7 @@ func NewPembayaranMonitoringController(pembayaranMonitoringServices dashboardpem
 }
 
 func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) IndexRekananPembayaran(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	jenisPengadaan := c.Query("JENIS_PENGADAAN")
 
 	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.IndexRekananPembayaranService(c, jenisPengadaan)
@@ -27,6 +28,7 @@ func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) In
 }
 
 func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) FilterPengadaan(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	jenisPengadaan := c.Query("filter")
 
 	pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.FilterPengadaan(c, jenisPengadaan)
@@ -39,6 +41,7 @@ func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) Fi
 }
 
 func (pembayaranMonitoringControllerImpl *PembayaranMonitoringControllerImpl) IndexPembayaran(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	// jenisPengadaan := c.Query("filter")
 
 	// pembayaran, err := pembayaranMonitoringControllerImpl.PembayaranMonitoringServices.FilterPengadaan(c, jenisPengadaan)

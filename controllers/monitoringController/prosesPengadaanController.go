@@ -11,6 +11,8 @@ type MonitoringProsesPengadaanImpl struct {
 
 type MonitoringProsesPengadaan interface {
 	JenisPengadaan(c *fiber.Ctx) error
+	DetailProsesPengadaan(c *fiber.Ctx) error
+	PutProsesPengadaan(c *fiber.Ctx) error
 }
 
 func NewMonitoringProsesPengadaan(monitoringProsesPengadaan monitoringservices.MonitoringProsesPengadaan) *MonitoringProsesPengadaanImpl {

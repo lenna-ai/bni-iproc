@@ -18,6 +18,7 @@ func NewDetailPengadaanController(DetailPengadaanFilterService detailpengadaanse
 }
 
 func (FilterController *PengadaanControllerImpl) IndexPengadaan(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	dataDetailPengadaan, err := FilterController.PengadaanFilterService.IndexPengadaan(c)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.IndexPengadaan %v \n ", err)
@@ -27,6 +28,7 @@ func (FilterController *PengadaanControllerImpl) IndexPengadaan(c *fiber.Ctx) er
 }
 
 func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	filter := make(map[string]string)
 	status_pengadaan := c.Query("filter")
 	for _, valueSplitStatusPengadaan := range strings.Split(status_pengadaan, ",") {
@@ -43,6 +45,7 @@ func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) e
 }
 
 func (FilterController *PengadaanControllerImpl) IndexStatus(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	dataListStatus, err := FilterController.PengadaanFilterService.IndexStatus(c)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.IndexStatus %v\n ", err)
@@ -52,6 +55,7 @@ func (FilterController *PengadaanControllerImpl) IndexStatus(c *fiber.Ctx) error
 }
 
 func (FilterController *PengadaanControllerImpl) IndexType(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	dataListType, err := FilterController.PengadaanFilterService.IndexType(c)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.IndexType %v\n ", err)
@@ -61,6 +65,7 @@ func (FilterController *PengadaanControllerImpl) IndexType(c *fiber.Ctx) error {
 }
 
 func (FilterController *PengadaanControllerImpl) SumPengadaan(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	// var SUM_NILAI_PENGADAAN_HASIL = "NILAI_PENGADAAN_HASIL"
 	// var GROUP_PENGADAAN = "JENIS_PENGADAAN"
 	// var WHERE_KEY = "MATA_ANGGARAN-JENIS_PENGADAAN"
@@ -82,6 +87,7 @@ func (FilterController *PengadaanControllerImpl) SumPengadaan(c *fiber.Ctx) erro
 }
 
 func (FilterController *PengadaanControllerImpl) EfisiensiPengadaan(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	estimasi_nilai_pengadaan, err := strconv.Atoi(c.Query("ESTIMASI_NILAI_PENGADAAN"))
 	if err != nil {
 		log.Printf("error ESTIMASI_NILAI_PENGADAAN converter %v\n ", err)
