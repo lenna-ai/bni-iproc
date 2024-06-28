@@ -2,7 +2,7 @@ package appconfig
 
 import (
 	"github.com/lenna-ai/bni-iproc/config"
-	dashboardpembayaraancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
+	"github.com/lenna-ai/bni-iproc/controllers"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	detailpengadaancontroller "github.com/lenna-ai/bni-iproc/controllers/detailPengadaanController"
 	monitoringController "github.com/lenna-ai/bni-iproc/controllers/monitoringController"
@@ -14,7 +14,7 @@ import (
 	monitoringService "github.com/lenna-ai/bni-iproc/services/monitoringServices"
 )
 
-func InitControllerServiceRepository() (*detailpengadaancontroller.PengadaanControllerImpl, *dashboardpembayaraancontroller.PembayaranMonitoringControllerImpl, *monitoringController.MonitoringProsesPengadaanImpl) {
+func InitControllerServiceRepository(allControllers *controllers.AllControllers) {
 	db := config.DB
 	detailPengadaanFilterRepository := detailpengadaanrepositories.NewDetailPengadaanRepository(db)
 	detailPengadaanFilterService := detailpengadaanservices.NewDetailPengadaanService(detailPengadaanFilterRepository)
@@ -28,6 +28,15 @@ func InitControllerServiceRepository() (*detailpengadaancontroller.PengadaanCont
 	monitoringProsesPengadaanService := monitoringService.NewMonitoringProsesPengadaan(monitoringProsesPengadaanRepository)
 	monitoringProsesPengadaanController := monitoringController.NewMonitoringProsesPengadaan(monitoringProsesPengadaanService)
 
+	monitoringPembayaranRutinRepository := monitoringrepositories.NewPembayaranRutinRepository(db)
+	monitoringPembayaranRutinService := monitoringService.NewPembayaranRutinService(monitoringPembayaranRutinRepository)
+	PembayaranRutinController := monitoringController.NewPembayaranRutinController(monitoringPembayaranRutinService)
+
+	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController
+	allControllers.PembayaranMonitoringControllerImpl = dashboardMonitoringController
+	allControllers.PembayaranRutinControllerImpl = PembayaranRutinController
+	allControllers.PengadaanControllerImpl = detailPengadaanFilterController
+
 	// cannot use pembayaranMonitoringServices (variable of type *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl) as dashboardpembayaraanservices.PembayaranMonitoringServices value in argument to dashboardpembayaraancontroller.NewPembayaranMonitoringController: *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl does not implement dashboardpembayaraanservices.PembayaranMonitoringServices (missing method IndexPengadaan)
-	return detailPengadaanFilterController, dashboardMonitoringController, monitoringProsesPengadaanController
+	// return allControllers
 }

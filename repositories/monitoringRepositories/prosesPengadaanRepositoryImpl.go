@@ -1,6 +1,8 @@
 package monitoringrepositories
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	pegadaanmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
 	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
@@ -25,7 +27,11 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPen
 }
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx, prosesPengadaanModel *formatterProsesPengadaanModel.PutPengadaanFormatter) error {
-	if err := monitoringProsesPengadaanImpl.DB.Where("NAMA = ?", prosesPengadaanModel.Nama).Updates(prosesPengadaanModel).Error; err != nil {
+	updateProsesPengadaanModel := monitoringProsesPengadaanImpl.DB.Where("NAMA = ?", prosesPengadaanModel.Nama).Updates(prosesPengadaanModel)
+	if updateProsesPengadaanModel.RowsAffected < 1 {
+		return errors.New("Data not found")
+	}
+	if err := updateProsesPengadaanModel.Error; err != nil {
 		return err
 	}
 	return nil

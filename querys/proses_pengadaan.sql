@@ -3,7 +3,7 @@ CREATE TABLE monitoring_proses_pengadaan(
    ,NAMA VARCHAR(255)
    ,KETERANGAN_JIKA_TERLAMBAT CLOB
    ,CONSTRAINT pk_monitoring_proses_MONITORING_PROSES_PENGADAANPRIMARY KEY (ID)
-,NULL);
+);
 
 
 -- Step 2: Create the sequence
