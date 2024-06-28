@@ -31,5 +31,4 @@ func Router(app *fiber.App) {
 	pembayaranRutin := monitoring.Group("pembayaranRutin")
 	pembayaranRutin.Get("/", allControllers.PembayaranRutinControllerImpl.DetailPembayaranRutin)
 	pembayaranRutin.Put("/", allControllers.PembayaranRutinControllerImpl.PutPembayaranRutin)
-
 }

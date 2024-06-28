@@ -7,6 +7,13 @@ import (
 	pembayaranrutinmodel "github.com/lenna-ai/bni-iproc/models/pembayaranRutinModel"
 )
 
+func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailPembayaranRutin(c *fiber.Ctx, pembayaranRutin *[]pembayaranrutinmodel.PembayaranRutin) error {
+	if err := pembayaranRutinRepositoryImpl.DB.Find(pembayaranRutin).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) PutPembayaranRutin(c *fiber.Ctx, pembayaranRutin *pembayaranrutinmodel.PembayaranRutin) error {
 	updatePembayaranRutinRepository := pembayaranRutinRepositoryImpl.DB.Where("NAMA = ? and NILAI_PENGADAAN_HASIL = ?", pembayaranRutin.Nama, pembayaranRutin.NilaiPengadaanHasil).Updates(pembayaranRutin)
 	if updatePembayaranRutinRepository.RowsAffected < 1 {

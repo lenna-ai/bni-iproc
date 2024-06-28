@@ -7,6 +7,7 @@ import (
 )
 
 type PembayaranRutinService interface {
+	DetailPembayaranRutin(c *fiber.Ctx, pembayaranRutin *[]pembayaranrutinmodel.PembayaranRutin) error
 	PutPembayaranRutin(c *fiber.Ctx, pembayaranRutin *pembayaranrutinmodel.PembayaranRutin) error
 }
 

@@ -1,16 +1,18 @@
 package monitoringcontroller
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	pembayaranrutinmodel "github.com/lenna-ai/bni-iproc/models/pembayaranRutinModel"
 )
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailPembayaranRutin(c *fiber.Ctx) error {
-	fmt.Println("arifin")
-	return nil
+	putPembayaranRutinModelModel := new([]pembayaranrutinmodel.PembayaranRutin)
+	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailPembayaranRutin(c, putPembayaranRutinModelModel)
+	if err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, putPembayaranRutinModelModel)
 }
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) PutPembayaranRutin(c *fiber.Ctx) error {
