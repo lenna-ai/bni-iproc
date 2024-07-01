@@ -11,3 +11,10 @@ func (pembayaranRutinServiceImpl *PembayaranRutinServiceImpl) DetailPembayaranRu
 func (pembayaranRutinServiceImpl *PembayaranRutinServiceImpl) PutPembayaranRutin(c *fiber.Ctx, pembayaranRutin *pembayaranrutinmodel.PembayaranRutin) error {
 	return pembayaranRutinServiceImpl.PembayaranRutinRepository.PutPembayaranRutin(c, pembayaranRutin)
 }
+
+func (pembayaranRutinServiceImpl *PembayaranRutinServiceImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *[]pembayaranrutinmodel.BreakdownPembayaranRutin) error {
+	return pembayaranRutinServiceImpl.PembayaranRutinRepository.DetailBreakdownPembayaranRutin(c, breakdownPembayaranRutin)
+}
+func (pembayaranRutinServiceImpl *PembayaranRutinServiceImpl) PutBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *pembayaranrutinmodel.BreakdownPembayaranRutin) error {
+	return pembayaranRutinServiceImpl.PembayaranRutinRepository.PutBreakdownPembayaranRutin(c, breakdownPembayaranRutin)
+}

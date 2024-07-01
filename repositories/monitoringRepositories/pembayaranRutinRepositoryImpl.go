@@ -24,3 +24,21 @@ func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) PutPembayara
 	}
 	return nil
 }
+
+func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *[]pembayaranrutinmodel.BreakdownPembayaranRutin) error {
+	if err := pembayaranRutinRepositoryImpl.DB.Find(breakdownPembayaranRutin).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) PutBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *pembayaranrutinmodel.BreakdownPembayaranRutin) error {
+	updatePembayaranRutinRepository := pembayaranRutinRepositoryImpl.DB.Where("MONITORING_PEMBAYARAN_RUTIN_ID = ?", breakdownPembayaranRutin.MonitoringPembayaranRutinId).Updates(breakdownPembayaranRutin)
+	if updatePembayaranRutinRepository.RowsAffected < 1 {
+		return errors.New("Data not found")
+	}
+	if err := updatePembayaranRutinRepository.Error; err != nil {
+		return err
+	}
+	return nil
+}
