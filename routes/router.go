@@ -38,5 +38,5 @@ func Router(app *fiber.App) {
 
 	pembayaranPrestasi := app.Group("pembayaranPrestasi")
 	pembayaranPrestasi.Get("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
-	pembayaranPrestasi.Put("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
+	pembayaranPrestasi.Put("/", allControllers.PembayaranPrestasiControllerImpl.PutPembayaranPrestasi)
 }

@@ -12,6 +12,7 @@ type PembayaranPrestasiServiceImpl struct {
 
 type PembayaranPrestasiService interface {
 	DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi) error
+	PutPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *pembayaranprestasimodel.PembayaranPrestasi) error
 }
 
 func NewPembayaranPrestasiService(pembayaranPrestasiRepository pembayaranprestasirepositories.PembayaranPrestasiRepository) *PembayaranPrestasiServiceImpl {

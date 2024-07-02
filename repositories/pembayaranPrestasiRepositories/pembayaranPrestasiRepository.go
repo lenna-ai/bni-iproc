@@ -11,6 +11,7 @@ type PembayaranPrestasiRepositoryImpl struct {
 }
 type PembayaranPrestasiRepository interface {
 	DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi) error
+	PutPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *pembayaranprestasimodel.PembayaranPrestasi) error
 }
 
 func NewPembayaranPrestasiRepository(db *gorm.DB) *PembayaranPrestasiRepositoryImpl {

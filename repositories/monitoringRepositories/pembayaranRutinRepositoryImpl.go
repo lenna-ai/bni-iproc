@@ -2,6 +2,7 @@ package monitoringrepositories
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	pembayaranrutinmodel "github.com/lenna-ai/bni-iproc/models/pembayaranRutinModel"
@@ -15,7 +16,13 @@ func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailPembay
 }
 
 func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) PutPembayaranRutin(c *fiber.Ctx, pembayaranRutin *pembayaranrutinmodel.PembayaranRutin) error {
-	updatePembayaranRutinRepository := pembayaranRutinRepositoryImpl.DB.Where("NAMA = ? and NILAI_PENGADAAN_HASIL = ?", pembayaranRutin.Nama, pembayaranRutin.NilaiPengadaanHasil).Updates(pembayaranRutin)
+	var whereQuery string
+	if pembayaranRutin.NilaiPengadaanHasil == "" {
+		whereQuery = fmt.Sprintf("NAMA = '%s' and NILAI_PENGADAAN_HASIL IS NULL", pembayaranRutin.Nama)
+	} else {
+		whereQuery = fmt.Sprintf("NAMA = '%s' and NILAI_PENGADAAN_HASIL = '%s'", pembayaranRutin.Nama, pembayaranRutin.NilaiPengadaanHasil)
+	}
+	updatePembayaranRutinRepository := pembayaranRutinRepositoryImpl.DB.Where(whereQuery).Updates(pembayaranRutin)
 	if updatePembayaranRutinRepository.RowsAffected < 1 {
 		return errors.New("Data not found")
 	}

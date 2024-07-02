@@ -12,3 +12,9 @@ func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailPembay
 	}
 	return nil
 }
+func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) PutPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *pembayaranprestasimodel.PembayaranPrestasi) error {
+	if err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.PutPembayaranPrestasi(c, pembayaranPrestasi); err != nil {
+		return err
+	}
+	return nil
+}
