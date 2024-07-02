@@ -15,6 +15,9 @@ func Router(app *fiber.App) {
 	pengadaan.Get("/sum", allControllers.PengadaanControllerImpl.SumPengadaan)
 	pengadaan.Get("/efisiensi", allControllers.PengadaanControllerImpl.EfisiensiPengadaan)
 
+	pengadaan.Get("/status", allControllers.PengadaanControllerImpl.IndexStatus)
+	pengadaan.Get("/type_pengadaan", allControllers.PengadaanControllerImpl.IndexType)
+
 	pembayaraan := app.Group("pembayaraan")
 	pembayaraan.Get("/", allControllers.PembayaranMonitoringControllerImpl.IndexPembayaran)
 	pembayaraan.Get("rekanan", allControllers.PembayaranMonitoringControllerImpl.IndexRekananPembayaran)
@@ -25,9 +28,6 @@ func Router(app *fiber.App) {
 	monitoring.Get("/proses_pengadaan", allControllers.MonitoringProsesPengadaanImpl.DetailProsesPengadaan)
 	monitoring.Put("/proses_pengadaan", allControllers.MonitoringProsesPengadaanImpl.PutProsesPengadaan)
 
-	pengadaan.Get("/status", allControllers.PengadaanControllerImpl.IndexStatus)
-	pengadaan.Get("/type_pengadaan", allControllers.PengadaanControllerImpl.IndexType)
-
 	pembayaranRutin := monitoring.Group("pembayaranRutin")
 	pembayaranRutin.Get("/", allControllers.PembayaranRutinControllerImpl.DetailPembayaranRutin)
 	pembayaranRutin.Put("/", allControllers.PembayaranRutinControllerImpl.PutPembayaranRutin)
@@ -35,4 +35,8 @@ func Router(app *fiber.App) {
 	breakdownPembayaranRutin := pembayaranRutin.Group("breakdown")
 	breakdownPembayaranRutin.Get("/", allControllers.PembayaranRutinControllerImpl.DetailBreakdownPembayaranRutin)
 	breakdownPembayaranRutin.Put("/", allControllers.PembayaranRutinControllerImpl.PutBreakdownPembayaranRutin)
+
+	pembayaranPrestasi := app.Group("pembayaranPrestasi")
+	pembayaranPrestasi.Get("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
+	pembayaranPrestasi.Put("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
 }

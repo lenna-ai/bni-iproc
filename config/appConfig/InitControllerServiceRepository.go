@@ -6,12 +6,15 @@ import (
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	detailpengadaancontroller "github.com/lenna-ai/bni-iproc/controllers/detailPengadaanController"
 	monitoringController "github.com/lenna-ai/bni-iproc/controllers/monitoringController"
+	pembayaranprestasicontroller "github.com/lenna-ai/bni-iproc/controllers/pembayaranPrestasiController"
 	dashboardpembayaranrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardPembayaranRepositories"
 	detailpengadaanrepositories "github.com/lenna-ai/bni-iproc/repositories/detailPengadaanRepositories"
 	monitoringrepositories "github.com/lenna-ai/bni-iproc/repositories/monitoringRepositories"
+	pembayaranprestasirepositories "github.com/lenna-ai/bni-iproc/repositories/pembayaranPrestasiRepositories"
 	dashboardpembayaranservices "github.com/lenna-ai/bni-iproc/services/dashboardPembayaraanServices"
 	detailpengadaanservices "github.com/lenna-ai/bni-iproc/services/detailPengadaanServices"
 	monitoringService "github.com/lenna-ai/bni-iproc/services/monitoringServices"
+	pembayaranprestasiservices "github.com/lenna-ai/bni-iproc/services/pembayaranPrestasiServices"
 )
 
 func InitControllerServiceRepository(allControllers *controllers.AllControllers) {
@@ -32,10 +35,15 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	monitoringPembayaranRutinService := monitoringService.NewPembayaranRutinService(monitoringPembayaranRutinRepository)
 	PembayaranRutinController := monitoringController.NewPembayaranRutinController(monitoringPembayaranRutinService)
 
+	pembayaranPrestasiRepository := pembayaranprestasirepositories.NewPembayaranPrestasiRepository(db)
+	pembayaranPrestasiServices := pembayaranprestasiservices.NewPembayaranPrestasiService(pembayaranPrestasiRepository)
+	pembayaranPrestasiController := pembayaranprestasicontroller.NewPembayaranPrestasiController(pembayaranPrestasiServices)
+
 	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController
 	allControllers.PembayaranMonitoringControllerImpl = dashboardMonitoringController
 	allControllers.PembayaranRutinControllerImpl = PembayaranRutinController
 	allControllers.PengadaanControllerImpl = detailPengadaanFilterController
+	allControllers.PembayaranPrestasiControllerImpl = pembayaranPrestasiController
 
 	// cannot use pembayaranMonitoringServices (variable of type *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl) as dashboardpembayaraanservices.PembayaranMonitoringServices value in argument to dashboardpembayaraancontroller.NewPembayaranMonitoringController: *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl does not implement dashboardpembayaraanservices.PembayaranMonitoringServices (missing method IndexPengadaan)
 	// return allControllers
