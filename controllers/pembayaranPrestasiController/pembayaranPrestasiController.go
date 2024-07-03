@@ -12,6 +12,8 @@ type PembayaranPrestasiControllerImpl struct {
 type PembayaranPrestasiController interface {
 	DetailPembayaranPrestasi(c *fiber.Ctx) error
 	PutPembayaranPrestasi(c *fiber.Ctx) error
+	DetailBreakdownPembayaranPrestasi(c *fiber.Ctx) error
+	PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error
 }
 
 func NewPembayaranPrestasiController(pembayaranPrestasiService pembayaranprestasiservices.PembayaranPrestasiService) *PembayaranPrestasiControllerImpl {

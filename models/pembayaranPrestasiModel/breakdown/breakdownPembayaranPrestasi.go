@@ -7,3 +7,13 @@ type BreakdownPembayaranPrestasi struct {
 	STATUS_SYARAT_PEMBAYARAN  string `json:"STATUS_SYARAT_PEMBAYARAN" validate:"required"`
 	KETERANGAN_JIKA_TERLAMBAT string `json:"KETERANGAN_JIKA_TERLAMBAT" validate:"required"`
 }
+
+func (BreakdownPembayaranPrestasi) TableName() string {
+	return "MONITORING_PEMBAYARAN_PRESTASI"
+}
+
+type RequestBreakdownPembayaranPrestasi struct {
+	JENIS_PENGADAAN string `json:"JENIS_PENGADAAN" validate:"required"`
+	NAMA_PENGADAAN  string `json:"NAMA_PENGADAAN" validate:"required"`
+	NILAI_PENGADAAN string `json:"NILAI_PENGADAAN"`
+}
