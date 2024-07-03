@@ -25,7 +25,6 @@ func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutPem
 		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and NILAI_PENGADAAN = '%s'", pembayaranPrestasi.NAMA_PENGADAAN, pembayaranPrestasi.JENIS_PENGADAAN, pembayaranPrestasi.NILAI_PENGADAAN)
 	}
 	updateProsesPengadaanModel := pembayaranPrestasiRepositoryImpl.DB.Where(whereQuery).Updates(pembayaranPrestasi)
-	fmt.Println(updateProsesPengadaanModel.RowsAffected)
 	if updateProsesPengadaanModel.RowsAffected < 1 {
 		return errors.New("Data not found")
 	}
@@ -48,7 +47,23 @@ func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) Detail
 	}
 	return nil
 }
-func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error {
-	fmt.Println("REPO PutBreakdownPembayaranPrestasi")
+func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownRequestPutPembayaraanPrestasi *breakdown.RequestPutBreakdownPembayaranPrestasi) error {
+	var whereQuery string
+	if breakdownRequestPutPembayaraanPrestasi.NILAI_PENGADAAN == "" && breakdownRequestPutPembayaraanPrestasi.TERMIN == "" {
+		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and TERMIN IS NULL and NILAI_PENGADAAN IS NULL", breakdownRequestPutPembayaraanPrestasi.NAMA_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.JENIS_PENGADAAN)
+	} else if breakdownRequestPutPembayaraanPrestasi.NILAI_PENGADAAN == "" {
+		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and TERMIN = '%s' and NILAI_PENGADAAN IS NULL", breakdownRequestPutPembayaraanPrestasi.NAMA_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.JENIS_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.TERMIN)
+	} else if breakdownRequestPutPembayaraanPrestasi.TERMIN == "" {
+		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and TERMIN IS NULL and NILAI_PENGADAAN = '%s'", breakdownRequestPutPembayaraanPrestasi.NAMA_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.JENIS_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.NILAI_PENGADAAN)
+	} else {
+		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and TERMIN = '%s' and NILAI_PENGADAAN = '%s'", breakdownRequestPutPembayaraanPrestasi.NAMA_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.JENIS_PENGADAAN, breakdownRequestPutPembayaraanPrestasi.TERMIN, breakdownRequestPutPembayaraanPrestasi.NILAI_PENGADAAN)
+	}
+	updateProsesPengadaanModel := pembayaranPrestasiRepositoryImpl.DB.Where(whereQuery).Updates(breakdownRequestPutPembayaraanPrestasi)
+	if updateProsesPengadaanModel.RowsAffected < 1 {
+		return errors.New("Data not found")
+	}
+	if err := updateProsesPengadaanModel.Error; err != nil {
+		return err
+	}
 	return nil
 }

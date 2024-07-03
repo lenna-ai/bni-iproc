@@ -15,7 +15,7 @@ type PembayaranPrestasiService interface {
 	DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi, requestPembayaranPrestasi *pembayaranprestasimodel.RequestPembayaranPrestasi) error
 	PutPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *pembayaranprestasimodel.PembayaranPrestasi) error
 	DetailBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownPembayaraanPrestasi *[]breakdown.BreakdownPembayaranPrestasi, breakdownRequestBreakdownPembayaranPrestasi *breakdown.RequestBreakdownPembayaranPrestasi) error
-	PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error
+	PutBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownRequestPutPembayaraanPrestasi *breakdown.RequestPutBreakdownPembayaranPrestasi) error
 }
 
 func NewPembayaranPrestasiService(pembayaranPrestasiRepository pembayaranprestasirepositories.PembayaranPrestasiRepository) *PembayaranPrestasiServiceImpl {

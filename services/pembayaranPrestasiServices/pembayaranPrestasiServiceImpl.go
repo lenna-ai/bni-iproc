@@ -26,7 +26,9 @@ func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailBreakd
 
 	return nil
 }
-func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error {
-	pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.PutBreakdownPembayaranPrestasi(c)
+func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownRequestPutPembayaraanPrestasi *breakdown.RequestPutBreakdownPembayaranPrestasi) error {
+	if err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.PutBreakdownPembayaranPrestasi(c, breakdownRequestPutPembayaraanPrestasi); err != nil {
+		return err
+	}
 	return nil
 }

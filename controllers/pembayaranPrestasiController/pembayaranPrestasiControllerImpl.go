@@ -1,8 +1,6 @@
 package pembayaranprestasicontroller
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	pembayaranprestasimodel "github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel"
@@ -60,6 +58,17 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error {
-	fmt.Println("PutBreakdownPembayaranPrestasi")
-	return nil
+	var breakdownRequestPutPembayaraanPrestasi = new(breakdown.RequestPutBreakdownPembayaranPrestasi)
+	if err := c.BodyParser(breakdownRequestPutPembayaraanPrestasi); err != nil {
+		return helpers.ResultFailedJsonApi(c, breakdownRequestPutPembayaraanPrestasi, err.Error())
+	}
+	jsonTag, valueErrorTag, valueErrorParam, err := helpers.ValidationFields(breakdownRequestPutPembayaraanPrestasi)
+	if err != nil {
+		return helpers.MessageErrorValidation(c, jsonTag, valueErrorTag, valueErrorParam)
+	}
+
+	if err = pembayaranPrestasiControllerImpl.PembayaranPrestasiService.PutBreakdownPembayaranPrestasi(c, breakdownRequestPutPembayaraanPrestasi); err != nil {
+		return helpers.ResultFailedJsonApi(c, breakdownRequestPutPembayaraanPrestasi, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, breakdownRequestPutPembayaraanPrestasi)
 }
