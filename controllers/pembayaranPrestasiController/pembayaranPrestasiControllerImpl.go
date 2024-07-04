@@ -8,6 +8,7 @@ import (
 )
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) DetailPembayaranPrestasi(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	var pembayaraanPrestasi = new([]pembayaranprestasimodel.PembayaranPrestasi)
 	var requestPembayaranPrestasi = new(pembayaranprestasimodel.RequestPembayaranPrestasi)
 	jsonTag, valueErrorTag, valueErrorParam, err := helpers.ValidationFields(requestPembayaranPrestasi)
@@ -22,6 +23,7 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutPembayaranPrestasi(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	var pembayaraanPrestasi = new(pembayaranprestasimodel.PembayaranPrestasi)
 	if err := c.BodyParser(pembayaraanPrestasi); err != nil {
 		return helpers.ResultFailedJsonApi(c, pembayaraanPrestasi, err.Error())
@@ -39,6 +41,7 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutPem
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) DetailBreakdownPembayaranPrestasi(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	var breakdownPembayaraanPrestasi = new([]breakdown.BreakdownPembayaranPrestasi)
 	var breakdownRequestBreakdownPembayaranPrestasi = new(breakdown.RequestBreakdownPembayaranPrestasi)
 
@@ -58,6 +61,7 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	var breakdownRequestPutPembayaraanPrestasi = new(breakdown.RequestPutBreakdownPembayaranPrestasi)
 	if err := c.BodyParser(breakdownRequestPutPembayaraanPrestasi); err != nil {
 		return helpers.ResultFailedJsonApi(c, breakdownRequestPutPembayaraanPrestasi, err.Error())

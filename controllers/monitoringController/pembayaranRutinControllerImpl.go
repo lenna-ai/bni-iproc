@@ -9,6 +9,7 @@ import (
 )
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailPembayaranRutin(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	putPembayaranRutinModelModel := new([]pembayaranrutinmodel.PembayaranRutin)
 	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailPembayaranRutin(c, putPembayaranRutinModelModel)
 	if err != nil {
@@ -38,6 +39,7 @@ func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) PutPembayara
 }
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	DetailBreakdownPembayaranRutin := new([]pembayaranrutinmodel.BreakdownPembayaranRutin)
 	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailBreakdownPembayaranRutin(c, DetailBreakdownPembayaranRutin)
 	if err != nil {
