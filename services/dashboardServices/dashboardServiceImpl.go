@@ -36,3 +36,9 @@ func (dashboardServiceImpl *DashboardServiceImpl) Status(c *fiber.Ctx,statusPeng
 	}
 	return nil
 }
+func (dashboardServiceImpl *DashboardServiceImpl) Metode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.Metode(c,metodePengadaan); err != nil {
+		return err
+	}
+	return nil
+}

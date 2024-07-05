@@ -44,3 +44,11 @@ func (dashboardControllerImpl *DashboardControllerImpl) Status(c *fiber.Ctx) err
 	}
 	return helpers.ResultSuccessJsonApi(c, statusPengadaan)
 }
+
+func (dashboardControllerImpl *DashboardControllerImpl) Metode(c *fiber.Ctx) error  {
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.Metode(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}

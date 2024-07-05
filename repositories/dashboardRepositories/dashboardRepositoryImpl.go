@@ -47,3 +47,10 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) Status(c *fiber.Ctx,stat
 	}
 	return nil
 }
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) Metode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Find(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
