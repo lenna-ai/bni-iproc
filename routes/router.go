@@ -10,7 +10,6 @@ func Router(app *fiber.App) {
 	var allControllers = new(controllers.AllControllers)
 	appconfig.InitControllerServiceRepository(allControllers)
 
-
 	dashboard := app.Group("dashboard")
 	dashboard.Get("/total_pengadaan", allControllers.DashboardControllerImpl.TotalPengadaan)
 	dashboard.Get("/total_pembayaran", allControllers.DashboardControllerImpl.TotalPembayaran)
@@ -20,12 +19,12 @@ func Router(app *fiber.App) {
 	dashboardPengadaanOngoing.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnGoingKewenangan)
 	dashboardPengadaanOngoing.Get("/status",allControllers.DashboardControllerImpl.PengadaanOnGoingStatus)
 	dashboardPengadaanOngoing.Get("/metode",allControllers.DashboardControllerImpl.PengadaanOnGoingMetode)
+	dashboardPengadaanOngoing.Get("/keputusan", allControllers.DashboardControllerImpl.PengadaanOnGoingKeputusan)
 
 	dashboardPengadaanDone := dashboard.Group("pengadaanDone")
 	dashboardPengadaanDone.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnDoneKewenangan)
 	dashboardPengadaanDone.Get("/status",allControllers.DashboardControllerImpl.PengadaanOnDoneStatus)
 	dashboardPengadaanDone.Get("/metode",allControllers.DashboardControllerImpl.PengadaanOnDoneMetode)
-	
 
 	pengadaan := app.Group("pengadaan")
 	pengadaan.Get("/", allControllers.PengadaanControllerImpl.IndexPengadaan)

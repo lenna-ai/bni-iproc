@@ -16,6 +16,7 @@ type DashboardController interface {
 	PengadaanOnGoingKewenangan(c *fiber.Ctx) error
 	PengadaanOnGoingStatus(c *fiber.Ctx) error
 	PengadaanOnGoingMetode(c *fiber.Ctx) error
+	PengadaanOnGoingKeputusan(c *fiber.Ctx) error
 	PengadaanOnDoneKewenangan(c *fiber.Ctx) error
 	PengadaanOnDoneStatus(c *fiber.Ctx) error
 	PengadaanOnDoneMetode(c *fiber.Ctx) error

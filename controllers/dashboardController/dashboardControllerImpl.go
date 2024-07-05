@@ -53,6 +53,14 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingMetode(c
 	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }
 
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx) error  {
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnGoingKeputusan(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}
+
 func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx) error  {
 	var totalPembayaran = new([]map[string]interface{}) 
 	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneKewenangan(c, totalPembayaran); err != nil {

@@ -55,6 +55,19 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c
 	return nil
 }
 
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`p.NAMA,p.JENIS_PENGADAAN, sum(p.NILAI_PENGADAAN_INISASI) as estimasi_nilai_pengadaan,CASE
+	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 500000000 THEN 'TPD1'
+	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 3000000000 THEN 'TPD2'
+	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 75000000000 THEN 'TPP1'
+	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 150000000000 THEN 'TPP2'
+	WHEN sum(p.NILAI_PENGADAAN_INISASI) > 150000000000 THEN 'TPP3'
+	END AS KEWENANGAN_PENGADAAN`).Group("p.JENIS_PENGADAAN,p.NAMA").Scan(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
 		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'

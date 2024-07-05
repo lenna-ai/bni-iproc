@@ -36,8 +36,16 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingStatus(c *fibe
 	}
 	return nil
 }
+
 func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnGoingMetode(c,metodePengadaan); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnGoingKeputusan(c,metodePengadaan); err != nil {
 		return err
 	}
 	return nil
