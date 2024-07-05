@@ -9,6 +9,17 @@ import (
 func Router(app *fiber.App) {
 	var allControllers = new(controllers.AllControllers)
 	appconfig.InitControllerServiceRepository(allControllers)
+
+
+	dashboard := app.Group("dashboard")
+	dashboard.Get("/total_pengadaan", allControllers.DashboardControllerImpl.TotalPengadaan)
+	dashboard.Get("/total_pembayaran", allControllers.DashboardControllerImpl.TotalPembayaran)
+	dashboard.Get("/total_vendor", allControllers.DashboardControllerImpl.TotalVendor)
+
+	dashboardPengadaanOngoing := dashboard.Group("pengadaanOnGoing")
+	dashboardPengadaanOngoing.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnGoingKewenangan)
+	
+
 	pengadaan := app.Group("pengadaan")
 	pengadaan.Get("/", allControllers.PengadaanControllerImpl.IndexPengadaan)
 	pengadaan.Get("/filter", allControllers.PengadaanControllerImpl.FilterPengadaan)

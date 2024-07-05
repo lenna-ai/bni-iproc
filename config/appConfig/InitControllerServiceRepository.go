@@ -3,15 +3,18 @@ package appconfig
 import (
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/controllers"
+	dashboardcontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardController"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	detailpengadaancontroller "github.com/lenna-ai/bni-iproc/controllers/detailPengadaanController"
 	monitoringController "github.com/lenna-ai/bni-iproc/controllers/monitoringController"
 	pembayaranprestasicontroller "github.com/lenna-ai/bni-iproc/controllers/pembayaranPrestasiController"
 	dashboardpembayaranrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardPembayaranRepositories"
+	dashboardrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardRepositories"
 	detailpengadaanrepositories "github.com/lenna-ai/bni-iproc/repositories/detailPengadaanRepositories"
 	monitoringrepositories "github.com/lenna-ai/bni-iproc/repositories/monitoringRepositories"
 	pembayaranprestasirepositories "github.com/lenna-ai/bni-iproc/repositories/pembayaranPrestasiRepositories"
 	dashboardpembayaranservices "github.com/lenna-ai/bni-iproc/services/dashboardPembayaraanServices"
+	dashboardservices "github.com/lenna-ai/bni-iproc/services/dashboardServices"
 	detailpengadaanservices "github.com/lenna-ai/bni-iproc/services/detailPengadaanServices"
 	monitoringService "github.com/lenna-ai/bni-iproc/services/monitoringServices"
 	pembayaranprestasiservices "github.com/lenna-ai/bni-iproc/services/pembayaranPrestasiServices"
@@ -19,6 +22,11 @@ import (
 
 func InitControllerServiceRepository(allControllers *controllers.AllControllers) {
 	db := config.DB
+
+	dashboardRepository := dashboardrepositories.NewDashboardRepository(db)
+	dashboardservices := dashboardservices.NewDashboardService(dashboardRepository)
+	dashboardcontroller := dashboardcontroller.NewDashboardController(dashboardservices)
+
 	detailPengadaanFilterRepository := detailpengadaanrepositories.NewDetailPengadaanRepository(db)
 	detailPengadaanFilterService := detailpengadaanservices.NewDetailPengadaanService(detailPengadaanFilterRepository)
 	detailPengadaanFilterController := detailpengadaancontroller.NewDetailPengadaanController(detailPengadaanFilterService)
@@ -39,6 +47,7 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	pembayaranPrestasiServices := pembayaranprestasiservices.NewPembayaranPrestasiService(pembayaranPrestasiRepository)
 	pembayaranPrestasiController := pembayaranprestasicontroller.NewPembayaranPrestasiController(pembayaranPrestasiServices)
 
+	allControllers.DashboardControllerImpl = dashboardcontroller
 	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController
 	allControllers.PembayaranMonitoringControllerImpl = dashboardMonitoringController
 	allControllers.PembayaranRutinControllerImpl = PembayaranRutinController
