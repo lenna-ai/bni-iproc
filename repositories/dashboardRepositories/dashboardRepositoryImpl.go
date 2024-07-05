@@ -40,3 +40,10 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 	}
 	return nil
 }
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) Status(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}

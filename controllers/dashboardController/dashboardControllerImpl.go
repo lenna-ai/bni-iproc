@@ -36,3 +36,11 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingKewenang
 	}
 	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
 }
+
+func (dashboardControllerImpl *DashboardControllerImpl) Status(c *fiber.Ctx) error  {
+	var statusPengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.Status(c,statusPengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, statusPengadaan)
+}

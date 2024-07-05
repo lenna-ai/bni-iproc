@@ -14,6 +14,7 @@ type DashboardController interface {
 	TotalPembayaran(c *fiber.Ctx) error
 	TotalVendor(c *fiber.Ctx) error
 	PengadaanOnGoingKewenangan(c *fiber.Ctx) error
+	Status(c *fiber.Ctx) error
 }
 
 func NewDashboardController(dashboardservices dashboardservices.DashboardService,) *DashboardControllerImpl {

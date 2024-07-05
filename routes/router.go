@@ -18,6 +18,7 @@ func Router(app *fiber.App) {
 
 	dashboardPengadaanOngoing := dashboard.Group("pengadaanOnGoing")
 	dashboardPengadaanOngoing.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnGoingKewenangan)
+	dashboardPengadaanOngoing.Get("/status",allControllers.DashboardControllerImpl.Status)
 	
 
 	pengadaan := app.Group("pengadaan")

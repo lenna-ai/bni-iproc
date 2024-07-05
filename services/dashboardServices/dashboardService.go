@@ -14,6 +14,7 @@ type DashboardService interface {
 	TotalPembayaran(c *fiber.Ctx,dashboardModel *map[string]interface{}) error
 	TotalVendor(c *fiber.Ctx,dashboardModel *map[string]interface{}) error
 	PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error
+	Status(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error
 }
 
 func NewDashboardService(dashboardRepository dashboardrepositories.DashboardRepository) *DashboardServiceImpl {

@@ -29,3 +29,10 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingKewenangan(c *
 	}
 	return nil
 }
+
+func (dashboardServiceImpl *DashboardServiceImpl) Status(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.Status(c,statusPengadaan); err != nil {
+		return err
+	}
+	return nil
+}
