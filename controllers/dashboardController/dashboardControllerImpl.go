@@ -76,3 +76,11 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneMetode(c 
 	}
 	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }
+
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx) error  {
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneTrenPengadaan(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}

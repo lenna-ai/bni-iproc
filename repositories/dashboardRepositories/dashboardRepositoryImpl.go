@@ -84,3 +84,9 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c 
 	}
 	return nil
 }
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN AS name,count(*) AS counting_data").Group("p.STATUS_PENGADAAN").Find(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}

@@ -64,3 +64,10 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneMetode(c *fiber
 	return nil
 }
 
+func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneTrenPengadaan(c,dashboardModel); err != nil {
+		return err
+	}
+	return nil
+}
+
