@@ -49,7 +49,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Find(metodePengadaan).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","On Progress").Find(metodePengadaan).Error; err != nil {
 		return err
 	}
 	return nil
@@ -66,6 +66,20 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "Done")
 	
 	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","Done").Find(metodePengadaan).Error; err != nil {
 		return err
 	}
 	return nil

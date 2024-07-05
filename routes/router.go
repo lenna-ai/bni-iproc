@@ -23,6 +23,8 @@ func Router(app *fiber.App) {
 
 	dashboardPengadaanDone := dashboard.Group("pengadaanDone")
 	dashboardPengadaanDone.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnDoneKewenangan)
+	dashboardPengadaanDone.Get("/status",allControllers.DashboardControllerImpl.PengadaanOnDoneStatus)
+	dashboardPengadaanDone.Get("/metode",allControllers.DashboardControllerImpl.PengadaanOnDoneMetode)
 	
 
 	pengadaan := app.Group("pengadaan")

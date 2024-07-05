@@ -42,9 +42,25 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingMetode(c *fibe
 	}
 	return nil
 }
+
 func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneKewenangan(c,dashboardModel); err != nil {
 		return err
 	}
 	return nil
 }
+
+func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneStatus(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneStatus(c,dashboardModel); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneMetode(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneMetode(c,dashboardModel); err != nil {
+		return err
+	}
+	return nil
+}
+

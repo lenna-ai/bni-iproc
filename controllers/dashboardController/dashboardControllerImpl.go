@@ -53,11 +53,26 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingMetode(c
 	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }
 
-
 func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx) error  {
 	var totalPembayaran = new([]map[string]interface{}) 
 	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneKewenangan(c, totalPembayaran); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
+}
+
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneStatus(c *fiber.Ctx) error  {
+	var totalPembayaran = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneStatus(c, totalPembayaran); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
+}
+
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneMetode(c *fiber.Ctx) error  {
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneMetode(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }
