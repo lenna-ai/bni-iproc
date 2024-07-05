@@ -41,15 +41,31 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 	return nil
 }
 
-func (dashboardRepositoryImpl *DashboardRepositoryImpl) Status(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (dashboardRepositoryImpl *DashboardRepositoryImpl) Metode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Find(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
+		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'
+		WHEN p.KEWENANGAN_PENGADAAN = 'General Manager' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (UnitPengguna)' THEN 'TPD-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-1'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-3'
+		ELSE 'Not Found'
+		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "Done")
+	
+	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
 		return err
 	}
 	return nil

@@ -37,18 +37,27 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingKewenang
 	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
 }
 
-func (dashboardControllerImpl *DashboardControllerImpl) Status(c *fiber.Ctx) error  {
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingStatus(c *fiber.Ctx) error  {
 	var statusPengadaan = new([]map[string]interface{}) 
-	if err := dashboardControllerImpl.DashboardService.Status(c,statusPengadaan); err != nil {
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnGoingStatus(c,statusPengadaan); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c, statusPengadaan)
 }
 
-func (dashboardControllerImpl *DashboardControllerImpl) Metode(c *fiber.Ctx) error  {
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingMetode(c *fiber.Ctx) error  {
 	var metodePengadaan = new([]map[string]interface{}) 
-	if err := dashboardControllerImpl.DashboardService.Metode(c,metodePengadaan); err != nil {
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnGoingMetode(c,metodePengadaan); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}
+
+
+func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx) error  {
+	var totalPembayaran = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneKewenangan(c, totalPembayaran); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
 }

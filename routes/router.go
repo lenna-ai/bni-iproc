@@ -18,11 +18,11 @@ func Router(app *fiber.App) {
 
 	dashboardPengadaanOngoing := dashboard.Group("pengadaanOnGoing")
 	dashboardPengadaanOngoing.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnGoingKewenangan)
-	dashboardPengadaanOngoing.Get("/status",allControllers.DashboardControllerImpl.Status)
-	dashboardPengadaanOngoing.Get("/metode",allControllers.DashboardControllerImpl.Metode)
+	dashboardPengadaanOngoing.Get("/status",allControllers.DashboardControllerImpl.PengadaanOnGoingStatus)
+	dashboardPengadaanOngoing.Get("/metode",allControllers.DashboardControllerImpl.PengadaanOnGoingMetode)
 
-	// dashboardPengadaanDone := dashboard.Group("pengadaanDone")
-	// dashboardPengadaanDone.Get("/")
+	dashboardPengadaanDone := dashboard.Group("pengadaanDone")
+	dashboardPengadaanDone.Get("/kewenangan",allControllers.DashboardControllerImpl.PengadaanOnDoneKewenangan)
 	
 
 	pengadaan := app.Group("pengadaan")
