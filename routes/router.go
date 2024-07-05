@@ -26,6 +26,10 @@ func Router(app *fiber.App) {
 	dashboardPengadaanDone.Get("/status",allControllers.DashboardControllerImpl.PengadaanOnDoneStatus)
 	dashboardPengadaanDone.Get("/metode",allControllers.DashboardControllerImpl.PengadaanOnDoneMetode)
 
+	informasiRekanan := dashboard.Group("informasiRekanan")
+	informasiRekanan.Get("/",allControllers.DashboardControllerImpl.InformasiRekanan)
+	informasiRekanan.Get("/data_informasi_rekanan",allControllers.DashboardControllerImpl.DataInformasiRekanan)
+
 	pengadaan := app.Group("pengadaan")
 	pengadaan.Get("/", allControllers.PengadaanControllerImpl.IndexPengadaan)
 	pengadaan.Get("/filter", allControllers.PengadaanControllerImpl.FilterPengadaan)

@@ -21,6 +21,8 @@ type DashboardController interface {
 	PengadaanOnDoneStatus(c *fiber.Ctx) error
 	PengadaanOnDoneMetode(c *fiber.Ctx) error
 	PengadaanOnDoneTrenPengadaan(c *fiber.Ctx) error
+	InformasiRekanan(c *fiber.Ctx) error
+	DataInformasiRekanan(c *fiber.Ctx) error
 }
 
 func NewDashboardController(dashboardservices dashboardservices.DashboardService,) *DashboardControllerImpl {

@@ -97,8 +97,23 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c 
 	}
 	return nil
 }
+
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN AS name,count(*) AS counting_data").Group("p.STATUS_PENGADAAN").Find(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_activity_status_name,count(*) AS count_status_name").Group("dvr.vendor_activity_status_name").Find(metodePengadaan).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) DataInformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_activity_status_name").Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error; err != nil {
 		return err
 	}
 	return nil

@@ -103,3 +103,21 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneTrenPenga
 	}
 	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }
+
+func (dashboardControllerImpl *DashboardControllerImpl) InformasiRekanan(c *fiber.Ctx) error  {
+	defer helpers.RecoverPanicContext(c)
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.InformasiRekanan(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}
+
+func (dashboardControllerImpl *DashboardControllerImpl) DataInformasiRekanan(c *fiber.Ctx) error  {
+	defer helpers.RecoverPanicContext(c)
+	var metodePengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.DataInformasiRekanan(c,metodePengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+}

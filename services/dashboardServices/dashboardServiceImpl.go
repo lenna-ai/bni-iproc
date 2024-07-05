@@ -79,3 +79,17 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneTrenPengadaan(c
 	return nil
 }
 
+func (dashboardServiceImpl *DashboardServiceImpl) InformasiRekanan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.InformasiRekanan(c,dashboardModel); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dashboardServiceImpl *DashboardServiceImpl) DataInformasiRekanan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
+	if err := dashboardServiceImpl.DashboardRepository.DataInformasiRekanan(c,dashboardModel); err != nil {
+		return err
+	}
+	return nil
+}
+
