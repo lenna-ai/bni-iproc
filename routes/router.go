@@ -1,9 +1,13 @@
 package routes
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	appconfig "github.com/lenna-ai/bni-iproc/config/appConfig"
 	"github.com/lenna-ai/bni-iproc/controllers"
+
+	jwtware "github.com/gofiber/contrib/jwt"
 )
 
 func Router(app *fiber.App) {
@@ -12,6 +16,13 @@ func Router(app *fiber.App) {
 
 	login := app.Group("login")
 	login.Get("ldap",allControllers.LoginControllerImpl.Ldap)
+
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{Key: []byte(os.Getenv("SECRET_TOKEN"))},
+		ErrorHandler: allControllers.LoginControllerImpl.ErrorHandler,
+	}))
+
+	app.Get("/me", allControllers.LoginControllerImpl.MeJwt)
 
 	dashboard := app.Group("dashboard")
 	dashboard.Get("/total_pengadaan", allControllers.DashboardControllerImpl.TotalPengadaan)

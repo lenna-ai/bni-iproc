@@ -11,6 +11,8 @@ type LoginControllerImpl struct {
 
 type LoginController interface {
 	Ldap(c *fiber.Ctx) error
+	MeJwt(c *fiber.Ctx) error
+	ErrorHandler(c *fiber.Ctx) error
 }
 
 func NewLoginController(ldapLoginService loginservices.LdapLoginService) *LoginControllerImpl {

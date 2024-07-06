@@ -93,10 +93,15 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,da
 		"data":  data,
 		"exp":   time.Now().Add(time.Hour * time.Duration(timeInt)).Unix(),
 	}
+
+	// Create token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte(secret_token))
 	if err != nil {
 		return "",err
 	}
-	return t, nil
+
+	return t,nil
 }
