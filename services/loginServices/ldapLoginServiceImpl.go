@@ -13,16 +13,18 @@ import (
 	loginmodel "github.com/lenna-ai/bni-iproc/models/loginModel"
 )
 
-const (
-    ldapServer   = "ldap.forumsys.com"
-    ldapPort     = 389
-    ldapBindDN   = "cn=read-only-admin,dc=example,dc=com"
-    ldapPassword = "password"
-    ldapSearchDN = "dc=example,dc=com"
-)
+
 
 func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin) (bool, *loginmodel.UserLDAPData,string, error) {
-	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", ldapServer, ldapPort))
+	var (
+		ldapServer   = os.Getenv("LDAP_SERVER")
+		ldapPort     = os.Getenv("LDAP_PORT")
+		ldapBindDN   = os.Getenv("LDAP_BIND_DN")
+		ldapPassword = os.Getenv("LDAP_PASSWORD")
+		ldapSearchDN = os.Getenv("LDAP_SEARCH_DN")
+	)
+
+	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%v", ldapServer, ldapPort))
     if err != nil {
         return false, nil,"", err
     }
