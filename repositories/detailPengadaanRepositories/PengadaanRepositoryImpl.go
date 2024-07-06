@@ -5,14 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
-	"gorm.io/gorm"
 )
-
-func NewDetailPengadaanRepository(db *gorm.DB) *PengadaanRepositoryImpl {
-	return &PengadaanRepositoryImpl{
-		DB: db,
-	}
-}
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.Pengadaan)

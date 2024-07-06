@@ -1,0 +1,22 @@
+package dashboardrekananservices
+
+import (
+	"github.com/gofiber/fiber/v2"
+	dashboardmodel "github.com/lenna-ai/bni-iproc/models/dashboardModel"
+	dashboardrekananrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardRekananRepositories"
+)
+
+type DashboardRekananService interface {
+	Rekanan(c *fiber.Ctx,param string,rekananData *[]map[string]any) error
+	BreakdownRekanan(c *fiber.Ctx,param string,breakdownRekananData *[]dashboardmodel.DashboardRekanan) error
+}
+
+type DashboardRekananServiceImpl struct {
+	DashboardRekananRepository dashboardrekananrepositories.DashboardRekananRepository
+}
+
+func NewDashboardRekananService(DashboardRekananRepository dashboardrekananrepositories.DashboardRekananRepository) *DashboardRekananServiceImpl {
+	return &DashboardRekananServiceImpl{
+		DashboardRekananRepository: DashboardRekananRepository,
+	}
+}

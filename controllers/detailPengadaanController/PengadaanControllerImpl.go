@@ -8,14 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
-	detailpengadaanservices "github.com/lenna-ai/bni-iproc/services/detailPengadaanServices"
 )
-
-func NewDetailPengadaanController(DetailPengadaanFilterService detailpengadaanservices.PengadaanService) *PengadaanControllerImpl {
-	return &PengadaanControllerImpl{
-		PengadaanFilterService: DetailPengadaanFilterService,
-	}
-}
 
 func (FilterController *PengadaanControllerImpl) IndexPengadaan(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)

@@ -39,6 +39,10 @@ func Router(app *fiber.App) {
 	pengadaan.Get("/status", allControllers.PengadaanControllerImpl.IndexStatus)
 	pengadaan.Get("/type_pengadaan", allControllers.PengadaanControllerImpl.IndexType)
 
+	rekanan := app.Group("rekanan")
+	rekanan.Get("/:jenis_pengadaan", allControllers.DashboardRekananController.Rekanan)
+	rekanan.Get("/breakdown/:nama_pt", allControllers.DashboardRekananController.BreakdownRekanan)
+
 	pembayaraan := app.Group("pembayaraan")
 	pembayaraan.Get("/", allControllers.PembayaranMonitoringControllerImpl.IndexPembayaran)
 	pembayaraan.Get("rekanan", allControllers.PembayaranMonitoringControllerImpl.IndexRekananPembayaran)

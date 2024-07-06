@@ -7,14 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
-	detailpengadaanrepositories "github.com/lenna-ai/bni-iproc/repositories/detailPengadaanRepositories"
 )
-
-func NewDetailPengadaanService(repository detailpengadaanrepositories.PengadaanRepository) *PengadaanServiceImpl {
-	return &PengadaanServiceImpl{
-		PengadaanFilterRepository: repository,
-	}
-}
 
 func (repository *PengadaanServiceImpl) IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error) {
 	dataDetailPengadaan, err := repository.PengadaanFilterRepository.IndexPengadaan(c)

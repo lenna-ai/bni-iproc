@@ -17,3 +17,9 @@ type PengadaanRepository interface {
 	FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error)
 	SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error)
 }
+
+func NewDetailPengadaanRepository(db *gorm.DB) *PengadaanRepositoryImpl {
+	return &PengadaanRepositoryImpl{
+		DB: db,
+	}
+}

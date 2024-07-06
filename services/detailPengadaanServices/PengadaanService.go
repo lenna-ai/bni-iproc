@@ -18,3 +18,9 @@ type PengadaanService interface {
 	SumPengadaan(c *fiber.Ctx, SUM1 string, SUM2 string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string, WHERE_AND string) ([]detailmodel.DataResultSumPengadaan, error)
 	EfisiensiPengadaan(c *fiber.Ctx, estimasi_nilai_pengadaan int, nilai_spk int) (resultSisaAnggaran int, resultEfisiensi float64)
 }
+
+func NewDetailPengadaanService(repository detailpengadaanrepositories.PengadaanRepository) *PengadaanServiceImpl {
+	return &PengadaanServiceImpl{
+		PengadaanFilterRepository: repository,
+	}
+}

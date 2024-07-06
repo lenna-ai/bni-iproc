@@ -17,3 +17,9 @@ type PengadaanDoneController interface {
 	SumPengadaan(c *fiber.Ctx) error
 	EfisiensiPengadaan(c *fiber.Ctx) error
 }
+
+func NewDetailPengadaanController(DetailPengadaanFilterService detailpengadaanservices.PengadaanService) *PengadaanControllerImpl {
+	return &PengadaanControllerImpl{
+		PengadaanFilterService: DetailPengadaanFilterService,
+	}
+}
