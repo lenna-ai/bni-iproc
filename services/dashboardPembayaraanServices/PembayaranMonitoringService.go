@@ -12,6 +12,6 @@ type PembayaranMonitoringServicesImpl struct {
 }
 
 type PembayaranMonitoringServices interface {
-	IndexRekananPembayaranService(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error)
-	FilterPengadaan(c *fiber.Ctx, jenisPengadaan string) ([]pembayaranmodel.Pembayaran, error)
+	IndexRekananPembayaranService(c *fiber.Ctx, jenisPengadaan string,totalCount *int64) ([]formatters.IndexPembayaranMonitor, error)
+	FilterPengadaan(c *fiber.Ctx, jenisPengadaan string,totalCount *int64) ([]pembayaranmodel.Pembayaran, error)
 }

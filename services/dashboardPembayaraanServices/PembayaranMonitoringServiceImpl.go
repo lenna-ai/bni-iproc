@@ -17,8 +17,8 @@ func NewPembayaranMonitoringServices(PembayaranMonitoringRepository dashboardpem
 	}
 }
 
-func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) IndexRekananPembayaranService(c *fiber.Ctx, jenisPengadaan string) ([]formatters.IndexPembayaranMonitor, error) {
-	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexRekananPembayaranMonitor(c, jenisPengadaan)
+func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) IndexRekananPembayaranService(c *fiber.Ctx, jenisPengadaan string,totalCount *int64) ([]formatters.IndexPembayaranMonitor, error) {
+	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexRekananPembayaranMonitor(c, jenisPengadaan,totalCount)
 	if err != nil {
 		log.Printf("error pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexPembayaranMonitor %v\n", err)
 		return pembayaran, err
@@ -26,7 +26,7 @@ func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) IndexR
 	return pembayaran, nil
 }
 
-func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) FilterPengadaan(c *fiber.Ctx, jenisPengadaan string) ([]pembayaranmodel.Pembayaran, error) {
+func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) FilterPengadaan(c *fiber.Ctx, jenisPengadaan string,totalCount *int64) ([]pembayaranmodel.Pembayaran, error) {
 	splitJenisPengadaan := strings.Split(jenisPengadaan, ",")
 	var queryStringWhere string
 	var countSplitVSJP int
@@ -46,7 +46,7 @@ func (pembayaranMonitoringServicesImpl *PembayaranMonitoringServicesImpl) Filter
 		}
 	}
 
-	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.FilterPengadaan(c, queryStringWhere)
+	pembayaran, err := pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.FilterPengadaan(c, queryStringWhere,totalCount)
 	if err != nil {
 		log.Printf("error pembayaranMonitoringServicesImpl.PembayaranMonitoringRepository.IndexPembayaranMonitor %v\n", err)
 		return pembayaran, err
