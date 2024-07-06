@@ -7,8 +7,8 @@ import (
 )
 
 type DashboardRekananRepository interface {
-	Rekanan(c *fiber.Ctx,param string,rekananData *[]map[string]any) error
-	BreakdownRekanan(c *fiber.Ctx,param string,breakdownRekananData *[]dashboardmodel.DashboardRekanan) error
+	Rekanan(c *fiber.Ctx,param string,rekananData *[]map[string]any,totalCount *int64) error
+	BreakdownRekanan(c *fiber.Ctx,param string,breakdownRekananData *[]dashboardmodel.DashboardRekanan, totalCount *int64) error
 }
 
 type DashboardRekananRepositoryImpl struct {
