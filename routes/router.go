@@ -10,6 +10,9 @@ func Router(app *fiber.App) {
 	var allControllers = new(controllers.AllControllers)
 	appconfig.InitControllerServiceRepository(allControllers)
 
+	login := app.Group("login")
+	login.Get("ldap",allControllers.LoginControllerImpl.Ldap)
+
 	dashboard := app.Group("dashboard")
 	dashboard.Get("/total_pengadaan", allControllers.DashboardControllerImpl.TotalPengadaan)
 	dashboard.Get("/total_pembayaran", allControllers.DashboardControllerImpl.TotalPembayaran)

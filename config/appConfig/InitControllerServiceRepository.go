@@ -3,6 +3,7 @@ package appconfig
 import (
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/controllers"
+	logincontroller "github.com/lenna-ai/bni-iproc/controllers/LoginController"
 	dashboardcontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardController"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	dashboardrekanancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardRekananController"
@@ -19,12 +20,16 @@ import (
 	dashboardrekananservices "github.com/lenna-ai/bni-iproc/services/dashboardRekananServices"
 	dashboardservices "github.com/lenna-ai/bni-iproc/services/dashboardServices"
 	detailpengadaanservices "github.com/lenna-ai/bni-iproc/services/detailPengadaanServices"
+	loginservices "github.com/lenna-ai/bni-iproc/services/loginServices"
 	monitoringService "github.com/lenna-ai/bni-iproc/services/monitoringServices"
 	pembayaranprestasiservices "github.com/lenna-ai/bni-iproc/services/pembayaranPrestasiServices"
 )
 
 func InitControllerServiceRepository(allControllers *controllers.AllControllers) {
 	db := config.DB
+
+	loginServices := loginservices.NewLdapLoginService()
+	loginController := logincontroller.NewLoginController(loginServices)
 
 	dashboardRepository := dashboardrepositories.NewDashboardRepository(db)
 	dashboardservices := dashboardservices.NewDashboardService(dashboardRepository)
@@ -54,6 +59,7 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	pembayaranPrestasiServices := pembayaranprestasiservices.NewPembayaranPrestasiService(pembayaranPrestasiRepository)
 	pembayaranPrestasiController := pembayaranprestasicontroller.NewPembayaranPrestasiController(pembayaranPrestasiServices)
 
+	allControllers.LoginControllerImpl = loginController
 	allControllers.DashboardControllerImpl = dashboardcontroller
 	allControllers.DashboardRekananController = dashboardRekanan
 	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController

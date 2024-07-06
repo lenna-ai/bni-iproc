@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	logincontroller "github.com/lenna-ai/bni-iproc/controllers/LoginController"
 	dashboardcontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardController"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	dashboardrekanancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardRekananController"
@@ -10,6 +11,7 @@ import (
 )
 
 type AllControllers struct {
+	LoginControllerImpl            	   *logincontroller.LoginControllerImpl
 	DashboardControllerImpl            *dashboardcontroller.DashboardControllerImpl
 	DashboardRekananController 		   *dashboardrekanancontroller.DashboardRekananImpl
 	PengadaanControllerImpl            *detailpengadaancontroller.PengadaanControllerImpl
