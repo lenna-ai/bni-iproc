@@ -15,14 +15,14 @@ func Router(app *fiber.App) {
 	appconfig.InitControllerServiceRepository(allControllers)
 
 	login := app.Group("login")
-	login.Get("ldap",allControllers.LoginControllerImpl.Ldap)
+	login.Get("ldap",allControllers.LoginController.Ldap)
 
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{Key: []byte(os.Getenv("SECRET_TOKEN"))},
-		ErrorHandler: allControllers.LoginControllerImpl.ErrorHandler,
+		ErrorHandler: allControllers.LoginController.ErrorHandler,
 	}))
 
-	app.Get("/me", allControllers.LoginControllerImpl.MeJwt)
+	app.Get("/me", allControllers.LoginController.MeJwt)
 
 	dashboard := app.Group("dashboard")
 	dashboard.Get("/total_pengadaan", allControllers.DashboardControllerImpl.TotalPengadaan)

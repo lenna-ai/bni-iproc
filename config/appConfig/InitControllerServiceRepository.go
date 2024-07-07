@@ -3,11 +3,11 @@ package appconfig
 import (
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/controllers"
-	logincontroller "github.com/lenna-ai/bni-iproc/controllers/LoginController"
 	dashboardcontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardController"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	dashboardrekanancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardRekananController"
 	detailpengadaancontroller "github.com/lenna-ai/bni-iproc/controllers/detailPengadaanController"
+	"github.com/lenna-ai/bni-iproc/controllers/loginController"
 	monitoringController "github.com/lenna-ai/bni-iproc/controllers/monitoringController"
 	pembayaranprestasicontroller "github.com/lenna-ai/bni-iproc/controllers/pembayaranPrestasiController"
 	dashboardpembayaranrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardPembayaranRepositories"
@@ -29,7 +29,7 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	db := config.DB
 
 	loginServices := loginservices.NewLdapLoginService()
-	loginController := logincontroller.NewLoginController(loginServices)
+	loginController := loginController.NewloginController(loginServices)
 
 	dashboardRepository := dashboardrepositories.NewDashboardRepository(db)
 	dashboardservices := dashboardservices.NewDashboardService(dashboardRepository)
@@ -59,7 +59,7 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	pembayaranPrestasiServices := pembayaranprestasiservices.NewPembayaranPrestasiService(pembayaranPrestasiRepository)
 	pembayaranPrestasiController := pembayaranprestasicontroller.NewPembayaranPrestasiController(pembayaranPrestasiServices)
 
-	allControllers.LoginControllerImpl = loginController
+	allControllers.LoginController = loginController
 	allControllers.DashboardControllerImpl = dashboardcontroller
 	allControllers.DashboardRekananController = dashboardRekanan
 	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController

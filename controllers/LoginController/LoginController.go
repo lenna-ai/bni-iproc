@@ -1,4 +1,4 @@
-package logincontroller
+package loginController
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +15,7 @@ type LoginController interface {
 	ErrorHandler(c *fiber.Ctx) error
 }
 
-func NewLoginController(ldapLoginService loginservices.LdapLoginService) *LoginControllerImpl {
+func NewloginController(ldapLoginService loginservices.LdapLoginService) *LoginControllerImpl {
 	return &LoginControllerImpl{
 		LdapLoginService: ldapLoginService,
 	}

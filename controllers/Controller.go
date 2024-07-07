@@ -1,17 +1,17 @@
 package controllers
 
 import (
-	logincontroller "github.com/lenna-ai/bni-iproc/controllers/LoginController"
 	dashboardcontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardController"
 	dashboardpembayarancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardPembayaraanController"
 	dashboardrekanancontroller "github.com/lenna-ai/bni-iproc/controllers/dashboardRekananController"
 	detailpengadaancontroller "github.com/lenna-ai/bni-iproc/controllers/detailPengadaanController"
+	"github.com/lenna-ai/bni-iproc/controllers/loginController"
 	monitoringcontroller "github.com/lenna-ai/bni-iproc/controllers/monitoringController"
 	pembayaranprestasicontroller "github.com/lenna-ai/bni-iproc/controllers/pembayaranPrestasiController"
 )
 
 type AllControllers struct {
-	LoginControllerImpl            	   *logincontroller.LoginControllerImpl
+	LoginController *loginController.LoginControllerImpl
 	DashboardControllerImpl            *dashboardcontroller.DashboardControllerImpl
 	DashboardRekananController 		   *dashboardrekanancontroller.DashboardRekananImpl
 	PengadaanControllerImpl            *detailpengadaancontroller.PengadaanControllerImpl

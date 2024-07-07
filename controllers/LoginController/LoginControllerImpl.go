@@ -1,4 +1,4 @@
-package logincontroller
+package loginController
 
 import (
 	"errors"
