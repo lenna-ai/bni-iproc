@@ -1,7 +1,7 @@
 package monitoringcontroller
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
@@ -43,7 +43,7 @@ func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailBreakd
 	DetailBreakdownPembayaranRutin := new([]pembayaranrutinmodel.BreakdownPembayaranRutin)
 	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailBreakdownPembayaranRutin(c, DetailBreakdownPembayaranRutin)
 	if err != nil {
-		fmt.Println("err.Error()")
+		log.Println("err.Error()")
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c, DetailBreakdownPembayaranRutin)

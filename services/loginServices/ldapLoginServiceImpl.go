@@ -15,7 +15,7 @@ import (
 
 
 
-func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin) (bool, *loginmodel.UserLDAPData,string, error) {
+func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin) (bool, jwt.MapClaims,string, error) {
 	var (
 		ldapServer   = os.Getenv("LDAP_SERVER")
 		ldapPort     = os.Getenv("LDAP_PORT")
@@ -80,20 +80,20 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 			data.TelephoneNumber = attr.Values[0]
 		}
 	}
-	token, _ := ldapLoginServiceImpl.JWTTokenClaims(f,data)
-	return true, data,token, nil
+	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,data)
+	return true, claims,token, nil
 }
 
-func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,data any) (string,error) {
+func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,data any) (string, jwt.MapClaims, error) {
 	time_env := os.Getenv("TIME_JWT_EXP")
 	secret_token := os.Getenv("SECRET_TOKEN")
 	timeInt,err := strconv.Atoi(time_env)
 	if err != nil {
-		return "",err
+		return "",jwt.MapClaims{},err
 	}
 	claims := jwt.MapClaims{
-		"data":  data,
-		"exp":   time.Now().Add(time.Hour * time.Duration(timeInt)).Unix(),
+		"user":  data,
+		"exp":   time.Now().Add(time.Minute * time.Duration(timeInt)).Unix(),
 	}
 
 	// Create token
@@ -102,8 +102,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,da
 	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte(secret_token))
 	if err != nil {
-		return "",err
+		return "",jwt.MapClaims{},err
 	}
 
-	return t,nil
+	return t,claims,nil
 }
