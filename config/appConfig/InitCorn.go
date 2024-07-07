@@ -1,6 +1,8 @@
 package appconfig
 
 import (
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -15,7 +17,8 @@ func initCornJob() {
 
 	go scheduler.AddFunc("* * * * *", func() {
 		wg.Add(1)
-		console.RemoveFileStorage("./storage/logs", 7)
+		intTimeDay,_ := strconv.Atoi(os.Getenv("TIME_STORAGE_DAY"))
+		console.RemoveFileStorage("./storage/logs", intTimeDay)
 	})
 
 	wg.Wait()
