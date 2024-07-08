@@ -12,6 +12,18 @@ services:
     networks:
       - learning
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx_container_bni
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - learning
+    depends_on:
+      - app
+
 # Networks to be created to facilitate communication between containers
 networks:
   learning:
