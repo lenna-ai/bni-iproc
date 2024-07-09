@@ -13,11 +13,7 @@ func main() {
 	defer helpers.RecoverPanicContext(&fiber.Ctx{})
 	appconfig.InitApplication()
 	app := fiber.New()
-	// app.Use(cors.New())
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowCredentials: true,
-	}))
+	app.Use(cors.New())
 	config.Logger(app)
 	routes.Router(app)
 	if err := app.Listen(":3000"); err != nil {
