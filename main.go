@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/lenna-ai/bni-iproc/config"
 	appconfig "github.com/lenna-ai/bni-iproc/config/appConfig"
 	"github.com/lenna-ai/bni-iproc/helpers"
@@ -12,6 +13,11 @@ func main() {
 	defer helpers.RecoverPanicContext(&fiber.Ctx{})
 	appconfig.InitApplication()
 	app := fiber.New()
+	// app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowCredentials: true,
+	}))
 	config.Logger(app)
 	routes.Router(app)
 	if err := app.Listen(":3000"); err != nil {
