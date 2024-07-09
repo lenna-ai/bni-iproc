@@ -14,6 +14,7 @@ func Router(app *fiber.App) {
 	login.Get("ldap",allControllers.LoginController.Ldap)
 	login.Get("vendor",allControllers.LoginController.Vendor)
 
+	// comments JWT 
 	// app.Use(jwtware.New(jwtware.Config{
 	// 	SigningKey: jwtware.SigningKey{Key: []byte(os.Getenv("SECRET_TOKEN"))},
 	// 	ErrorHandler: allControllers.LoginController.ErrorHandler,
