@@ -33,10 +33,10 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalVendor(c *fiber.Ctx
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
 		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'General Manager' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (UnitPengguna)' THEN 'TPD-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-3'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (Unit Pengguna)' THEN 'TPD-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-1'
+		WHEN p.KEWENANGAN_PENGADAAN = 'DIRUT' OR p.KEWENANGAN_PENGADAAN = 'WADIRUT' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
 		ELSE 'Not Found'
 		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "On Progress")
 	
@@ -80,10 +80,10 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusa
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
 		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'General Manager' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (UnitPengguna)' THEN 'TPD-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Wakil General Manager' THEN 'TPP-3'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (Unit Pengguna)' THEN 'TPD-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-1'
+		WHEN p.KEWENANGAN_PENGADAAN = 'DIRUT' OR p.KEWENANGAN_PENGADAAN = 'WADIRUT' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-2'
+		WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
 		ELSE 'Not Found'
 		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "Done")
 	

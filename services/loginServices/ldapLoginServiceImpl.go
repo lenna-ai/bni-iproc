@@ -20,12 +20,21 @@ import (
 
 func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin) (bool, jwt.MapClaims,string, error) {
 	var (
-		ldapServer   = os.Getenv("LDAP_SERVER")
-		ldapPort     = os.Getenv("LDAP_PORT")
-		ldapBindDN   = os.Getenv("LDAP_BIND_DN")
-		ldapPassword = os.Getenv("LDAP_PASSWORD")
-		ldapSearchDN = os.Getenv("LDAP_SEARCH_DN")
+		ldapServer,ldapPort,ldapBindDN,ldapPassword,ldapSearchDN    string
 	)
+	if reqLogin.LocationDepartment == "HQ" {
+		ldapServer   = os.Getenv("LDAP_SERVER_HQ")
+		ldapPort     = os.Getenv("LDAP_PORT_HQ")
+		ldapBindDN   = os.Getenv("LDAP_BIND_DN_HQ")
+		ldapPassword = os.Getenv("LDAP_PASSWORD_HQ")
+		ldapSearchDN = os.Getenv("LDAP_SEARCH_DN_HQ")
+	}else if reqLogin.LocationDepartment == "BR" {
+		ldapServer   = os.Getenv("LDAP_SERVER_BR")
+		ldapPort     = os.Getenv("LDAP_PORT_BR")
+		ldapBindDN   = os.Getenv("LDAP_BIND_DN_BR")
+		ldapPassword = os.Getenv("LDAP_PASSWORD_BR")
+		ldapSearchDN = os.Getenv("LDAP_SEARCH_DN_BR")
+	}
 
 	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%v", ldapServer, ldapPort))
     if err != nil {
@@ -42,13 +51,9 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	searchRequest := ldap.NewSearchRequest(
 		ldapSearchDN,
-		ldap.ScopeWholeSubtree,
-		ldap.NeverDerefAliases,
-		0,
-		0,
-		false,
-		fmt.Sprintf("(&(objectClass=organizationalPerson)(uid=%s))", reqLogin.Username),
-		[]string{"uid", "cn", "sn", "mail","telephoneNumber"},
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(sAMAccountName=%s)", reqLogin.Username),
+		[]string{"dn", "displayName", "department", "maverickApps", "whenChanged", "sAMAccountName", "userAccountControl", "mail"},
 		nil,
 	)
 
@@ -63,32 +68,36 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		log.Println("len(sr.Entries) == 0")
 		return false, nil,"", errors.New("user not found")
 	}
-	entry := sr.Entries[0]
 
-	// verify user password by binding to user dn (with user password)
-	err = l.Bind(entry.DN, reqLogin.Password)
+	userDn := sr.Entries[0].DN
+	err = l.Bind(userDn, ldapPassword)
 	if err != nil {
-		log.Println("l.Bind(entry.DN, reqLogin.Password) == nil")
 		return false, nil,"", err
 	}
 
-	// (optional) store data
-	data := new(loginmodel.UserLDAPData)
-	data.ID = reqLogin.Username
-
-	for _, attr := range entry.Attributes {
-		switch attr.Name {
-		case "sn":
-			data.Name = attr.Values[0]
-		case "mail":
-			data.Email = attr.Values[0]
-		case "cn":
-			data.FullName = attr.Values[0]
-		case "telephoneNumber":
-			data.TelephoneNumber = attr.Values[0]
-		}
+	entry := sr.Entries[0]
+	if entry.GetAttributeValue("maverickApps") == "" {
+		return false, nil,"", err
 	}
-	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,data)
+
+	if entry.GetAttributeValue("userAccountControl") == "" {
+		return false, nil,"", err
+	}
+
+	if entry.GetAttributeValue("mail") == "" {
+		return false, nil,"", err
+	}
+
+	userInfo := map[string]string{
+		"displayName":        entry.GetAttributeValue("displayName"),
+		"department":         entry.GetAttributeValue("department"),
+		"maverickApps":       entry.GetAttributeValue("maverickApps"),
+		"whenChanged":        entry.GetAttributeValue("whenChanged"),
+		"sAMAccountName":     entry.GetAttributeValue("sAMAccountName"),
+		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
+		"userMail":           entry.GetAttributeValue("mail"),
+	}
+	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)
 	return true, claims,token, nil
 }
 

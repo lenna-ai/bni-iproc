@@ -3,7 +3,7 @@ package loginmodel
 type RequestLogin struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
-    Ldap bool `json:"isLdap" validate:"required"`
+    LocationDepartment string `json:"locationDepartment" validate:"required"`
 }
 
 type UserLDAPData struct {
