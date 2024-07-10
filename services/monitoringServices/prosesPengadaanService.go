@@ -15,7 +15,7 @@ type MonitoringProsesPengadaanImpl struct {
 
 type MonitoringProsesPengadaan interface {
 	JenisPengadaan(c *fiber.Ctx) (*[]formatters.JenisPengadaan, error)
-	DetailProsesPengadaan(c *fiber.Ctx) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error)
+	DetailProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error)
 	PutProsesPengadaan(c *fiber.Ctx, prosesPengadaanModel *formatterProsesPengadaanModel.PutPengadaanFormatter) error
 }
 

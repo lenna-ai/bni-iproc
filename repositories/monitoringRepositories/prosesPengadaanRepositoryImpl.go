@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	pegadaanmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
 	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
 	formatterProsesPengadaanModel "github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
@@ -20,9 +21,11 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 	return jenisPengadaan, nil
 }
 
-func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error) {
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error) {
 	var prosesPengadaanModel = new([]formatterProsesPengadaanModel.PutPengadaanFormatter)
-	if err := monitoringProsesPengadaanImpl.DB.Find(prosesPengadaanModel).Error; err != nil {
+	
+	monitoringProsesPengadaanImpl.DB.Find(prosesPengadaanModel).Count(totalCount)
+	if err := monitoringProsesPengadaanImpl.DB.Scopes(gormhelpers.Paginate(c)).Find(prosesPengadaanModel).Error; err != nil {
 		log.Println("monitoringProsesPengadaanImpl.DB.Find(prosesPengadaanModel).Error; err")
 		return prosesPengadaanModel, err
 	}

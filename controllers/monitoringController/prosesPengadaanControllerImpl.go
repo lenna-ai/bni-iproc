@@ -29,7 +29,7 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProses
 	var totalCount = new(int64)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
-	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c)
+	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c,totalCount)
 	if err != nil {
 		log.Printf("error monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.getPengadaanFormatter %v \n ", err)
 		return helpers.ResultFailedJsonApi(c, getPengadaanFormatter, err.Error())

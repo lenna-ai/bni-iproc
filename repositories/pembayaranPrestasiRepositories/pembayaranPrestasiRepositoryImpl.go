@@ -6,12 +6,14 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	pembayaranprestasimodel "github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel"
 	"github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel/breakdown"
 )
 
-func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi, requestPembayaranPrestasi *pembayaranprestasimodel.RequestPembayaranPrestasi) error {
-	if err := pembayaranPrestasiRepositoryImpl.DB.Where("JENIS_PENGADAAN = ?", requestPembayaranPrestasi.JENIS_PENGADAAN).Find(pembayaranPrestasi).Error; err != nil {
+func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi, requestPembayaranPrestasi *pembayaranprestasimodel.RequestPembayaranPrestasi,totalCount *int64) error {
+	pembayaranPrestasiRepositoryImpl.DB.Where("JENIS_PENGADAAN = ?", requestPembayaranPrestasi.JENIS_PENGADAAN).Find(pembayaranPrestasi).Count(totalCount)
+	if err := pembayaranPrestasiRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Where("JENIS_PENGADAAN = ?", requestPembayaranPrestasi.JENIS_PENGADAAN).Find(pembayaranPrestasi).Error; err != nil {
 		log.Println("pembayaranPrestasiRepositoryImpl.DB.Find(pembayaranPrestasi).Error")
 		return err
 	}
@@ -35,13 +37,14 @@ func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutPem
 	return nil
 }
 
-func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) DetailBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownPembayaraanPrestasi *[]breakdown.BreakdownPembayaranPrestasi, breakdownRequestBreakdownPembayaranPrestasi *breakdown.RequestBreakdownPembayaranPrestasi) error {
+func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) DetailBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownPembayaraanPrestasi *[]breakdown.BreakdownPembayaranPrestasi, breakdownRequestBreakdownPembayaranPrestasi *breakdown.RequestBreakdownPembayaranPrestasi,totalCount *int64) error {
 	var whereQuery string
 	if breakdownRequestBreakdownPembayaranPrestasi.NILAI_PENGADAAN == "" {
 		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and NILAI_PENGADAAN IS NULL", breakdownRequestBreakdownPembayaranPrestasi.NAMA_PENGADAAN, breakdownRequestBreakdownPembayaranPrestasi.JENIS_PENGADAAN)
 	} else {
 		whereQuery = fmt.Sprintf("NAMA_PENGADAAN = '%s' and JENIS_PENGADAAN = '%s' and NILAI_PENGADAAN = '%s'", breakdownRequestBreakdownPembayaranPrestasi.NAMA_PENGADAAN, breakdownRequestBreakdownPembayaranPrestasi.JENIS_PENGADAAN, breakdownRequestBreakdownPembayaranPrestasi.NILAI_PENGADAAN)
 	}
+	pembayaranPrestasiRepositoryImpl.DB.Where(whereQuery).Find(breakdownPembayaraanPrestasi).Count(totalCount)
 	if err := pembayaranPrestasiRepositoryImpl.DB.Where(whereQuery).Find(breakdownPembayaraanPrestasi).Error; err != nil {
 		log.Println("pembayaranPrestasiRepositoryImpl.DB.Find(breakdownPembayaraanPrestasi).Error")
 		return err

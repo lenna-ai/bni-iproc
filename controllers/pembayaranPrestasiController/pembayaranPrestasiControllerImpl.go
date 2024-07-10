@@ -26,7 +26,7 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 	if err != nil {
 		return helpers.MessageErrorValidation(c, jsonTag, valueErrorTag, valueErrorParam)
 	}
-	err = pembayaranPrestasiControllerImpl.PembayaranPrestasiService.DetailPembayaranPrestasi(c, pembayaraanPrestasi, requestPembayaranPrestasi)
+	err = pembayaranPrestasiControllerImpl.PembayaranPrestasiService.DetailPembayaranPrestasi(c, pembayaraanPrestasi, requestPembayaranPrestasi,totalCount)
 	if err != nil {
 		return helpers.ResultFailedJsonApi(c, pembayaraanPrestasi, err.Error())
 	}
@@ -56,6 +56,9 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 	defer helpers.RecoverPanicContext(c)
 	var breakdownPembayaraanPrestasi = new([]breakdown.BreakdownPembayaranPrestasi)
 	var breakdownRequestBreakdownPembayaranPrestasi = new(breakdown.RequestBreakdownPembayaranPrestasi)
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
 	if err := c.BodyParser(breakdownRequestBreakdownPembayaranPrestasi); err != nil {
 		return helpers.ResultFailedJsonApi(c, breakdownRequestBreakdownPembayaranPrestasi, err.Error())
@@ -66,10 +69,11 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 		return helpers.MessageErrorValidation(c, jsonTag, valueErrorTag, valueErrorParam)
 	}
 
-	if err := pembayaranPrestasiControllerImpl.PembayaranPrestasiService.DetailBreakdownPembayaranPrestasi(c, breakdownPembayaraanPrestasi, breakdownRequestBreakdownPembayaranPrestasi); err != nil {
+	if err := pembayaranPrestasiControllerImpl.PembayaranPrestasiService.DetailBreakdownPembayaranPrestasi(c, breakdownPembayaraanPrestasi, breakdownRequestBreakdownPembayaranPrestasi,totalCount); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, breakdownPembayaraanPrestasi)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,breakdownPembayaraanPrestasi))
+	// return helpers.ResultSuccessJsonApi(c, breakdownPembayaraanPrestasi)
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutBreakdownPembayaranPrestasi(c *fiber.Ctx) error {

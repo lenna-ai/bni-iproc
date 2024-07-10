@@ -4,12 +4,14 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
 )
 
-func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error) {
+func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string,totalCount *int64) ([]detailmodel.Pengadaan, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.Pengadaan)
-	if err := repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Error; err != nil {
+	repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Count(totalCount)
+	if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Find(dataFilterDetailPengadaan).Error; err != nil {
 		log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n ", err)
 		return *dataFilterDetailPengadaan, err
 	}

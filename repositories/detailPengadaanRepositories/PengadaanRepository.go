@@ -14,7 +14,7 @@ type PengadaanRepository interface {
 	IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error)
 	IndexStatus(c *fiber.Ctx) ([]detailmodel.Status, error)
 	IndexType(c *fiber.Ctx) ([]detailmodel.Type, error)
-	FilterPengadaan(c *fiber.Ctx, stringWhere string) ([]detailmodel.Pengadaan, error)
+	FilterPengadaan(c *fiber.Ctx, stringWhere string,totalCount *int64) ([]detailmodel.Pengadaan, error)
 	SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error)
 }
 

@@ -6,8 +6,8 @@ import (
 	"github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel/breakdown"
 )
 
-func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi, requestPembayaranPrestasi *pembayaranprestasimodel.RequestPembayaranPrestasi) error {
-	err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.DetailPembayaranPrestasi(c, pembayaranPrestasi, requestPembayaranPrestasi)
+func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailPembayaranPrestasi(c *fiber.Ctx, pembayaranPrestasi *[]pembayaranprestasimodel.PembayaranPrestasi, requestPembayaranPrestasi *pembayaranprestasimodel.RequestPembayaranPrestasi,totalCount *int64) error {
+	err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.DetailPembayaranPrestasi(c, pembayaranPrestasi, requestPembayaranPrestasi,totalCount)
 	if err != nil {
 		return err
 	}
@@ -19,8 +19,8 @@ func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) PutPembayara
 	}
 	return nil
 }
-func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownPembayaraanPrestasi *[]breakdown.BreakdownPembayaranPrestasi, breakdownRequestBreakdownPembayaranPrestasi *breakdown.RequestBreakdownPembayaranPrestasi) error {
-	if err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.DetailBreakdownPembayaranPrestasi(c, breakdownPembayaraanPrestasi, breakdownRequestBreakdownPembayaranPrestasi); err != nil {
+func (pembayaranPrestasiServiceImpl *PembayaranPrestasiServiceImpl) DetailBreakdownPembayaranPrestasi(c *fiber.Ctx, breakdownPembayaraanPrestasi *[]breakdown.BreakdownPembayaranPrestasi, breakdownRequestBreakdownPembayaranPrestasi *breakdown.RequestBreakdownPembayaranPrestasi,totalCount *int64) error {
+	if err := pembayaranPrestasiServiceImpl.PembayaranPrestasiRepository.DetailBreakdownPembayaranPrestasi(c, breakdownPembayaraanPrestasi, breakdownRequestBreakdownPembayaranPrestasi,totalCount); err != nil {
 		return err
 	}
 

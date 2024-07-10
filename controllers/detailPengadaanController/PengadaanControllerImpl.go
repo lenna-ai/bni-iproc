@@ -25,6 +25,7 @@ func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) e
 	defer helpers.RecoverPanicContext(c)
 	
 	status_pengadaan := c.Query("filter")
+
 	filter := make(map[string]string)
 	var totalCount = new(int64)
 	page, _ := strconv.Atoi(c.Query("page"))
@@ -35,7 +36,7 @@ func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) e
 			filter[strings.Split(valueSplitStatusPengadaan, "=")[i]] = strings.Split(valueSplitStatusPengadaan, "=")[i+1]
 		}
 	}
-	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c, filter)
+	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c, filter,totalCount)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.FilterPengadaan %v\n ", err)
 		return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())

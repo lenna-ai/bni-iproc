@@ -16,8 +16,9 @@ func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailPembay
 	var totalCount = new(int64)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+
 	putPembayaranRutinModelModel := new([]pembayaranrutinmodel.PembayaranRutin)
-	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailPembayaranRutin(c, putPembayaranRutinModelModel)
+	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailPembayaranRutin(c, putPembayaranRutinModelModel,totalCount)
 	if err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
@@ -53,7 +54,7 @@ func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailBreakd
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
 	DetailBreakdownPembayaranRutin := new([]pembayaranrutinmodel.BreakdownPembayaranRutin)
-	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailBreakdownPembayaranRutin(c, DetailBreakdownPembayaranRutin)
+	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailBreakdownPembayaranRutin(c, DetailBreakdownPembayaranRutin, totalCount)
 	if err != nil {
 		log.Println("err.Error()")
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())

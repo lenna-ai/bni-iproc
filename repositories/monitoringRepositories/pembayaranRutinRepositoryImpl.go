@@ -6,11 +6,13 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	pembayaranrutinmodel "github.com/lenna-ai/bni-iproc/models/pembayaranRutinModel"
 )
 
-func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailPembayaranRutin(c *fiber.Ctx, pembayaranRutin *[]pembayaranrutinmodel.PembayaranRutin) error {
-	if err := pembayaranRutinRepositoryImpl.DB.Find(pembayaranRutin).Error; err != nil {
+func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailPembayaranRutin(c *fiber.Ctx, pembayaranRutin *[]pembayaranrutinmodel.PembayaranRutin,totalCount *int64) error {
+	pembayaranRutinRepositoryImpl.DB.Find(pembayaranRutin).Count(totalCount)
+	if err := pembayaranRutinRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Find(pembayaranRutin).Error; err != nil {
 		log.Println("pembayaranRutinRepositoryImpl.DB.Find(pembayaranRutin).Error; err")
 		return err
 	}
@@ -36,8 +38,9 @@ func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) PutPembayara
 	return nil
 }
 
-func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *[]pembayaranrutinmodel.BreakdownPembayaranRutin) error {
-	if err := pembayaranRutinRepositoryImpl.DB.Find(breakdownPembayaranRutin).Error; err != nil {
+func (pembayaranRutinRepositoryImpl *PembayaranRutinRepositoryImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx, breakdownPembayaranRutin *[]pembayaranrutinmodel.BreakdownPembayaranRutin,totalCount *int64) error {
+	pembayaranRutinRepositoryImpl.DB.Find(breakdownPembayaranRutin).Count(totalCount)
+	if err := pembayaranRutinRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Find(breakdownPembayaranRutin).Error; err != nil {
 		log.Println("epositoryImpl.DB.Find(breakdownPembayaranRutin).Error; err")
 		return err
 	}

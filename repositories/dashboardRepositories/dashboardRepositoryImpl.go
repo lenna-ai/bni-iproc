@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 )
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPengadaan(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
@@ -119,7 +120,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_activity_status_name,count(*) AS count_status_name").Group("dvr.vendor_activity_status_name").Find(metodePengadaan).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_activity_status_name,count(*) AS count_status_name").Group("dvr.vendor_activity_status_name").Find(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.vendor_activity_status_name,count(*) AS count_status_name).Group(dvr.vendor_activity_status_name).Find(metodePengadaan).Error; err != nil ")
 		return err
 	}
@@ -127,7 +128,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fibe
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) DataInformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_activity_status_name").Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_activity_status_name").Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.NAME,DVR.vendor_activity_status_name).Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error")
 		return err
 	}
