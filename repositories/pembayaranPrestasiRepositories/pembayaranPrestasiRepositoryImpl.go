@@ -29,6 +29,7 @@ func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutPem
 		return errors.New("data not found")
 	}
 	if err := updateProsesPengadaanModel.Error; err != nil {
+		log.Println("updateProsesPengadaanModel.Error; err != nil")
 		return err
 	}
 	return nil
@@ -60,9 +61,11 @@ func (pembayaranPrestasiRepositoryImpl *PembayaranPrestasiRepositoryImpl) PutBre
 	}
 	updateProsesPengadaanModel := pembayaranPrestasiRepositoryImpl.DB.Where(whereQuery).Updates(breakdownRequestPutPembayaraanPrestasi)
 	if updateProsesPengadaanModel.RowsAffected < 1 {
+		log.Println("data not found")
 		return errors.New("data not found")
 	}
 	if err := updateProsesPengadaanModel.Error; err != nil {
+		log.Println("updateProsesPengadaanModel.Error; err")
 		return err
 	}
 	return nil

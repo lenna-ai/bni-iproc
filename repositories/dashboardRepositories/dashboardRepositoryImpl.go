@@ -1,11 +1,14 @@
 package dashboardrepositories
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPengadaan(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("SUM(p.nilai_spk) as nilai_spk").Find(dashboardModel).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(SUM(p.nilai_spk) as nilai_spk).Find(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -13,6 +16,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPengadaan(c *fiber.
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPembayaran(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("BREAKDOWN_MONITORING_PEMBAYARAN_RUTIN bmpr").Select("sum(BMPR.NILAI_TAGIHAN) as nilai_tagihan").Where("BMPR.STATUS_PEMBAYARAN = ?","sudah dibayarkan").Find(dashboardModel).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(BREAKDOWN_MONITORING_PEMBAYARAN_RUTIN bmpr).Select(sum(BMPR.NILAI_TAGIHAN) as nilai_tagihan).Where(BMPR.STATUS_PEMBAYARAN = ?","sudah dibayarkan).Find(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -20,6 +24,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPembayaran(c *fiber
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalVendor(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("sum(p.NILAI_SPK) as nilai_spk").Joins("right join PENGADAAN p ON p.VENDOR_ID = dvr.ID").Find(dashboardModel).Error; err != nil {
+		log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -36,6 +41,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "On Progress")
 	
 	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
+		log.Println("err := dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -43,6 +49,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN).Find(statusPengadaan).Error; err != nil")
 		return err
 	}
 	return nil
@@ -50,6 +57,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","On Progress").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,On Progress).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
 	return nil
@@ -63,6 +71,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusa
 	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 150000000000 THEN 'TPP2'
 	WHEN sum(p.NILAI_PENGADAAN_INISASI) > 150000000000 THEN 'TPP3'
 	END AS KEWENANGAN_PENGADAAN`).Group("p.JENIS_PENGADAAN,p.NAMA").Scan(metodePengadaan).Error; err != nil {
+		log.Println("(dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error")
 		return err
 	}
 	return nil
@@ -79,6 +88,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "Done")
 	
 	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -86,6 +96,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN ).Find(statusPengadaan).Error; err != nil")
 		return err
 	}
 	return nil
@@ -93,6 +104,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c 
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","Done").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,Done).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
 	return nil
@@ -100,6 +112,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c 
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN AS name,count(*) AS counting_data").Group("p.STATUS_PENGADAAN").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN AS name,count(*) AS counting_data).Group(p.STATUS_PENGADAAN).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
 	return nil
@@ -107,6 +120,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_activity_status_name,count(*) AS count_status_name").Group("dvr.vendor_activity_status_name").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.vendor_activity_status_name,count(*) AS count_status_name).Group(dvr.vendor_activity_status_name).Find(metodePengadaan).Error; err != nil ")
 		return err
 	}
 	return nil
@@ -114,6 +128,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fibe
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) DataInformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_activity_status_name").Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.NAME,DVR.vendor_activity_status_name).Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error")
 		return err
 	}
 	return nil

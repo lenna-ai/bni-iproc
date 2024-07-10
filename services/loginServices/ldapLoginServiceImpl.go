@@ -29,12 +29,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%v", ldapServer, ldapPort))
     if err != nil {
+		log.Println("ldap.Dial(tcp, fmt.Sprintf(s:v, ldapServer, ldapPort))")
         return false, nil,"", err
     }
     defer l.Close()
 
 	err = l.Bind(ldapBindDN, ldapPassword)
 	if err != nil {
+		log.Println("l.Bind(ldapBindDN, ldapPassword)")
 		return false, nil,"", err
 	}
 
@@ -53,10 +55,12 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	sr, err := l.Search(searchRequest)
 	
 	if err != nil {
+		log.Println("err != nil")
 		return false, nil,"", err
 	}
 
 	if len(sr.Entries) == 0 {
+		log.Println("len(sr.Entries) == 0")
 		return false, nil,"", errors.New("user not found")
 	}
 	entry := sr.Entries[0]
@@ -64,6 +68,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	// verify user password by binding to user dn (with user password)
 	err = l.Bind(entry.DN, reqLogin.Password)
 	if err != nil {
+		log.Println("l.Bind(entry.DN, reqLogin.Password) == nil")
 		return false, nil,"", err
 	}
 
@@ -122,6 +127,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,da
 	secret_token := os.Getenv("SECRET_TOKEN")
 	timeInt,err := strconv.Atoi(time_env)
 	if err != nil {
+		log.Println("strconv.Atoi(time_env) err")
 		return "",jwt.MapClaims{},err
 	}
 	claims := jwt.MapClaims{
@@ -135,6 +141,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,da
 	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte(secret_token))
 	if err != nil {
+		log.Println("t, err, err")
 		return "",jwt.MapClaims{},err
 	}
 
