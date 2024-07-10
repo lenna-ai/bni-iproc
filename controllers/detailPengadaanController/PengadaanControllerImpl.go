@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	"github.com/lenna-ai/bni-iproc/models/pegadaanModel/formatters"
 )
 
@@ -22,8 +23,13 @@ func (FilterController *PengadaanControllerImpl) IndexPengadaan(c *fiber.Ctx) er
 
 func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
-	filter := make(map[string]string)
+	
 	status_pengadaan := c.Query("filter")
+	filter := make(map[string]string)
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+
 	for _, valueSplitStatusPengadaan := range strings.Split(status_pengadaan, ",") {
 		for i := 0; i < len(strings.Split(valueSplitStatusPengadaan, "="))/2; i++ {
 			filter[strings.Split(valueSplitStatusPengadaan, "=")[i]] = strings.Split(valueSplitStatusPengadaan, "=")[i+1]
@@ -34,7 +40,8 @@ func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) e
 		log.Printf("error PengadaanFilterService.FilterPengadaan %v\n ", err)
 		return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, dataFilterDetailPengadaan)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,dataFilterDetailPengadaan))
+	// return helpers.ResultSuccessJsonApi(c, dataFilterDetailPengadaan)
 }
 
 func (FilterController *PengadaanControllerImpl) IndexStatus(c *fiber.Ctx) error {

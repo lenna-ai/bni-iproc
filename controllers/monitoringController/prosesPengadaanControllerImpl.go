@@ -3,11 +3,13 @@ package monitoringcontroller
 import (
 	"log"
 	"reflect"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/helpers"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	formatters "github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
 )
 
@@ -23,12 +25,17 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c)
 	if err != nil {
 		log.Printf("error monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.getPengadaanFormatter %v \n ", err)
 		return helpers.ResultFailedJsonApi(c, getPengadaanFormatter, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, getPengadaanFormatter)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,getPengadaanFormatter))
+	// return helpers.ResultSuccessJsonApi(c, getPengadaanFormatter)
 }
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx) error {

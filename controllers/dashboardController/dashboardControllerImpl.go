@@ -1,8 +1,11 @@
 package dashboardcontroller
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 )
 
 func (dashboardControllerImpl *DashboardControllerImpl) TotalPengadaan(c *fiber.Ctx) error  {
@@ -106,18 +109,30 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneTrenPenga
 
 func (dashboardControllerImpl *DashboardControllerImpl) InformasiRekanan(c *fiber.Ctx) error  {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	
 	var metodePengadaan = new([]map[string]interface{}) 
 	if err := dashboardControllerImpl.DashboardService.InformasiRekanan(c,metodePengadaan); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,metodePengadaan))
 }
 
 func (dashboardControllerImpl *DashboardControllerImpl) DataInformasiRekanan(c *fiber.Ctx) error  {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+
 	var metodePengadaan = new([]map[string]interface{}) 
 	if err := dashboardControllerImpl.DashboardService.DataInformasiRekanan(c,metodePengadaan); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,metodePengadaan))
+	// return helpers.ResultSuccessJsonApi(c, metodePengadaan)
 }

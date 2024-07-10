@@ -1,16 +1,27 @@
 package pembayaranprestasicontroller
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	pembayaranprestasimodel "github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel"
 	"github.com/lenna-ai/bni-iproc/models/pembayaranPrestasiModel/breakdown"
 )
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) DetailPembayaranPrestasi(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+
 	var pembayaraanPrestasi = new([]pembayaranprestasimodel.PembayaranPrestasi)
 	var requestPembayaranPrestasi = new(pembayaranprestasimodel.RequestPembayaranPrestasi)
+	if err := c.BodyParser(requestPembayaranPrestasi); err != nil {
+		return helpers.ResultFailedJsonApi(c, pembayaraanPrestasi, err.Error())
+	}
 	jsonTag, valueErrorTag, valueErrorParam, err := helpers.ValidationFields(requestPembayaranPrestasi)
 	if err != nil {
 		return helpers.MessageErrorValidation(c, jsonTag, valueErrorTag, valueErrorParam)
@@ -19,7 +30,8 @@ func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) Detail
 	if err != nil {
 		return helpers.ResultFailedJsonApi(c, pembayaraanPrestasi, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, pembayaraanPrestasi)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,pembayaraanPrestasi))
+	// return helpers.ResultSuccessJsonApi(c, pembayaraanPrestasi)
 }
 
 func (pembayaranPrestasiControllerImpl *PembayaranPrestasiControllerImpl) PutPembayaranPrestasi(c *fiber.Ctx) error {

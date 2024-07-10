@@ -2,20 +2,27 @@ package monitoringcontroller
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
+	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	pembayaranrutinmodel "github.com/lenna-ai/bni-iproc/models/pembayaranRutinModel"
 )
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailPembayaranRutin(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 	putPembayaranRutinModelModel := new([]pembayaranrutinmodel.PembayaranRutin)
 	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailPembayaranRutin(c, putPembayaranRutinModelModel)
 	if err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, putPembayaranRutinModelModel)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,putPembayaranRutinModelModel))
+	// return helpers.ResultSuccessJsonApi(c, putPembayaranRutinModelModel)
 }
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) PutPembayaranRutin(c *fiber.Ctx) error {
@@ -40,13 +47,19 @@ func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) PutPembayara
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) DetailBreakdownPembayaranRutin(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+
 	DetailBreakdownPembayaranRutin := new([]pembayaranrutinmodel.BreakdownPembayaranRutin)
 	err := pembayaranRutinControllerImpl.PembayaranRutinService.DetailBreakdownPembayaranRutin(c, DetailBreakdownPembayaranRutin)
 	if err != nil {
 		log.Println("err.Error()")
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, DetailBreakdownPembayaranRutin)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,DetailBreakdownPembayaranRutin))
+	// return helpers.ResultSuccessJsonApi(c, DetailBreakdownPembayaranRutin)
 }
 
 func (pembayaranRutinControllerImpl *PembayaranRutinControllerImpl) PutBreakdownPembayaranRutin(c *fiber.Ctx) error {
