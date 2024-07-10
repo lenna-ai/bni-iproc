@@ -60,6 +60,7 @@ func (loginControllerImpl *LoginControllerImpl) Vendor(c *fiber.Ctx) error {
 }
 
 func (loginControllerImpl *LoginControllerImpl) MeJwt(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
 	data := new(map[string]any)
 	jwthelpers.MeJwt(c,data)
 	// jwthelpers.ExpJwt(c)
