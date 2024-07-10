@@ -4,3 +4,5 @@ storage/logs/database/*.log
 settings.json
 querys/*
 ./querys
+data.sql
+*.sql

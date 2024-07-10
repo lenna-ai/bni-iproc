@@ -3,6 +3,7 @@ package loginservices
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -10,7 +11,9 @@ import (
 	"github.com/go-ldap/ldap/v3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lenna-ai/bni-iproc/helpers/jwtHelpers/decrypt"
 	loginmodel "github.com/lenna-ai/bni-iproc/models/loginModel"
+	usermodel "github.com/lenna-ai/bni-iproc/models/userModel"
 )
 
 
@@ -83,6 +86,36 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,data)
 	return true, claims,token, nil
 }
+
+func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthVendor(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin) (string,jwt.MapClaims,error) {
+	users := new([]usermodel.Users)
+	err := ldapLoginServiceImpl.LoginRepository.CheckUser(f,reqLogin, users)
+	var dataUserLogin loginmodel.DataUserLogin
+	if err != nil {
+		log.Println("ldapLoginServiceImpl.LoginRepository.CheckUser")
+		return "",jwt.MapClaims{},err
+	}
+
+	for _, user := range *users {
+		dataUserLogin.Username = user.CODE
+		dataUserLogin.Password = user.PASSWORD
+		dataUserLogin.RoleName = append(dataUserLogin.RoleName, user.ROLE_NAME)
+	} 
+	plainTextPassword := decrypt.DecryptAES(dataUserLogin.Password)
+	
+	if reqLogin.Password != plainTextPassword {
+		log.Println("password was wrong")
+		return "",jwt.MapClaims{}, errors.New("username or password wrong")
+	}
+	token, dataUserResult, err := ldapLoginServiceImpl.JWTTokenClaims(f,dataUserLogin)
+	if err != nil {
+		log.Println("password was wrong")
+		return "",jwt.MapClaims{}, nil
+	}
+	return token, dataUserResult, nil
+}	
+
+
 
 func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,data any) (string, jwt.MapClaims, error) {
 	time_env := os.Getenv("TIME_JWT_EXP")

@@ -14,6 +14,7 @@ import (
 	dashboardrekananrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardRekananRepositories"
 	dashboardrepositories "github.com/lenna-ai/bni-iproc/repositories/dashboardRepositories"
 	detailpengadaanrepositories "github.com/lenna-ai/bni-iproc/repositories/detailPengadaanRepositories"
+	loginrepositories "github.com/lenna-ai/bni-iproc/repositories/loginRepositories"
 	monitoringrepositories "github.com/lenna-ai/bni-iproc/repositories/monitoringRepositories"
 	pembayaranprestasirepositories "github.com/lenna-ai/bni-iproc/repositories/pembayaranPrestasiRepositories"
 	dashboardpembayaranservices "github.com/lenna-ai/bni-iproc/services/dashboardPembayaraanServices"
@@ -28,7 +29,8 @@ import (
 func InitControllerServiceRepository(allControllers *controllers.AllControllers) {
 	db := config.DB
 
-	loginServices := loginservices.NewLdapLoginService()
+	loginrepository := loginrepositories.NewLoginRepository(db)
+	loginServices := loginservices.NewLdapLoginService(loginrepository)
 	loginController := loginController.NewloginController(loginServices)
 
 	dashboardRepository := dashboardrepositories.NewDashboardRepository(db)

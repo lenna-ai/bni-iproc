@@ -2,6 +2,7 @@ package loginController
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -24,6 +25,29 @@ func (loginControllerImpl *LoginControllerImpl) Ldap(c *fiber.Ctx) error {
 		log.Println("loginControllerImpl.LdapLoginService.AuthUsingLDAP")
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
+
+	timeExxp := jwthelpers.ExpJwt(c,data["exp"].(int64))
+	result := fiber.Map{
+		"data":data["user"],
+		"token":token,
+		"timeExp":timeExxp,
+	}
+	
+	return helpers.ResultSuccessJsonApi(c,result)
+}
+
+func (loginControllerImpl *LoginControllerImpl) Vendor(c *fiber.Ctx) error {
+	defer helpers.RecoverPanicContext(c)
+	reqLogin := new(loginmodel.RequestLogin)
+	if err := c.BodyParser(reqLogin); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	token,data,err := loginControllerImpl.LdapLoginService.AuthVendor(c,reqLogin)
+	if err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	fmt.Println(data)
+	fmt.Println(token)
 
 	timeExxp := jwthelpers.ExpJwt(c,data["exp"].(int64))
 	result := fiber.Map{

@@ -12,7 +12,7 @@ func Router(app *fiber.App) {
 
 	login := app.Group("login")
 	login.Get("ldap",allControllers.LoginController.Ldap)
-	//login.Get("vendor",allControllers.LoginController.Vendor)
+	login.Get("vendor",allControllers.LoginController.Vendor)
 
 	// comments JWT 
 	// app.Use(jwtware.New(jwtware.Config{
