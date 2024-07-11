@@ -62,7 +62,17 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+
+	query := `
+			SELECT df.STATUS_PENGADAAN, 
+				COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+				COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+				COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+			FROM (SELECT p.* FROM PENGADAAN p) df
+			GROUP BY df.STATUS_PENGADAAN
+			ORDER BY df.STATUS_PENGADAAN ASC`
+
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(statusPengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN).Find(statusPengadaan).Error; err != nil")
 		return err
 	}
@@ -70,7 +80,14 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","On Progress").Find(metodePengadaan).Error; err != nil {
+	query := `SELECT df.METODE, 
+		COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+		COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+		FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'On Progress') df
+		GROUP BY df.METODE
+		ORDER BY df.METODE ASC`
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,On Progress).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
@@ -78,13 +95,26 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`p.NAMA,p.JENIS_PENGADAAN, sum(p.NILAI_PENGADAAN_INISASI) as estimasi_nilai_pengadaan,CASE
-	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 500000000 THEN 'TPD1'
-	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 3000000000 THEN 'TPD2'
-	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 75000000000 THEN 'TPP1'
-	WHEN sum(p.NILAI_PENGADAAN_INISASI) < 150000000000 THEN 'TPP2'
-	WHEN sum(p.NILAI_PENGADAAN_INISASI) > 150000000000 THEN 'TPP3'
-	END AS KEWENANGAN_PENGADAAN`).Group("p.JENIS_PENGADAAN,p.NAMA").Scan(metodePengadaan).Error; err != nil {
+	query := `SELECT df.Kewenangan, 
+       COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+       COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+       COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+		FROM (
+			SELECT p.*, 
+				CASE
+					WHEN p.NILAI_PENGADAAN_INISASI < 500000000 THEN 'TPD1'
+					WHEN p.NILAI_PENGADAAN_INISASI < 3000000000 THEN 'TPD2'
+					WHEN p.NILAI_PENGADAAN_INISASI < 75000000000 THEN 'TPP1'
+					WHEN p.NILAI_PENGADAAN_INISASI < 150000000000 THEN 'TPP2'
+					WHEN p.NILAI_PENGADAAN_INISASI > 150000000000 THEN 'TPP3'
+					ELSE 'Not Found'
+				END AS Kewenangan 
+			FROM PENGADAAN p 
+			WHERE p.STATUS_PENGADAAN = 'On Progress'
+		) df
+		GROUP BY df.Kewenangan
+		ORDER BY df.Kewenangan ASC`
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("(dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error")
 		return err
 	}
@@ -121,7 +151,16 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan").Group("p.STATUS_PENGADAAN ").Find(statusPengadaan).Error; err != nil {
+	query := `
+			SELECT df.STATUS_PENGADAAN, 
+				COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+				COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+				COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+			FROM (SELECT p.* FROM PENGADAAN p) df
+			GROUP BY df.STATUS_PENGADAAN
+			ORDER BY df.STATUS_PENGADAAN ASC`
+
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(statusPengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN ).Find(statusPengadaan).Error; err != nil")
 		return err
 	}
@@ -129,7 +168,14 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c 
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.METODE ,count(*) as count_metode").Group("p.METODE").Where("p.STATUS_PENGADAAN = ?","Done").Find(metodePengadaan).Error; err != nil {
+	query := `SELECT df.METODE, 
+		COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+		COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+		FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'Done') df
+		GROUP BY df.METODE
+		ORDER BY df.METODE ASC`
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,Done).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
