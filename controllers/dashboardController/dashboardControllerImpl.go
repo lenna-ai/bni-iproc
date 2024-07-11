@@ -1,7 +1,9 @@
 package dashboardcontroller
 
 import (
+	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
@@ -100,11 +102,17 @@ func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneMetode(c 
 
 func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx) error  {
 	defer helpers.RecoverPanicContext(c)
-	var metodePengadaan = new([]map[string]interface{}) 
-	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneTrenPengadaan(c,metodePengadaan); err != nil {
+	year := c.Query("year")
+	statusParams, err :=  url.QueryUnescape(c.Params("status"))
+	status := strings.ToLower(statusParams)
+	if err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, metodePengadaan)
+	var PengadaanOnDoneTrenPengadaan = new([]map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.PengadaanOnDoneTrenPengadaan(c,status,year,PengadaanOnDoneTrenPengadaan); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, PengadaanOnDoneTrenPengadaan)
 }
 
 func (dashboardControllerImpl *DashboardControllerImpl) InformasiRekanan(c *fiber.Ctx) error  {

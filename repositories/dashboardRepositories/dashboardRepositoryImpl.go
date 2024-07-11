@@ -1,6 +1,7 @@
 package dashboardrepositories
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,16 +33,28 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalVendor(c *fiber.Ctx
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
-	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
-		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (Unit Pengguna)' THEN 'TPD-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'DIRUT' OR p.KEWENANGAN_PENGADAAN = 'WADIRUT' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
-		ELSE 'Not Found'
-		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "On Progress")
+	query := `
+	SELECT df.Kewenangan,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+	FROM (
+		SELECT p.*,
+			   CASE
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Departemen Divisi PFA (Unit Pelaksana)', 'Pemimpin Departemen (Unit Pengguna)') THEN 'TPD-1'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Divisi PFA (Unit Pelaksana)', 'Pemimpin Divisi/Satuan (Unit Pengguna)') THEN 'TPD-2'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-1'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('DIRUT', 'WADIRUT', 'Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-2'
+				   WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
+				   ELSE 'Not Found'
+			   END AS Kewenangan
+		FROM PENGADAAN p
+		WHERE p.STATUS_PENGADAAN = 'Done'
+	) df
+	GROUP BY df.Kewenangan
+	ORDER BY df.Kewenangan ASC`	
 	
-	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
 		log.Println("err := dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
@@ -79,16 +92,28 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusa
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
-	subQuery := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select(`CASE
-		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Departemen (Unit Pengguna)' THEN 'TPD-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi PFA (Unit Pelaksana)' OR p.KEWENANGAN_PENGADAAN = 'Pemimpin Divisi/Satuan (Unit Pengguna)' THEN 'TPD-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-1'
-		WHEN p.KEWENANGAN_PENGADAAN = 'DIRUT' OR p.KEWENANGAN_PENGADAAN = 'WADIRUT' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawahkan fungsi pengadaan' OR p.KEWENANGAN_PENGADAAN = 'Direktur yang membawakan fungsi manajemen risiko' OR p.KEWENANGAN_PENGADAAN = 'Dir. Bidang/SEVP (Unit Pengguna)' THEN 'TPP-2'
-		WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
-		ELSE 'Not Found'
-		END AS Kewenangan`).Where("p.STATUS_PENGADAAN = ?", "Done")
+	query := `
+	SELECT df.Kewenangan,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+	FROM (
+		SELECT p.*,
+			   CASE
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Departemen Divisi PFA (Unit Pelaksana)', 'Pemimpin Departemen (Unit Pengguna)') THEN 'TPD-1'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Divisi PFA (Unit Pelaksana)', 'Pemimpin Divisi/Satuan (Unit Pengguna)') THEN 'TPD-2'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-1'
+				   WHEN p.KEWENANGAN_PENGADAAN IN ('DIRUT', 'WADIRUT', 'Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-2'
+				   WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
+				   ELSE 'Not Found'
+			   END AS Kewenangan
+		FROM PENGADAAN p
+		WHERE p.STATUS_PENGADAAN = 'Done'
+	) df
+	GROUP BY df.Kewenangan
+	ORDER BY df.Kewenangan ASC`
 	
-	if err := dashboardRepositoryImpl.DB.Table("(?) subquery", subQuery).Select("Kewenangan, COUNT(*) as Count").Group("Kewenangan").Scan(dashboardModel).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
@@ -111,8 +136,60 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c 
 	return nil
 }
 
-func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("PENGADAAN p").Select("p.STATUS_PENGADAAN AS name,count(*) AS counting_data").Group("p.STATUS_PENGADAAN").Find(metodePengadaan).Error; err != nil {
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaanMasuk(c *fiber.Ctx,year string,metodePengadaan *[]map[string]interface{}) error {
+	query := fmt.Sprintf(`
+		WITH months AS (
+			SELECT LEVEL AS month
+			FROM DUAL
+			CONNECT BY LEVEL <= 12
+			),
+			pengadaan_monthly AS (
+			SELECT 
+				EXTRACT(MONTH FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) AS month
+			FROM PENGADAAN p
+			WHERE REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+				AND EXTRACT(YEAR FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) = %v
+				AND p.STATUS = 'On Progress'
+			)
+			SELECT 
+			m.month,
+			COALESCE(COUNT(pm.month), 0) AS record_count
+			FROM months m
+			LEFT JOIN pengadaan_monthly pm ON m.month = pm.month
+			GROUP BY m.month
+			ORDER BY m.month
+	`,year)
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN AS name,count(*) AS counting_data).Group(p.STATUS_PENGADAAN).Find(metodePengadaan).Error; err != nil")
+		return err
+	}
+	return nil
+}
+
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPengadaanSelesai(c *fiber.Ctx,year string,metodePengadaan *[]map[string]interface{}) error {
+	query := fmt.Sprintf(`
+		WITH months AS (
+			SELECT LEVEL AS month
+			FROM DUAL
+			CONNECT BY LEVEL <= 12
+			),
+			pengadaan_monthly AS (
+			SELECT 
+				EXTRACT(MONTH FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) AS month
+			FROM PENGADAAN p
+			WHERE REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+				AND EXTRACT(YEAR FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) = %v
+				AND p.STATUS = 'On Progress'
+			)
+			SELECT 
+			m.month,
+			COALESCE(COUNT(pm.month), 0) AS record_count
+			FROM months m
+			LEFT JOIN pengadaan_monthly pm ON m.month = pm.month
+			GROUP BY m.month
+			ORDER BY m.month
+	`,year)
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN AS name,count(*) AS counting_data).Group(p.STATUS_PENGADAAN).Find(metodePengadaan).Error; err != nil")
 		return err
 	}

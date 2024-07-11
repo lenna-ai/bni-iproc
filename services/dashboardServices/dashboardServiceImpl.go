@@ -72,9 +72,15 @@ func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneMetode(c *fiber
 	return nil
 }
 
-func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
-	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneTrenPengadaan(c,dashboardModel); err != nil {
-		return err
+func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,status string,year string,PengadaanOnDoneTrenPengadaan *[]map[string]interface{}) error {
+	if status == "done" {
+		if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneTrenPengadaanMasuk(c,year,PengadaanOnDoneTrenPengadaan); err != nil {
+			return err
+		}
+	}else {
+		if err := dashboardServiceImpl.DashboardRepository.PengadaanOnDoneTrenPengadaanSelesai(c,year,PengadaanOnDoneTrenPengadaan); err != nil {
+			return err
+		}
 	}
 	return nil
 }

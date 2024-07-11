@@ -20,7 +20,8 @@ type DashboardRepository interface {
 	PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error
 	PengadaanOnDoneStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error
 	PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error
-	PengadaanOnDoneTrenPengadaan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error
+	PengadaanOnDoneTrenPengadaanMasuk(c *fiber.Ctx,year string,metodePengadaan *[]map[string]interface{}) error
+	PengadaanOnDoneTrenPengadaanSelesai(c *fiber.Ctx,year string,metodePengadaan *[]map[string]interface{}) error
 	InformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error
 	DataInformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error
 }
