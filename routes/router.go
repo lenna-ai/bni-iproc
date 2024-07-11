@@ -15,8 +15,8 @@ func Router(app *fiber.App) {
 	appconfig.InitControllerServiceRepository(allControllers)
 
 	login := app.Group("login")
-	login.Get("ldap",allControllers.LoginController.Ldap)
-	login.Get("vendor",allControllers.LoginController.Vendor)
+	login.Post("ldap",allControllers.LoginController.Ldap)
+	login.Post("vendor",allControllers.LoginController.Vendor)
 
 	// comments JWT 
 	app.Use(jwtware.New(jwtware.Config{
