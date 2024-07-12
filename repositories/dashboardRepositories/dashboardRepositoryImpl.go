@@ -41,12 +41,12 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 	FROM (
 		SELECT p.*,
 			   CASE
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Departemen Divisi PFA (Unit Pelaksana)', 'Pemimpin Departemen (Unit Pengguna)') THEN 'TPD-1'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Divisi PFA (Unit Pelaksana)', 'Pemimpin Divisi/Satuan (Unit Pengguna)') THEN 'TPD-2'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-1'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('DIRUT', 'WADIRUT', 'Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-2'
-				   WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
-				   ELSE 'Not Found'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)')) THEN 'TPD-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)')) THEN 'TPD-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
+					ELSE 'Not Found'
 			   END AS Kewenangan
 		FROM PENGADAAN p
 		WHERE p.STATUS_PENGADAAN = 'Done'
@@ -130,12 +130,12 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 	FROM (
 		SELECT p.*,
 			   CASE
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Departemen Divisi PFA (Unit Pelaksana)', 'Pemimpin Departemen (Unit Pengguna)') THEN 'TPD-1'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Pemimpin Divisi PFA (Unit Pelaksana)', 'Pemimpin Divisi/Satuan (Unit Pengguna)') THEN 'TPD-2'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-1'
-				   WHEN p.KEWENANGAN_PENGADAAN IN ('DIRUT', 'WADIRUT', 'Direktur yang membawahkan fungsi pengadaan', 'Direktur yang membawakan fungsi manajemen risiko', 'Dir. Bidang/SEVP (Unit Pengguna)') THEN 'TPP-2'
-				   WHEN p.KEWENANGAN_PENGADAAN = 'Rapat Direksi' THEN 'TPP-3'
-				   ELSE 'Not Found'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)')) THEN 'TPD-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)')) THEN 'TPD-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
+					ELSE 'Not Found'
 			   END AS Kewenangan
 		FROM PENGADAAN p
 		WHERE p.STATUS_PENGADAAN = 'Done'
