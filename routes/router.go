@@ -79,10 +79,10 @@ func Router(app *fiber.App) {
 	breakdownPembayaranRutin.Put("/", allControllers.PembayaranRutinControllerImpl.PutBreakdownPembayaranRutin)
 
 	pembayaranPrestasi := app.Group("pembayaranPrestasi")
-	pembayaranPrestasi.Get("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
+	pembayaranPrestasi.Post("/", allControllers.PembayaranPrestasiControllerImpl.DetailPembayaranPrestasi)
 	pembayaranPrestasi.Put("/", allControllers.PembayaranPrestasiControllerImpl.PutPembayaranPrestasi)
 
 	breakdown := pembayaranPrestasi.Group("breakdown")
-	breakdown.Get("/", allControllers.PembayaranPrestasiControllerImpl.DetailBreakdownPembayaranPrestasi)
+	breakdown.Post("/", allControllers.PembayaranPrestasiControllerImpl.DetailBreakdownPembayaranPrestasi)
 	breakdown.Put("/", allControllers.PembayaranPrestasiControllerImpl.PutBreakdownPembayaranPrestasi)
 }
