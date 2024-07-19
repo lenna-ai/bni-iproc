@@ -35,7 +35,6 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProses
 		return helpers.ResultFailedJsonApi(c, getPengadaanFormatter, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,getPengadaanFormatter))
-	// return helpers.ResultSuccessJsonApi(c, getPengadaanFormatter)
 }
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx) error {
