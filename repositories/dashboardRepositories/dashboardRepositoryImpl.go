@@ -36,13 +36,13 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 	query := `
 	SELECT df.Kewenangan,
 		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		   COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
 		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
 	FROM (
 		SELECT p.*,
 			   CASE
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)')) THEN 'TPD-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)')) THEN 'TPD-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)'), LOWER('wakil general manager')) THEN 'TPD-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)'), LOWER('general manager')) THEN 'TPD-2'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
@@ -63,31 +63,26 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenang
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
 
-	query := `
-			SELECT df.STATUS_PENGADAAN, 
-				COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-				COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
-				COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-			FROM (SELECT p.* FROM PENGADAAN p) df
-			GROUP BY df.STATUS_PENGADAAN
-			ORDER BY df.STATUS_PENGADAAN ASC`
+	// query := `
+	// 		SELECT df.STATUS_PENGADAAN, 
+	// 			COUNT(CASE WHEN df.jenis_pengadaan = 'IT' and status_pengadaan = 'On Progress' THEN 1 END) AS total_it,
+	// 			COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') and status_pengadaan = 'On Progress' THEN 1 END) AS total_nonit,
+	// 			COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' and status_pengadaan = 'On Progress' THEN 1 END) AS total_premises
+	// 		FROM (SELECT p.* FROM PENGADAAN p) df
+	// 		GROUP BY df.STATUS_PENGADAAN
+	// 		ORDER BY df.STATUS_PENGADAAN ASC`
 
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(statusPengadaan).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Table("STATUSPENGADAANONGOING").Find(statusPengadaan).Error; err != nil{
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN).Find(statusPengadaan).Error; err != nil")
 		return err
 	}
+
 	return nil
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	query := `SELECT df.METODE, 
-		COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
-		COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-		FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'On Progress') df
-		GROUP BY df.METODE
-		ORDER BY df.METODE ASC`
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
+
+	if err := dashboardRepositoryImpl.DB.Table("metodeOnGoing").Find(metodePengadaan).Error; err != nil{
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,On Progress).Find(metodePengadaan).Error; err != nil")
 		return err
 	}
@@ -95,29 +90,11 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingMetode(c
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	query := `SELECT df.Kewenangan, 
-       COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-       COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
-       COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-		FROM (
-			SELECT p.*, 
-				CASE
-					WHEN p.NILAI_PENGADAAN_INISASI < 500000000 THEN 'TPD1'
-					WHEN p.NILAI_PENGADAAN_INISASI < 3000000000 THEN 'TPD2'
-					WHEN p.NILAI_PENGADAAN_INISASI < 75000000000 THEN 'TPP1'
-					WHEN p.NILAI_PENGADAAN_INISASI < 150000000000 THEN 'TPP2'
-					WHEN p.NILAI_PENGADAAN_INISASI > 150000000000 THEN 'TPP3'
-					ELSE 'Not Found'
-				END AS Kewenangan 
-			FROM PENGADAAN p 
-			WHERE p.STATUS_PENGADAAN = 'On Progress'
-		) df
-		GROUP BY df.Kewenangan
-		ORDER BY df.Kewenangan ASC`
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
+	if err := dashboardRepositoryImpl.DB.Table("pendingKeputusanPengadaan").Find(metodePengadaan).Error; err != nil{
 		log.Println("(dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error")
 		return err
 	}
+	
 	return nil
 }
 
@@ -125,13 +102,13 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 	query := `
 	SELECT df.Kewenangan,
 		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		   COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
 		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
 	FROM (
 		SELECT p.*,
 			   CASE
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)')) THEN 'TPD-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)')) THEN 'TPD-2'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)'), LOWER('wakil general manager')) THEN 'TPD-1'
+					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)'),LOWER('general manager')) THEN 'TPD-2'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
 					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
@@ -154,7 +131,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c 
 	query := `
 			SELECT df.STATUS_PENGADAAN, 
 				COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-				COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+				COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
 				COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
 			FROM (SELECT p.* FROM PENGADAAN p) df
 			GROUP BY df.STATUS_PENGADAAN
@@ -170,7 +147,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
 	query := `SELECT df.METODE, 
 		COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		COUNT(CASE WHEN df.jenis_pengadaan = 'NON IT' THEN 1 END) AS total_nonit,
+		COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
 		COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
 		FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'Done') df
 		GROUP BY df.METODE

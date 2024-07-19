@@ -27,6 +27,34 @@ type Pengadaan struct {
 	Sla_in_days             string
 }
 
+type PengadaanFilter struct {
+	PROCUREMENT_ID int
+	JENIS_PENGADAAN string
+	JENIS_PENGADAAN_ID string
+	NAMA string
+	PIC_PENGADAAN string
+	PIC_PENGADAAN_ID string
+	UNIT_PENGADAAN string
+	METODE string
+	TAHAPAN string
+	STATUS string
+	SCHEDULE_START_DATE string
+	SCHEDULE_END_DATE string
+	STATUS_PENGADAAN string
+	STATUS_PENGADAAN_ID int
+	CHECK_DOKUMEN string
+	NILAI_PENGADAAN_INISASI string
+	NILAI_PENGADAAN_HASIL string
+	KEWENANGAN_PENGADAAN string
+	NOMOR_SPK string
+	MATA_ANGGARAN string
+	NILAI_BIDDING string
+	ITEM_NAME string
+	POST_DATE_SPK string
+	LETTER_DATE_SPK string
+	CREATED_AT string
+}
+
 type DataResultSumPengadaan struct {
 	ESTIMASI_NILAI_PENGADAAN string `gorm:"column:ESTIMASI_NILAI_PENGADAAN"`
 	NILAI_SPK                string `gorm:"column:NILAI_SPK"`
@@ -35,4 +63,8 @@ type DataResultSumPengadaan struct {
 
 func (Pengadaan) TableName() string {
 	return "PENGADAAN"
+}
+
+func (PengadaanFilter) TableName() string {
+	return "PENGADAAN_FILTER"
 }

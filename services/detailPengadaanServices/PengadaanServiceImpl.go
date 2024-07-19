@@ -36,7 +36,7 @@ func (repository *PengadaanServiceImpl) IndexType(c *fiber.Ctx) ([]detailmodel.T
 
 	return dataListType, nil
 }
-func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string,totalCount *int64) ([]detailmodel.Pengadaan, error) {
+func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	var stringWhere string
 	var loopFilter int
 	for k, v := range filter {

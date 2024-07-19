@@ -5,6 +5,7 @@ type PembayaranRutin struct {
 	NilaiPengadaanHasil string `json:"nilai_pengadaan_hasil" validate:"required"`
 	PembayaranTerakhir  string `json:"pembayaran_terakhir" validate:"required"`
 	StatusJatuhTempo    string `json:"status_jatuh_tempo" validate:"required"`
+	NominalPembayaran   string `json:"nominal_pembayaran" validate:"required"`
 }
 
 func (PembayaranRutin) TableName() string {
