@@ -13,7 +13,7 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 	}
 	return jenisPengadaan, nil
 }
-func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]formatterProsesPengadaanModel.PutPengadaanFormatter, error) {
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]map[string]interface{}, error) {
 	prosesPengadaanModel, err := monitoringProsesPengadaanImpl.monitoringRepository.GetProsesPengadaan(c,totalCount)
 	if err != nil {
 		return prosesPengadaanModel, err

@@ -1,15 +1,17 @@
 package formatters
 
+import "time"
+
 type PutPengadaanFormatter struct {
-	Nama                    string `json:"Nama" validate:"required"`
-	Metode              string `json:"Metode" validate:"required"`
-	Tahapan             string `json:"Tahapan" validate:"required"`
-	Status              string `json:"Status" validate:"required"`
-	ScheduleEndDate   string `json:"ScheduleEndDate" validate:"required"`
-	ScheduleStartDate string `json:"ScheduleStartDate" validate:"required"`
-	KeteranganJikaTerlambat string `json:"Keterangan_jika_terlambat" validate:"required,lt=400"`
+	ID string `json:"ID"`
+	PROCUREMENT_ID string `json:"PROCUREMENT_ID" validate:"required"`
+	STATUS string `json:"STATUS" validate:"required"`
+	STATUS_PENGADAAN_PROMOTS string `json:"STATUS_PENGADAAN_PROMOTS" validate:"required"`
+	KETERANGAN_JIKA_TERLAMBAT string `json:"KETERANGAN_JIKA_TERLAMBAT" validate:"required,lt=400"`
+	DELETED_AT *time.Time `json:"DELETED_AT"`
 }
 
+
 func (PutPengadaanFormatter) TableName() string {
-	return "MONITORING_PROSES_PENGADAAN"
+	return "MONITORING_PROSES_PENGADAAN_NEW"
 }
