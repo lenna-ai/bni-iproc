@@ -19,25 +19,42 @@ type PaginatedResponseStruct struct {
     PreviousPage int         `json:"previous_page,omitempty"`
 }
 
-func Paginate(r *fiber.Ctx) func(db *gorm.DB) *gorm.DB {
-	return func (db *gorm.DB) *gorm.DB {
-	  page, _ := strconv.Atoi(r.Query("page"))
-	  if page <= 0 {
-		page = 1
-	  }
-  
-	  pageSize, _ := strconv.Atoi(r.Query("page_size"))
-	  switch {
-	  case pageSize > 100:
-		pageSize = 100
-	  case pageSize <= 0:
-		pageSize = 10
-	  }
-  
-	  offset := (page - 1) * pageSize
-	  data := db.Offset(offset).Limit(pageSize)
-	  return data
-	}
+func Paginate(c *fiber.Ctx) func(db *gorm.DB) *gorm.DB {
+  return func(db *gorm.DB) *gorm.DB {
+      page, _ := strconv.Atoi(c.Query("page"))
+      if page <= 0 {
+          page = 1
+      }
+
+      pageSize, _ := strconv.Atoi(c.Query("page_size"))
+      switch {
+      case pageSize > 100:
+          pageSize = 100
+      case pageSize <= 0:
+          pageSize = 10
+      }
+
+      offset := (page - 1) * pageSize
+      return db.Offset(offset).Limit(pageSize)
+  }
+}
+
+func PaginateRaw(c *fiber.Ctx) (int, int) {
+  page, _ := strconv.Atoi(c.Query("page"))
+  if page <= 0 {
+      page = 1
+  }
+
+  pageSize, _ := strconv.Atoi(c.Query("page_size"))
+  switch {
+  case pageSize > 100:
+      pageSize = 100
+  case pageSize <= 0:
+      pageSize = 10
+  }
+
+  offset := (page - 1) * pageSize
+  return offset,pageSize
 }
 
 func CountDataModel(data any,totalCount *int64) error {

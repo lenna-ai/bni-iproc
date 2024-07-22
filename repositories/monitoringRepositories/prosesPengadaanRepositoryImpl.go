@@ -24,13 +24,20 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]map[string]interface{}, error) {
 	data := new([]map[string]interface{})
 
-	query := "SELECT p.PROCUREMENT_ID, P.JENIS_PENGADAAN, P.NAMA, P.METODE, P.TAHAPAN, P.SLA_IN_DAYS, TO_CHAR(P.SCHEDULE_START_DATE) START_DATE, TO_CHAR(P.SCHEDULE_END_DATE) END_DATE, MPPN.STATUS, MPPN.STATUS_PENGADAAN_PROMOTS, MPPN.KETERANGAN_JIKA_TERLAMBAT FROM PENGADAAN p LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON p.PROCUREMENT_ID =MPPN.PROCUREMENT_ID WHERE MPPN.DELETED_AT IS NULL GROUP BY p.PROCUREMENT_ID, P.JENIS_PENGADAAN, P.NAMA, P.METODE, P.TAHAPAN, P.SLA_IN_DAYS, TO_CHAR(P.SCHEDULE_START_DATE), TO_CHAR(P.SCHEDULE_END_DATE), MPPN.STATUS, MPPN.STATUS_PENGADAAN_PROMOTS, MPPN.KETERANGAN_JIKA_TERLAMBAT"
-	monitoringProsesPengadaanImpl.DB.Raw(query).Count(totalCount)
-	if err := monitoringProsesPengadaanImpl.DB.Scopes(gormhelpers.Paginate(c)).Raw(query).Scan(data).Error; err != nil {
-		log.Println("monitoringProsesPengadaanImpl.DB.Find(prosesPengadaanModel).Error; err")
-		return data, err
-	}
-	return data, nil
+    // Query dasar tanpa LIMIT dan OFFSET
+    query := `SELECT p.PROCUREMENT_ID, P.JENIS_PENGADAAN, P.NAMA, P.METODE, P.TAHAPAN, P.SLA_IN_DAYS, TO_CHAR(P.SCHEDULE_START_DATE) START_DATE, TO_CHAR(P.SCHEDULE_END_DATE) END_DATE, MPPN.STATUS, MPPN.STATUS_PENGADAAN_PROMOTS, MPPN.KETERANGAN_JIKA_TERLAMBAT FROM PENGADAAN p LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON p.PROCUREMENT_ID = MPPN.PROCUREMENT_ID WHERE MPPN.DELETED_AT IS NULL GROUP BY p.PROCUREMENT_ID, P.JENIS_PENGADAAN, P.NAMA, P.METODE, P.TAHAPAN, P.SLA_IN_DAYS, TO_CHAR(P.SCHEDULE_START_DATE), TO_CHAR(P.SCHEDULE_END_DATE), MPPN.STATUS, MPPN.STATUS_PENGADAAN_PROMOTS, MPPN.KETERANGAN_JIKA_TERLAMBAT ORDER BY p.PROCUREMENT_ID`
+    
+    // Menghitung total jumlah data tanpa pagination
+    monitoringProsesPengadaanImpl.DB.Raw(query).Count(totalCount)
+
+	pageSize, offset := gormhelpers.PaginateRaw(c)
+	paginatedQuery := query + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+    if err := monitoringProsesPengadaanImpl.DB.Raw(paginatedQuery,pageSize, offset).Scan(data).Error; err != nil {
+        log.Println("monitoringProsesPengadaanImpl.DB.Scopes(gormhelpers.Paginate(c)).Raw(query).Scan(data).Error: ", err)
+        return data, err
+    }
+
+    return data, nil
 }
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx, prosesPengadaanModel *formatterProsesPengadaanModel.PutPengadaanFormatter) error {
