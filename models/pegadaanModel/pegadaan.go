@@ -50,12 +50,14 @@ type PengadaanFilter struct {
 	KEWENANGAN_PENGADAAN string
 	NOMOR_SPK string
 	NILAI_SPK string
+	NAMA_VENDOR string
 	MATA_ANGGARAN string
 	NILAI_BIDDING string `gorm:"column:NILAI_BIDDING"`
 	ITEM_NAME string
 	POST_DATE_SPK string
 	LETTER_DATE_SPK string
 	CREATED_AT string
+	SLA_IN_DAYS string
 	MonitoringProses  []formatters.PutPengadaanFormatter `gorm:"foreignKey:PROCUREMENT_ID;references:PROCUREMENT_ID"`
 }
 

@@ -36,7 +36,7 @@ func (repository *PengadaanServiceImpl) IndexType(c *fiber.Ctx) ([]detailmodel.T
 
 	return dataListType, nil
 }
-func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map[string]string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
+func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx,usePagination bool, filter map[string]string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	var stringWhere string
 	var loopFilter int
 	for k, v := range filter {
@@ -48,15 +48,16 @@ func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map
 		}
 	}
 	var dataFilterDetailPengadaan []detailmodel.PengadaanFilter
+
 	if c.Query("filter_for") == "monitoring_proses_pengadaan"{
-		filterPengadaanMonitoringPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaanMonitoringPengadaan(c, stringWhere, totalCount)
+		filterPengadaanMonitoringPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaanMonitoringPengadaan(c,usePagination, stringWhere, totalCount)
 		dataFilterDetailPengadaan = filterPengadaanMonitoringPengadaan
 		if err != nil {
 			log.Printf("error PengadaanFilterRepository.FilterPengadaanMonitoringPengadaan %v\n", err)
 			return dataFilterDetailPengadaan, err
 		}
 	}else{
-		filterPengadaanUmum, err := repository.PengadaanFilterRepository.FilterPengadaanUmum(c, stringWhere, totalCount)
+		filterPengadaanUmum, err := repository.PengadaanFilterRepository.FilterPengadaanUmum(c,usePagination, stringWhere, totalCount)
 		dataFilterDetailPengadaan = filterPengadaanUmum
 		if err != nil {
 			log.Printf("error PengadaanFilterRepository.FilterPengadaanUmum %v\n", err)

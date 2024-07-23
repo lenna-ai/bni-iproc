@@ -30,13 +30,19 @@ func (FilterController *PengadaanControllerImpl) FilterPengadaan(c *fiber.Ctx) e
 	var totalCount = new(int64)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	var pagination bool 
+
+	if page != 0 && pageSize != 0 {
+		pagination = true
+	}
 
 	for _, valueSplitStatusPengadaan := range strings.Split(status_pengadaan, ",") {
 		for i := 0; i < len(strings.Split(valueSplitStatusPengadaan, "="))/2; i++ {
 			filter[strings.Split(valueSplitStatusPengadaan, "=")[i]] = strings.Split(valueSplitStatusPengadaan, "=")[i+1]
 		}
 	}
-	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c, filter,totalCount)
+
+	dataFilterDetailPengadaan, err := FilterController.PengadaanFilterService.FilterPengadaan(c,pagination, filter,totalCount)
 	if err != nil {
 		log.Printf("error PengadaanFilterService.FilterPengadaan %v\n ", err)
 		return helpers.ResultFailedJsonApi(c, dataFilterDetailPengadaan, err.Error())
