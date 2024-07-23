@@ -60,10 +60,13 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 
 func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,filterNamaPekerjaan string,breakdownRekananData *[]dashboardmodel.DashboardRekanan, totalCount *int64) error  {
 	var whereQuery string 
-	whereQuery = fmt.Sprintf("NAMA_VENDOR = %v",param)
+	whereQuery = fmt.Sprintf("NAMA_VENDOR = '%v'",param)
 	if filterNamaPekerjaan != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
 	}
+	fmt.Println("usePagination " )
+	fmt.Println(usePagination)
+	fmt.Println(whereQuery)
 
 	if usePagination {
 		if err := dashboardRekananRepositoryImpl.DB.Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
