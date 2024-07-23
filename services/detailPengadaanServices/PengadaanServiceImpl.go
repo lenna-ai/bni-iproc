@@ -47,10 +47,21 @@ func (repository *PengadaanServiceImpl) FilterPengadaan(c *fiber.Ctx, filter map
 			stringWhere += fmt.Sprintf("%v = '%v'", k, v)
 		}
 	}
-	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaan(c, stringWhere, totalCount)
-	if err != nil {
-		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v\n", err)
-		return dataFilterDetailPengadaan, err
+	var dataFilterDetailPengadaan []detailmodel.PengadaanFilter
+	if c.Query("filter_for") == "monitoring_proses_pengadaan"{
+		filterPengadaanMonitoringPengadaan, err := repository.PengadaanFilterRepository.FilterPengadaanMonitoringPengadaan(c, stringWhere, totalCount)
+		dataFilterDetailPengadaan = filterPengadaanMonitoringPengadaan
+		if err != nil {
+			log.Printf("error PengadaanFilterRepository.FilterPengadaanMonitoringPengadaan %v\n", err)
+			return dataFilterDetailPengadaan, err
+		}
+	}else{
+		filterPengadaanUmum, err := repository.PengadaanFilterRepository.FilterPengadaanUmum(c, stringWhere, totalCount)
+		dataFilterDetailPengadaan = filterPengadaanUmum
+		if err != nil {
+			log.Printf("error PengadaanFilterRepository.FilterPengadaanUmum %v\n", err)
+			return dataFilterDetailPengadaan, err
+		}
 	}
 
 	return dataFilterDetailPengadaan, nil

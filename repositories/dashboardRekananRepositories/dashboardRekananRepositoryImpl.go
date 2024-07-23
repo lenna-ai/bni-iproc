@@ -36,7 +36,11 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 				and p1.nama_vendor is not null
 				group by p1.nama_vendor
 	`,whereQuery)
-	if err := dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Raw(query).Scan(rekananData).Error; err != nil {
+	dashboardRekananRepositoryImpl.DB.Raw(query).Count(totalCount)
+
+	pageSize, offset := gormhelpers.PaginateRaw(c)
+	paginatedQuery := query + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+	if err := dashboardRekananRepositoryImpl.DB.Raw(paginatedQuery,pageSize, offset).Scan(rekananData).Error; err != nil {
 		log.Printf("dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table(PEMBAYARAN p).Select(p.NAMA_VENDOR ,COUNT(p.NAMA_PEKERJAAN) as calculate_job_name, sum(p.NILAI_KONTRAK) AS total_pekerjaan).Group(p.NAMA_VENDOR).Where(p.JENIS_PENGADAAN = ?,param).Find(rekananData).Error")
 		return err
 	}

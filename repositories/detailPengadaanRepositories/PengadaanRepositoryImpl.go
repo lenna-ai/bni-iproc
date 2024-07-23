@@ -8,7 +8,7 @@ import (
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
 )
 
-func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
+func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.PengadaanFilter)
 	repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Count(totalCount)
 	if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Find(dataFilterDetailPengadaan).Error; err != nil {
@@ -18,6 +18,27 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaan(c *fiber.Ctx, stringW
 
 	return *dataFilterDetailPengadaan, nil
 }
+
+
+func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c *fiber.Ctx, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
+	dataFilterDetailPengadaan := new([]detailmodel.PengadaanFilter)
+	
+	// Hitung total jumlah data tanpa pagination
+	err := repository.DB.Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Where(stringWhere).Model(&detailmodel.PengadaanFilter{}).Count(totalCount).Error
+	if err != nil {
+	log.Printf("error PengadaanRepositoryImpl.FilterPengadaan Count %v\n", err)
+		return *dataFilterDetailPengadaan, err
+	}
+	
+	// Ambil data dengan pagination
+	err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+	if err != nil {
+	log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
+	return *dataFilterDetailPengadaan, err
+	}
+	
+	return *dataFilterDetailPengadaan, nil
+	}
 
 func (repository *PengadaanRepositoryImpl) IndexPengadaan(c *fiber.Ctx) ([]detailmodel.Pengadaan, error) {
 	dataDetailPengadaan := new([]detailmodel.Pengadaan)

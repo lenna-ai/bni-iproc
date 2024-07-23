@@ -1,5 +1,7 @@
 package pegadaanmodel
 
+import "github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
+
 type Pengadaan struct {
 	Procurement_id          int
 	Jenis_pengadaan         string
@@ -47,12 +49,14 @@ type PengadaanFilter struct {
 	NILAI_PENGADAAN_HASIL string
 	KEWENANGAN_PENGADAAN string
 	NOMOR_SPK string
+	NILAI_SPK string
 	MATA_ANGGARAN string
-	NILAI_BIDDING string
+	NILAI_BIDDING string `gorm:"column:NILAI_BIDDING"`
 	ITEM_NAME string
 	POST_DATE_SPK string
 	LETTER_DATE_SPK string
 	CREATED_AT string
+	MonitoringProses  []formatters.PutPengadaanFormatter `gorm:"foreignKey:PROCUREMENT_ID;references:PROCUREMENT_ID"`
 }
 
 type DataResultSumPengadaan struct {
