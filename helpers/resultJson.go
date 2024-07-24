@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	validatorcustoms "github.com/lenna-ai/bni-iproc/helpers/validatorCustoms"
 )
 
 func ResultUnauthorizedJsonApi(c *fiber.Ctx, data any, errorMessage string) error {
@@ -34,10 +35,22 @@ func RecoverPanicContext(c *fiber.Ctx) error {
 
 func MessageErrorValidation(c *fiber.Ctx, field string, validateTag string, params string) error {
 	var errorMessage string
+	var messageValidator = map[string]any{
+		"CustomValidatorSpecialChar": fmt.Sprintf("Please dont use char => %v",validatorcustoms.CustomSpecialChar),
+	}
+
 	if params != "" {
-		errorMessage = fmt.Sprintf("The %v field/key is %v=%v.", field, validateTag, params)
+		errorMessage = fmt.Sprintf("The %v field/key is %v=%v. ", field, validateTag, params)
+		
 	} else {
-		errorMessage = fmt.Sprintf("The %v field/key is %v.", field, validateTag)
+		errorMessage = fmt.Sprintf("The %v field/key is %v. ", field, validateTag)
+	}
+	if validateTag != "" {
+		for k, v := range messageValidator {
+			if validateTag == k {
+				errorMessage += fmt.Sprint(v)
+			}
+		}
 	}
 	return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{
 		"data":   nil,

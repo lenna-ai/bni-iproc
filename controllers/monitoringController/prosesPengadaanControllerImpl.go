@@ -10,7 +10,7 @@ import (
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
-	formatters "github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
+	"github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
 )
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengadaan(c *fiber.Ctx) error {
@@ -40,6 +40,7 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProses
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx) error {
 
 	defer helpers.RecoverPanicContext(c)
+
 	putPengadaanFormatter := new(formatters.PutPengadaanFormatter)
 	if err := c.BodyParser(putPengadaanFormatter); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
@@ -56,9 +57,10 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 		}
 	}
 
-	if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
-		return helpers.ResultFailedJsonApi(c, nil, err.Error())
-	}
+	// if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
+	// 	return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	// }
 
-	return helpers.ResultSuccessJsonApi(c, putPengadaanFormatter)
+	// return helpers.ResultSuccessJsonApi(c, putPengadaanFormatter)
+	return nil
 }

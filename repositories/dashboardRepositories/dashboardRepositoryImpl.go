@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 )
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPengadaan(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
@@ -25,37 +24,28 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalPembayaran(c *fiber
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalVendor(c *fiber.Ctx,dashboardModel *map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("sum(p.NILAI_SPK) as nilai_spk").Joins("right join PENGADAAN p ON p.VENDOR_ID = dvr.ID").Find(dashboardModel).Error; err != nil {
-		log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
+	query := `SELECT SUM(T.NILAI_SPK) NILAI_SPK
+				FROM
+				(
+				SELECT procurement_id, NILAI_SPK
+				FROM PENGADAAN 
+				GROUP BY procurement_id, NILAI_SPK
+				) T
+			`
+	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
+		log.Println("err := dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
+	// if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("sum(p.NILAI_SPK) as nilai_spk").Joins("right join PENGADAAN p ON p.VENDOR_ID = dvr.ID").Find(dashboardModel).Error; err != nil {
+	// 	log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
+	// 	return err
+	// }
 	return nil
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
-	query := `
-	SELECT df.Kewenangan,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		   COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-	FROM (
-		SELECT p.*,
-			   CASE
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)'), LOWER('wakil general manager')) THEN 'TPD-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)'), LOWER('general manager')) THEN 'TPD-2'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
-					ELSE 'Not Found'
-			   END AS Kewenangan
-		FROM PENGADAAN p
-		WHERE p.STATUS_PENGADAAN = 'Done'
-	) df
-	GROUP BY df.Kewenangan
-	ORDER BY df.Kewenangan ASC`	
-	
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
-		log.Println("err := dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
+	if err := dashboardRepositoryImpl.DB.Table("KEWENANGANONGOING").Find(dashboardModel).Error; err != nil {
+		log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -99,28 +89,33 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKeputusa
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
-	query := `
-	SELECT df.Kewenangan,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		   COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
-		   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-	FROM (
-		SELECT p.*,
-			   CASE
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)'), LOWER('wakil general manager')) THEN 'TPD-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)'),LOWER('general manager')) THEN 'TPD-2'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
-					WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
-					ELSE 'Not Found'
-			   END AS Kewenangan
-		FROM PENGADAAN p
-		WHERE p.STATUS_PENGADAAN = 'Done'
-	) df
-	GROUP BY df.Kewenangan
-	ORDER BY df.Kewenangan ASC`
+	// query := `
+	// SELECT df.Kewenangan,
+	// 	   COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+	// 	   COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
+	// 	   COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+	// FROM (
+	// 	SELECT p.*,
+	// 		   CASE
+	// 				WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin departemen divisi pfa (unit pelaksana)'), LOWER('pemimpin departemen (unit pengguna)'), LOWER('wakil general manager')) THEN 'TPD-1'
+	// 				WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('pemimpin divisi pfa (unit pelaksana)'), LOWER('pemimpin divisi/satuan (unit pengguna)'),LOWER('general manager')) THEN 'TPD-2'
+	// 				WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/SEVP (unit pengguna)')) THEN 'TPP-1'
+	// 				WHEN LOWER(p.KEWENANGAN_PENGADAAN) IN (LOWER('dirut'), LOWER('wadirut'), LOWER('direktur yang membawahkan fungsi pengadaan'), LOWER('direktur yang membawakan fungsi manajemen risiko'), LOWER('dir. Bidang/sevp (unit pengguna)')) THEN 'TPP-2'
+	// 				WHEN LOWER(p.KEWENANGAN_PENGADAAN) = LOWER('Rapat Direksi') THEN 'TPP-3'
+	// 				ELSE 'Not Found'
+	// 		   END AS Kewenangan
+	// 	FROM PENGADAAN p
+	// 	WHERE p.STATUS_PENGADAAN = 'Done'
+	// ) df
+	// GROUP BY df.Kewenangan
+	// ORDER BY df.Kewenangan ASC`
 	
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
+	// if err := dashboardRepositoryImpl.DB.Raw(query).Scan(dashboardModel).Error; err != nil {
+	// 	return err
+	// }
+	// return nil
+	
+	if err := dashboardRepositoryImpl.DB.Table("KEWENANGANDONE").Find(dashboardModel).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
@@ -128,32 +123,44 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneKewenanga
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneStatus(c *fiber.Ctx,statusPengadaan *[]map[string]interface{}) error {
-	query := `
-			SELECT df.STATUS_PENGADAAN, 
-				COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-				COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
-				COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-			FROM (SELECT p.* FROM PENGADAAN p) df
-			GROUP BY df.STATUS_PENGADAAN
-			ORDER BY df.STATUS_PENGADAAN ASC`
+	// query := `
+	// 		SELECT df.STATUS_PENGADAAN, 
+	// 			COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+	// 			COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
+	// 			COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+	// 		FROM (SELECT p.* FROM PENGADAAN p) df
+	// 		GROUP BY df.STATUS_PENGADAAN
+	// 		ORDER BY df.STATUS_PENGADAAN ASC`
 
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(statusPengadaan).Error; err != nil {
-		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN ).Find(statusPengadaan).Error; err != nil")
+	// if err := dashboardRepositoryImpl.DB.Raw(query).Scan(statusPengadaan).Error; err != nil {
+	// 	log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN, COUNT(*) as count_pengadaan).Group(p.STATUS_PENGADAAN ).Find(statusPengadaan).Error; err != nil")
+	// 	return err
+	// }
+	// return nil
+
+	if err := dashboardRepositoryImpl.DB.Table("STATUSPENGADAANDONE").Find(statusPengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneMetode(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	query := `SELECT df.METODE, 
-		COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
-		COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
-		COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
-		FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'Done') df
-		GROUP BY df.METODE
-		ORDER BY df.METODE ASC`
-	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
-		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,Done).Find(metodePengadaan).Error; err != nil")
+	// query := `SELECT df.METODE, 
+	// 	COUNT(CASE WHEN df.jenis_pengadaan = 'IT' THEN 1 END) AS total_it,
+	// 	COUNT(CASE WHEN df.jenis_pengadaan not in ('IT','Premises') THEN 1 END) AS total_nonit,
+	// 	COUNT(CASE WHEN df.jenis_pengadaan = 'PREMISES' THEN 1 END) AS total_premises
+	// 	FROM (SELECT p.* FROM PENGADAAN p WHERE p.STATUS_PENGADAAN = 'Done') df
+	// 	GROUP BY df.METODE
+	// 	ORDER BY df.METODE ASC`
+	// if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
+	// 	log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.METODE ,count(*) as count_metode).Group(p.METODE).Where(p.STATUS_PENGADAAN = ?,Done).Find(metodePengadaan).Error; err != nil")
+	// 	return err
+	// }
+	// return nil
+
+	if err := dashboardRepositoryImpl.DB.Table("METODEDONE").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
 		return err
 	}
 	return nil
@@ -232,8 +239,8 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fibe
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) DataInformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_activity_status_name").Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error; err != nil {
-		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.NAME,DVR.vendor_activity_status_name).Where(`DVR.vendor_activity_status_name in ('Vendor Inaktif', 'Vendor Aktif')`).Find(metodePengadaan).Error")
+	if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("dvr.NAME,DVR.vendor_status_name").Where(`DVR.vendor_status_name in ('FREEZE', 'REKANAN AKTIF')`).Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.NAME,DVR.vendor_activity_status_name).Where(`DVR.vendor_activity_status_name in ('FREEZE', 'REKANAN AKTIF')`).Find(metodePengadaan).Error")
 		return err
 	}
 	return nil
