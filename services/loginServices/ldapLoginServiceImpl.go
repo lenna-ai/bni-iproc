@@ -121,7 +121,11 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthVendor(f *fiber.Ctx,reqLog
 		log.Println("password was wrong")
 		return "",jwt.MapClaims{}, errors.New("username or password wrong")
 	}
-	token, dataUserResult, err := ldapLoginServiceImpl.JWTTokenClaims(f,dataUserLogin)
+	var responseLogin = loginmodel.ResponseDataUserLogin{
+		Username: dataUserLogin.Username,
+		RoleName: dataUserLogin.RoleName,
+	}
+	token, dataUserResult, err := ldapLoginServiceImpl.JWTTokenClaims(f,responseLogin)
 	if err != nil {
 		log.Println("password was wrong")
 		return "",jwt.MapClaims{}, nil

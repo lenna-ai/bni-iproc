@@ -19,3 +19,8 @@ type DataUserLogin struct {
 	Password string `json:"password"`
     RoleName []string `json:"roleName"`
 }
+
+type ResponseDataUserLogin struct {
+    Username string `json:"username"`
+    RoleName []string `json:"roleName"`
+}
