@@ -53,7 +53,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		ldapSearchDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf("(sAMAccountName=%s)", reqLogin.Username),
-		[]string{"dn", "displayName", "department", "maverickApps", "whenChanged", "sAMAccountName", "userAccountControl", "mail"},
+		[]string{"dn", "displayName", "department", "maverickApps", "whenChanged", "sAMAccountName", "userAccountControl", "mail","promotsrole"},
 		nil,
 	)
 
@@ -88,6 +88,10 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		return false, nil,"", err
 	}
 
+	if entry.GetAttributeValue("promotsrole") == "" {
+		return false, nil,"", err
+	}
+
 	userInfo := map[string]string{
 		"displayName":        entry.GetAttributeValue("displayName"),
 		"department":         entry.GetAttributeValue("department"),
@@ -96,6 +100,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		"sAMAccountName":     entry.GetAttributeValue("sAMAccountName"),
 		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
 		"userMail":           entry.GetAttributeValue("mail"),
+		"promotsRole":        entry.GetAttributeValue("promotsrole"),
 	}
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)
 	return true, claims,token, nil
