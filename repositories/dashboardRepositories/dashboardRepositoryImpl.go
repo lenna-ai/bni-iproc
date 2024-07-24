@@ -167,12 +167,14 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 			CONNECT BY LEVEL <= 12
 			),
 			pengadaan_monthly AS (
-			SELECT 
-				EXTRACT(MONTH FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) AS month
-			FROM PENGADAAN p
-			WHERE REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
-				AND EXTRACT(YEAR FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) = %v
-				AND p.STATUS = 'On Progress'
+			SELECT
+			EXTRACT(MONTH FROM CAST(TO_TIMESTAMP(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS.FF7') AS DATE)) AS MONTH
+		FROM
+			PENGADAAN p
+		WHERE
+			REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{7}$')
+			AND EXTRACT(YEAR FROM CAST(TO_TIMESTAMP(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS.FF7') AS DATE)) = %v
+			AND p.STATUS = 'On Progress'
 			)
 			SELECT 
 			m.month,
@@ -180,7 +182,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 			FROM months m
 			LEFT JOIN pengadaan_monthly pm ON m.month = pm.month
 			GROUP BY m.month
-			ORDER BY m.month
+		ORDER BY m.month
 	`,year)
 	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN AS name,count(*) AS counting_data).Group(p.STATUS_PENGADAAN).Find(metodePengadaan).Error; err != nil")
@@ -197,12 +199,14 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 			CONNECT BY LEVEL <= 12
 			),
 			pengadaan_monthly AS (
-			SELECT 
-				EXTRACT(MONTH FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) AS month
-			FROM PENGADAAN p
-			WHERE REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
-				AND EXTRACT(YEAR FROM TO_DATE(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS')) = %v
-				AND p.STATUS = 'On Progress'
+			SELECT
+			EXTRACT(MONTH FROM CAST(TO_TIMESTAMP(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS.FF7') AS DATE)) AS MONTH
+		FROM
+			PENGADAAN_FILTER p
+		WHERE
+			REGEXP_LIKE(p.SCHEDULE_END_DATE, '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{7}$')
+			AND EXTRACT(YEAR FROM CAST(TO_TIMESTAMP(p.SCHEDULE_END_DATE, 'YYYY-MM-DD HH24:MI:SS.FF7') AS DATE)) = %v
+			AND p.STATUS = 'Done'
 			)
 			SELECT 
 			m.month,
@@ -210,7 +214,7 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 			FROM months m
 			LEFT JOIN pengadaan_monthly pm ON m.month = pm.month
 			GROUP BY m.month
-			ORDER BY m.month
+		ORDER BY m.month
 	`,year)
 	if err := dashboardRepositoryImpl.DB.Raw(query).Scan(metodePengadaan).Error; err != nil {
 		log.Println("dashboardRepositoryImpl.DB.Table(PENGADAAN p).Select(p.STATUS_PENGADAAN AS name,count(*) AS counting_data).Group(p.STATUS_PENGADAAN).Find(metodePengadaan).Error; err != nil")
