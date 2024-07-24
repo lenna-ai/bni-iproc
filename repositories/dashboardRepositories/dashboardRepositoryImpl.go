@@ -220,8 +220,8 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnDoneTrenPenga
 }
 
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) InformasiRekanan(c *fiber.Ctx,metodePengadaan *[]map[string]interface{}) error {
-	if err := dashboardRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_activity_status_name,count(*) AS count_status_name").Group("dvr.vendor_activity_status_name").Find(metodePengadaan).Error; err != nil {
-		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.vendor_activity_status_name,count(*) AS count_status_name).Group(dvr.vendor_activity_status_name).Find(metodePengadaan).Error; err != nil ")
+	if err := dashboardRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table("DATA_VENDOR_RESULT dvr").Select("dvr.vendor_status_name,count(*) AS count_status_name").Group("dvr.vendor_status_name").Find(metodePengadaan).Error; err != nil {
+		log.Println("dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(dvr.vendor_status_name,count(*) AS count_status_name).Group(dvr.vendor_status_name).Find(metodePengadaan).Error; err != nil ")
 		return err
 	}
 	return nil
