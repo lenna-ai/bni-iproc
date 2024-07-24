@@ -64,9 +64,6 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownR
 	if filterNamaPekerjaan != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
 	}
-	fmt.Println("usePagination " )
-	fmt.Println(usePagination)
-	fmt.Println(whereQuery)
 
 	if usePagination {
 		if err := dashboardRekananRepositoryImpl.DB.Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
