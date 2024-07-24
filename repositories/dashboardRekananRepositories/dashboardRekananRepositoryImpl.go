@@ -66,14 +66,13 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownR
 	}
 
 	if usePagination {
-		if err := dashboardRekananRepositoryImpl.DB.Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
+		dashboardRekananRepositoryImpl.DB.Model(breakdownRekananData).Where(whereQuery).Count(totalCount)
+		if err := dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
 			log.Printf("dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Where(NAMA_VENDOR = ?,param).Find(breakdownRekananData).Error %v\n ", err)
 			return err
 		}
-		
 	}else{
-		dashboardRekananRepositoryImpl.DB.Model(breakdownRekananData).Where(whereQuery).Count(totalCount)
-		if err := dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
+		if err := dashboardRekananRepositoryImpl.DB.Where(whereQuery).Find(breakdownRekananData).Error; err != nil {
 			log.Printf("dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Where(NAMA_VENDOR = ?,param).Find(breakdownRekananData).Error %v\n ", err)
 			return err
 		}

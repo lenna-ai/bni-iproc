@@ -13,6 +13,7 @@ type DashboardController interface {
 	TotalPengadaan(c *fiber.Ctx) error
 	TotalPembayaran(c *fiber.Ctx) error
 	TotalVendor(c *fiber.Ctx) error
+	Anggaran(c *fiber.Ctx) error
 	PengadaanOnGoingKewenangan(c *fiber.Ctx) error
 	PengadaanOnGoingStatus(c *fiber.Ctx) error
 	PengadaanOnGoingMetode(c *fiber.Ctx) error
