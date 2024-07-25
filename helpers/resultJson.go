@@ -52,7 +52,7 @@ func MessageErrorValidation(c *fiber.Ctx, field string, validateTag string, para
 			}
 		}
 	}
-	return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{
+	return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 		"data":   nil,
 		"status": errorMessage,
 	})
