@@ -70,7 +70,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	userDn := sr.Entries[0].DN
-	err = l.Bind(userDn, ldapPassword)
+	err = l.Bind(userDn, reqLogin.Password)
 	if err != nil {
 		return false, nil,"", err
 	}
@@ -95,7 +95,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	userInfo := map[string]string{
 		"displayName":        entry.GetAttributeValue("displayName"),
 		"department":         entry.GetAttributeValue("department"),
-		"maverickApps":       entry.GetAttributeValue("maverickApps"),
+		// "maverickApps":       entry.GetAttributeValue("maverickApps"),
 		"whenChanged":        entry.GetAttributeValue("whenChanged"),
 		"sAMAccountName":     entry.GetAttributeValue("sAMAccountName"),
 		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
@@ -120,7 +120,10 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthVendor(f *fiber.Ctx,reqLog
 		dataUserLogin.Password = user.PASSWORD
 		dataUserLogin.RoleName = append(dataUserLogin.RoleName, user.ROLE_NAME)
 	} 
-	plainTextPassword := decrypt.DecryptAES(dataUserLogin.Password)
+	plainTextPassword,err := decrypt.DecryptAES(dataUserLogin.Password)
+	if err != nil {
+		return "",jwt.MapClaims{}, errors.New("error DecryptAES")
+	}
 	
 	if reqLogin.Password != plainTextPassword {
 		log.Println("password was wrong")

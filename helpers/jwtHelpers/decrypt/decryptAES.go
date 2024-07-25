@@ -6,7 +6,7 @@ import (
 )
 
 
-func DecryptAES(encryptedHex string) string {
+func DecryptAES(encryptedHex string) (string, error) {
 	// Encrypted string in hexadecimal format
 	// encryptedHex := "1D4D4C3BE25EB5CDB19BE4C8EA06E1B9"
 	// AES key used for encryption
@@ -15,7 +15,7 @@ func DecryptAES(encryptedHex string) string {
 	// Decode the encrypted string from hexadecimal to byte array
 	encrypted, err := hex.DecodeString(encryptedHex)
 	if err != nil {
-		panic(err)
+		return "",err
 	}
 
 	//arr := []int{-45, -57, -75, -95, 72, 110, 91, -52, 9, -22, 100, -84, -3, -19, -25, 73}
@@ -26,13 +26,13 @@ func DecryptAES(encryptedHex string) string {
 		0x09, 0xea, 0x64, 0xac, 0xfd, 0xed, 0xe7, 0x49,
 	}
 	if len(keyBytes) != 16 {
-		panic("AES-128 key must be 16 bytes")
+		return "AES-128 key must be 16 bytes",err
 	}
 
 	// Create cipher block for AES
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
-		panic(err)
+		return "AES-128 key must be 16 bytes",err
 	}
 
 	// Decrypt the encrypted data
@@ -45,7 +45,7 @@ func DecryptAES(encryptedHex string) string {
 	// Convert decrypted data to string
 	decryptedString := string(decrypted)
 
-	return decryptedString
+	return decryptedString,nil
 }
 
 
