@@ -21,7 +21,17 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 	if filterNamaVendor != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_VENDOR LIKE '%%%s%%'", filterNamaVendor)
 	}
-	query := fmt.Sprintf(`SELECT p.NAMA_VENDOR, COUNT(*) jumlah_data_vendor FROM PENGADAAN_FILTER p %v GROUP BY p.NAMA_VENDOR`,whereQuery)
+	query := fmt.Sprintf(`
+		SELECT 
+		p.NAMA_VENDOR, 
+		NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,
+		COUNT(*) AS jumlah_pengadaan_vendor
+	FROM 
+		PENGADAAN_FILTER p
+	%v
+	GROUP BY 
+		p.NAMA_VENDOR
+	`,whereQuery)
 	if usePagination {
 		dashboardRekananRepositoryImpl.DB.Raw(query).Count(totalCount)
 	

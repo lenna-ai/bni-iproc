@@ -37,6 +37,15 @@ func (dashboardControllerImpl *DashboardControllerImpl) TotalVendor(c *fiber.Ctx
 	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
 }
 
+func (dashboardControllerImpl *DashboardControllerImpl) Anggaran(c *fiber.Ctx) error  {
+	defer helpers.RecoverPanicContext(c)
+	var totalPembayaran = new(map[string]interface{}) 
+	if err := dashboardControllerImpl.DashboardService.TotalVendor(c, totalPembayaran); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, totalPembayaran)
+}
+
 func (dashboardControllerImpl *DashboardControllerImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx) error  {
 	defer helpers.RecoverPanicContext(c)
 	var totalPembayaran = new([]map[string]interface{}) 

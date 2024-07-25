@@ -31,7 +31,7 @@ func Router(app *fiber.App) {
 	dashboard.Get("/total_pembayaran", allControllers.DashboardControllerImpl.TotalPembayaran)
 	dashboard.Get("/total_vendor", allControllers.DashboardControllerImpl.TotalVendor)
 
-	dashboard.Get("/anggaran/:anggaran", allControllers.DashboardControllerImpl.TotalPembayaran)
+	dashboard.Get("/anggaran/:anggaran", allControllers.DashboardControllerImpl.Anggaran)
 
 
 	dashboardPengadaanOngoing := dashboard.Group("pengadaanOnGoing")
