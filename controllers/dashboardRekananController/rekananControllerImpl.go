@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
-	dashboardmodel "github.com/lenna-ai/bni-iproc/models/dashboardModel"
+	pegadaanmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
 )
 
 func (dashboardRekananImpl *DashboardRekananImpl) Rekanan(c *fiber.Ctx) error {
@@ -38,7 +38,7 @@ func (dashboardRekananImpl *DashboardRekananImpl) Rekanan(c *fiber.Ctx) error {
 
 func (dashboardRekananImpl *DashboardRekananImpl) BreakdownRekanan(c *fiber.Ctx) error {
 	defer helpers.RecoverPanicContext(c)
-	var dashboardRekananData = new([]dashboardmodel.DashboardRekanan)
+	var dashboardRekananData = new([]pegadaanmodel.PengadaanFilter)
 	var totalCount = new(int64)
 	var filterNamaPekerjaan string
 	var pagination bool 
