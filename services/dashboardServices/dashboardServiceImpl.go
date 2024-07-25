@@ -1,6 +1,8 @@
 package dashboardservices
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -23,6 +25,20 @@ func (dashboardServiceImpl *DashboardServiceImpl) TotalVendor(c *fiber.Ctx,dashb
 	}
 	return nil
 }
+
+func (dashboardServiceImpl *DashboardServiceImpl) Anggaran(c *fiber.Ctx,anggaran string,anggaranModel *[]map[string]interface{}) error {
+	anggaran = strings.ToLower(anggaran)
+	if anggaran == "capex" {
+		anggaran = "ANGGARAN_CAPEX_CAPEX"
+	}else{
+		anggaran = "ANGGARAN_CAPEX_OPEX"
+	}
+	if err := dashboardServiceImpl.DashboardRepository.Anggaran(c,anggaran,anggaranModel); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (dashboardServiceImpl *DashboardServiceImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	if err := dashboardServiceImpl.DashboardRepository.PengadaanOnGoingKewenangan(c,dashboardModel); err != nil {
 		return err

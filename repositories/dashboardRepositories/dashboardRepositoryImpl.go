@@ -43,6 +43,18 @@ func (dashboardRepositoryImpl *DashboardRepositoryImpl) TotalVendor(c *fiber.Ctx
 	return nil
 }
 
+func (dashboardRepositoryImpl *DashboardRepositoryImpl) Anggaran(c *fiber.Ctx,anggaran string,anggaranModel *[]map[string]interface{}) error {
+	if err := dashboardRepositoryImpl.DB.Table(anggaran).Scan(anggaranModel).Error; err != nil {
+		log.Println("err := dashboardRepositoryImpl.DB.Table((?) subquery, subQuery).Select(Kewenangan, COUNT(*) as Count).Group(Kewenangan).Scan(dashboardModel).Error; err != nil")
+		return err
+	}
+	// if err := dashboardRepositoryImpl.DB.Table("DATA_VENDOR_RESULT dvr").Select("sum(p.NILAI_SPK) as nilai_spk").Joins("right join PENGADAAN p ON p.VENDOR_ID = dvr.ID").Find(dashboardModel).Error; err != nil {
+	// 	log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
+	// 	return err
+	// }
+	return nil
+}
+
 func (dashboardRepositoryImpl *DashboardRepositoryImpl) PengadaanOnGoingKewenangan(c *fiber.Ctx,dashboardModel *[]map[string]interface{}) error {
 	if err := dashboardRepositoryImpl.DB.Table("KEWENANGANONGOING").Find(dashboardModel).Error; err != nil {
 		log.Println("err := dashboardRepositoryImpl.DB.Table(DATA_VENDOR_RESULT dvr).Select(sum(p.NILAI_SPK) as nilai_spk).Joins(right join PENGADAAN p ON p.VENDOR_ID = dvr.ID).Find(dashboardModel).Error; err != nil")
