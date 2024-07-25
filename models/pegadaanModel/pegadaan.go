@@ -52,7 +52,6 @@ type PengadaanFilter struct {
 	NILAI_SPK string
 	NAMA_VENDOR string
 	MATA_ANGGARAN string
-	NILAI_BIDDING string `gorm:"column:NILAI_BIDDING"`
 	ITEM_NAME string
 	POST_DATE_SPK string
 	LETTER_DATE_SPK string
