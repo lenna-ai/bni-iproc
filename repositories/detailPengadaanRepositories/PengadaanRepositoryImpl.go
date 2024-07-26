@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
-	"gorm.io/gorm"
 )
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
@@ -41,18 +40,25 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 			return *dataFilterDetailPengadaan, err
 		}
 		
-		// Ambil data dengan pagination
-		err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
-			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		err = repository.DB.Model(dataFilterDetailPengadaan).
+			Preload("MonitoringProses"). // Preload the related MonitoringProses
+			Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID = PENGADAAN_FILTER.PROCUREMENT_ID"). // Adjust the join condition as necessary
+			Scopes(gormhelpers.Paginate(c)). // Apply pagination
+			Where(stringWhere). // Apply additional filters
+			Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID, 0) DESC"). // Order by MonitoringProses.ID in descending order
+			Find(dataFilterDetailPengadaan).Error // Execute the query
 		if err != nil {
-			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan pagination%v\n", err)
+			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan pagination: %v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
 	}else{
-		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
-			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		err := repository.DB.Model(dataFilterDetailPengadaan).
+			Preload("MonitoringProses"). // Preload the related MonitoringProses
+			Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID = PENGADAAN_FILTER.PROCUREMENT_ID"). // Adjust the join condition as necessary
+			Scopes(gormhelpers.Paginate(c)). // Apply pagination
+			Where(stringWhere). // Apply additional filters
+			Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID, 0) DESC"). // Order by MonitoringProses.ID in descending order
+			Find(dataFilterDetailPengadaan).Error // Execute the query
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
