@@ -93,10 +93,11 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
         return false, nil,"", errors.New("invalid username/password")
 	}
 
-	// if entry.GetAttributeValue("mail") == "" {
-	// 	log.Println("entry.GetAttributeValue(mail)")
-	// 	return false, nil,"", err
-	// }
+	if entry.GetAttributeValue("mail") == "" {
+		log.Println("entry.GetAttributeValue(mail)")
+		log.Println(err.Error())
+        return false, nil,"", errors.New("invalid username/password")
+	}
 
 	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage)
 	log.Println(adCodeMessage)
@@ -123,7 +124,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		"whenChanged":        entry.GetAttributeValue("whenChanged"),
 		"sAMAccountName":     entry.GetAttributeValue("sAMAccountName"),
 		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
-		// "userMail":           entry.GetAttributeValue("mail"),
+		"userMail":           entry.GetAttributeValue("mail"),
 		"promotsRole":        entry.GetAttributeValue("promotsrole"),
 	}
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)
