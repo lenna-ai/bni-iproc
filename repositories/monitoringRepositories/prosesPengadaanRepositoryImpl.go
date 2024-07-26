@@ -1,6 +1,7 @@
 package monitoringrepositories
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -21,11 +22,11 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 	return jenisPengadaan, nil
 }
 
-func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]map[string]interface{}, error) {
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx,totalCount *int64,jenis_pengadaan string,whereQuery string) (*[]map[string]interface{}, error) {
 	data := new([]map[string]interface{})
 
     // Query dasar tanpa LIMIT dan OFFSET
-    query := `SELECT * FROM (
+    query := fmt.Sprintf(`SELECT * FROM (
 SELECT
 	NVL(MPPN.ID, 0) mmpnId,
 	p.PROCUREMENT_ID,
@@ -43,6 +44,7 @@ FROM
 	PENGADAAN p
 LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON
 	p.PROCUREMENT_ID = MPPN.PROCUREMENT_ID
+%v
 GROUP BY
 	p.PROCUREMENT_ID,
 	P.JENIS_PENGADAAN,
@@ -56,7 +58,7 @@ GROUP BY
 	MPPN.STATUS,
 	MPPN.STATUS_PENGADAAN_PROMOTS,
 	MPPN.KETERANGAN_JIKA_TERLAMBAT) newtable
-ORDER BY mmpnId desc`
+ORDER BY mmpnId desc`,whereQuery)
     
     // Menghitung total jumlah data tanpa pagination
     monitoringProsesPengadaanImpl.DB.Raw(query).Count(totalCount)

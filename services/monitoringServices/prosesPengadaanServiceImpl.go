@@ -13,8 +13,18 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 	}
 	return jenisPengadaan, nil
 }
-func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx,totalCount *int64) (*[]map[string]interface{}, error) {
-	prosesPengadaanModel, err := monitoringProsesPengadaanImpl.monitoringRepository.GetProsesPengadaan(c,totalCount)
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProsesPengadaan(c *fiber.Ctx,totalCount *int64,jenis_pengadaan string) (*[]map[string]interface{}, error) {
+	var whereQuery string
+	if jenis_pengadaan == "it" {
+		whereQuery = "where p.JENIS_PENGADAAN in ('IT')"
+	}else if jenis_pengadaan == "premises" {	
+		whereQuery = "where p.JENIS_PENGADAAN in ('Premises')"
+	}else{
+		whereQuery = "where p.JENIS_PENGADAAN NOT in ('IT','Premises')"
+	}
+
+
+	prosesPengadaanModel, err := monitoringProsesPengadaanImpl.monitoringRepository.GetProsesPengadaan(c,totalCount,jenis_pengadaan,whereQuery)
 	if err != nil {
 		return prosesPengadaanModel, err
 	}

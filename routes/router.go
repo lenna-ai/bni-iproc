@@ -70,7 +70,7 @@ func Router(app *fiber.App) {
 
 	monitoring := app.Group("monitoring")
 	monitoring.Get("/jenis_pengadaan", allControllers.MonitoringProsesPengadaanImpl.JenisPengadaan)
-	monitoring.Get("/proses_pengadaan", allControllers.MonitoringProsesPengadaanImpl.DetailProsesPengadaan)
+	monitoring.Get("/proses_pengadaan/:jenis_pengadaan", allControllers.MonitoringProsesPengadaanImpl.DetailProsesPengadaan)
 	monitoring.Put("/proses_pengadaan", allControllers.MonitoringProsesPengadaanImpl.PutProsesPengadaan)
 
 	pembayaranRutin := monitoring.Group("pembayaranRutin")

@@ -1,9 +1,12 @@
 package monitoringcontroller
 
 import (
+	"fmt"
 	"log"
+	"net/url"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -27,9 +30,12 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProses
 	defer helpers.RecoverPanicContext(c)
 
 	var totalCount = new(int64)
+	jenisPengadaanParams,_:=url.QueryUnescape(c.Params("jenis_pengadaan"))
+	jenis_pengadaan := strings.ToLower(jenisPengadaanParams)
+	fmt.Println(jenis_pengadaan)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
-	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c,totalCount)
+	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c,totalCount,jenis_pengadaan)
 	if err != nil {
 		log.Printf("error monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.getPengadaanFormatter %v \n ", err)
 		return helpers.ResultFailedJsonApi(c, getPengadaanFormatter, err.Error())
