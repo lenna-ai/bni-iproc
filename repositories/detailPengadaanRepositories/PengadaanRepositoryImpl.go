@@ -41,13 +41,13 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 		}
 		
 		// Ambil data dengan pagination
-		err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Scopes(gormhelpers.Paginate(c)).Where(stringWhere).Order("NVL(mppn.ID, 0) DESC").Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan pagination%v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
 	}else{
-		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON PENGADAAN_FILTER.PROCUREMENT_ID = mppn.PROCUREMENT_ID").Where(stringWhere).Order("NVL(mppn.ID, 0) DESC").Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
