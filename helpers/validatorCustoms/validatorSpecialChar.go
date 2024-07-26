@@ -6,7 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var CustomSpecialChar = "“ < & > % $"
+var CustomSpecialChar = "“<&>%$"
 
 func CustomValidatorSpecialChar(fl validator.FieldLevel) bool {
     text := fl.Field().String()
