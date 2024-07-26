@@ -76,19 +76,23 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	entry := sr.Entries[0]
-	if entry.GetAttributeValue("maverickApps") == "" {
-		return false, nil,"", err
-	}
-
+	// if entry.GetAttributeValue("maverickApps") == "" {
+	// 	log.Println("entry.GetAttributeValue(maverickApps)")
+	// 	return false, nil,"", err
+	// }
+	
 	if entry.GetAttributeValue("userAccountControl") == "" {
+		log.Println("entry.GetAttributeValue(userAccountControl)")
 		return false, nil,"", err
 	}
 
 	if entry.GetAttributeValue("mail") == "" {
+		log.Println("entry.GetAttributeValue(mail)")
 		return false, nil,"", err
 	}
 
 	if entry.GetAttributeValue("promotsrole") == "" {
+		log.Println("entry.GetAttributeValue(promotsrole)")
 		return false, nil,"", err
 	}
 
