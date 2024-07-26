@@ -57,10 +57,9 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 		}
 	}
 
-	// if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
-	// 	return helpers.ResultFailedJsonApi(c, nil, err.Error())
-	// }
+	if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
+		return helpers.ResultFailedJsonApi(c, nil, err.Error())
+	}
 
-	// return helpers.ResultSuccessJsonApi(c, putPengadaanFormatter)
-	return nil
+	return helpers.ResultSuccessJsonApi(c, putPengadaanFormatter)
 }
