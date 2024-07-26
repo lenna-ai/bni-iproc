@@ -22,6 +22,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	var (
 		ldapServer,ldapPort,ldapBindDN,ldapPassword,ldapSearchDN    string
 	)
+	var adCodeMessage = new([]loginmodel.ADCodeMessage)
 	if reqLogin.LocationDepartment == "HQ" {
 		ldapServer   = os.Getenv("LDAP_SERVER_HQ")
 		ldapPort     = os.Getenv("LDAP_PORT_HQ")
@@ -38,15 +39,17 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%v", ldapServer, ldapPort))
     if err != nil {
-		log.Println("ldap.Dial(tcp, fmt.Sprintf(s:v, ldapServer, ldapPort))")
-        return false, nil,"", err
+		log.Println("ldap.Dial(tcp, log.Sprintf(s:v, ldapServer, ldapPort))")
+		log.Println(err.Error())
+        return false, nil,"", errors.New("invalid username/password")
     }
     defer l.Close()
 
 	err = l.Bind(ldapBindDN, ldapPassword)
 	if err != nil {
 		log.Println("l.Bind(ldapBindDN, ldapPassword)")
-		return false, nil,"", err
+		log.Println(err.Error())
+        return false, nil,"", errors.New("invalid username/password")
 	}
 
 	searchRequest := ldap.NewSearchRequest(
@@ -61,7 +64,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	
 	if err != nil {
 		log.Println("err != nil")
-		return false, nil,"", err
+		log.Println(err.Error())
+		return false, nil,"", errors.New("invalid username/password")
 	}
 
 	if len(sr.Entries) == 0 {
@@ -72,7 +76,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	userDn := sr.Entries[0].DN
 	err = l.Bind(userDn, reqLogin.Password)
 	if err != nil {
-		return false, nil,"", err
+		log.Println(err.Error())
+		return false, nil,"", errors.New("invalid username/password")
 	}
 
 	entry := sr.Entries[0]
@@ -81,19 +86,34 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	// 	return false, nil,"", err
 	// }
 	
+	log.Printf("userAccountControl => %v\n", entry.GetAttributeValue("userAccountControl"))
 	if entry.GetAttributeValue("userAccountControl") == "" {
-		log.Println("entry.GetAttributeValue(userAccountControl)")
-		return false, nil,"", err
+		log.Printf("entry.GetAttributeValue(userAccountControl) => %v", entry.GetAttributeValue("userAccountControl"))
+		log.Println(err.Error())
+        return false, nil,"", errors.New("invalid username/password")
 	}
 
-	if entry.GetAttributeValue("mail") == "" {
-		log.Println("entry.GetAttributeValue(mail)")
-		return false, nil,"", err
+	// if entry.GetAttributeValue("mail") == "" {
+	// 	log.Println("entry.GetAttributeValue(mail)")
+	// 	return false, nil,"", err
+	// }
+
+	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage)
+	log.Println(adCodeMessage)
+	for _, v := range *adCodeMessage {
+		if strconv.Itoa(v.Code) == entry.GetAttributeValue("userAccountControl") {
+			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(userAccountControl)")
+			if !v.IsSuccess {
+				return false, nil,"", errors.New(v.Message +" - Status Code: " + strconv.Itoa(v.Code))
+			}
+		}
 	}
 
+	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
-		return false, nil,"", err
+		log.Println(err.Error())
+        return false, nil,"", errors.New("invalid username/password")
 	}
 
 	userInfo := map[string]string{
@@ -103,7 +123,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		"whenChanged":        entry.GetAttributeValue("whenChanged"),
 		"sAMAccountName":     entry.GetAttributeValue("sAMAccountName"),
 		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
-		"userMail":           entry.GetAttributeValue("mail"),
+		// "userMail":           entry.GetAttributeValue("mail"),
 		"promotsRole":        entry.GetAttributeValue("promotsrole"),
 	}
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)

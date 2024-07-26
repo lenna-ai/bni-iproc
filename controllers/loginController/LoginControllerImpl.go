@@ -26,7 +26,7 @@ func (loginControllerImpl *LoginControllerImpl) Ldap(c *fiber.Ctx) error {
 	isSuccess, data,token, err := loginControllerImpl.LdapLoginService.AuthUsingLDAP(c, reqLogin);
 	if !isSuccess {
 		log.Println("loginControllerImpl.LdapLoginService.AuthUsingLDAP")
-		return helpers.ResultUnauthorizedJsonApi(c, nil, errors.New("invalid username/password").Error())
+		return helpers.ResultUnauthorizedJsonApi(c, nil, err.Error())
 	}
 	if  err != nil {
 		log.Println("loginControllerImpl.LdapLoginService.AuthUsingLDAP2")

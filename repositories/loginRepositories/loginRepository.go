@@ -13,6 +13,7 @@ type LoginRepositoryImpl struct {
 
 type LoginRepository interface {
 	CheckUser(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin,users *[]usermodel.Users)(error)
+	ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage) error
 }
 
 func NewLoginRepository(db *gorm.DB) *LoginRepositoryImpl {

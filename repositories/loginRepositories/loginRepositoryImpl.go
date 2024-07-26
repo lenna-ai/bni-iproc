@@ -22,3 +22,11 @@ func (loginRepositoryImpl LoginRepositoryImpl) CheckUser(f *fiber.Ctx,reqLogin *
 	}
 	return nil
 }
+
+func (loginRepositoryImpl LoginRepositoryImpl) ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage) error {
+	if err := loginRepositoryImpl.DB.Find(dataCode).Error; err != nil {
+		log.Println("loginRepositoryImpl.DB.Find(dataCode).Error")
+		return errors.New(err.Error())
+	}
+	return nil
+}

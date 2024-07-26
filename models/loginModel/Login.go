@@ -24,3 +24,9 @@ type ResponseDataUserLogin struct {
     Username string `json:"username"`
     RoleName []string `json:"roleName"`
 }
+
+type ADCodeMessage struct {
+    Code int
+    Message string
+    IsSuccess bool
+}
