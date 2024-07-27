@@ -2,7 +2,6 @@ package monitoringcontroller
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/url"
 	"reflect"
@@ -34,7 +33,6 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) DetailProses
 	var totalCount = new(int64)
 	jenisPengadaanParams,_:=url.QueryUnescape(c.Params("jenis_pengadaan"))
 	jenis_pengadaan := strings.ToLower(jenisPengadaanParams)
-	fmt.Println(jenis_pengadaan)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 	getPengadaanFormatter, err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.DetailProsesPengadaan(c,totalCount,jenis_pengadaan)

@@ -5,7 +5,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
-	"fmt"
 	"os"
 )
 
@@ -26,7 +25,6 @@ func DecryptAesFrontend(encryptText string ) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(string(origData))
 	return string(origData), nil
 }
 
