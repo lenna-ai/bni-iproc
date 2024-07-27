@@ -1,6 +1,7 @@
 package monitoringcontroller
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -13,6 +14,7 @@ import (
 	"github.com/lenna-ai/bni-iproc/config"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
+	jwthelpers "github.com/lenna-ai/bni-iproc/helpers/jwtHelpers"
 	"github.com/lenna-ai/bni-iproc/models/prosesPengadaanModel/formatters"
 )
 
@@ -63,9 +65,14 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 		}
 	}
 
+	var dataMe = new(map[string]any)
+	jwthelpers.MeJwt(c,dataMe)
+	data,_ := json.Marshal(dataMe)
+	putPengadaanFormatter.DELETED_BY = string(data)
 	if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 
 	return helpers.ResultSuccessJsonApi(c, putPengadaanFormatter)
+	
 }

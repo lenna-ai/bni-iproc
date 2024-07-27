@@ -8,6 +8,7 @@ type PutPengadaanFormatter struct {
 	STATUS string `json:"STATUS" validate:"required,CustomValidatorSpecialChar" column:"STATUS"`
 	STATUS_PENGADAAN_PROMOTS string `json:"STATUS_PENGADAAN_PROMOTS" validate:"required,CustomValidatorSpecialChar" column:"PROCUREMENT_ID"`
 	KETERANGAN_JIKA_TERLAMBAT string `json:"KETERANGAN_JIKA_TERLAMBAT" validate:"required,lt=400,CustomValidatorSpecialChar" column:"KETERANGAN_JIKA_TERLAMBAT"`
+	DELETED_BY string `json:"DELETED_BY"`
 	DELETED_AT *time.Time `json:"DELETED_AT"`
 }
 
