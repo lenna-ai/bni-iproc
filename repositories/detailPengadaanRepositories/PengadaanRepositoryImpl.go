@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
+	"gorm.io/gorm"
 )
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
@@ -28,7 +29,6 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,useP
 }
 
 
-
 func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.PengadaanFilter)
 	
@@ -39,32 +39,23 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan Count %v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
-		
-		err = repository.DB.Model(dataFilterDetailPengadaan).
-			Preload("MonitoringProses"). // Preload the related MonitoringProses
-			Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID = PENGADAAN_FILTER.PROCUREMENT_ID"). // Adjust the join condition as necessary
-			Scopes(gormhelpers.Paginate(c)). // Apply pagination
-			Where(stringWhere). // Apply additional filters
-			Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID, 0) DESC"). // Order by MonitoringProses.ID in descending order
-			Find(dataFilterDetailPengadaan).Error // Execute the query
+
+		err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
+			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
+		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
 		if err != nil {
-			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan pagination: %v\n", err)
+			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
 	}else{
-		err := repository.DB.Model(dataFilterDetailPengadaan).
-			Preload("MonitoringProses"). // Preload the related MonitoringProses
-			Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID = PENGADAAN_FILTER.PROCUREMENT_ID"). // Adjust the join condition as necessary
-			Scopes(gormhelpers.Paginate(c)). // Apply pagination
-			Where(stringWhere). // Apply additional filters
-			Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID, 0) DESC"). // Order by MonitoringProses.ID in descending order
-			Find(dataFilterDetailPengadaan).Error // Execute the query
+		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
+			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
+		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
 	}
-	
 	return *dataFilterDetailPengadaan, nil
 }
 

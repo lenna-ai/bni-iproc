@@ -14,9 +14,9 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 	var whereQuery string
 
 	if strings.ToLower(param) == "non it"{
-		whereQuery = "where p.jenis_pengadaan not in ('IT','Premises')"
+		whereQuery = "where p.jenis_pengadaan not in ('IT','Premises') and p.NAMA_VENDOR is not null"
 	}else{
-		whereQuery = fmt.Sprintf(`where lower(p.jenis_pengadaan) = '%v'`, strings.ToLower(param))
+		whereQuery = fmt.Sprintf(`where lower(p.jenis_pengadaan) = '%v' and p.NAMA_VENDOR is not null`, strings.ToLower(param))
 	}
 	if filterNamaVendor != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_VENDOR LIKE '%%%s%%'", filterNamaVendor)
@@ -52,7 +52,7 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 
 func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter, totalCount *int64) error  {
 	var whereQuery string 
-	whereQuery = fmt.Sprintf("NAMA_VENDOR = '%v'",param)
+	whereQuery = fmt.Sprintf("NAMA_VENDOR = '%v' AND STATUS IN ('Done','On Progress','revision','waiting approval')",param)
 	if filterNamaPekerjaan != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
 	}
