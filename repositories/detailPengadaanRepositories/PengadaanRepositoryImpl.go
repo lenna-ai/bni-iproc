@@ -48,7 +48,7 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 			return *dataFilterDetailPengadaan, err
 		}
 	}else{
-		err := repository.DB.Model(dataFilterDetailPengadaan).Scopes(gormhelpers.Paginate(c)).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
+		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
 			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
 		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
 		if err != nil {
