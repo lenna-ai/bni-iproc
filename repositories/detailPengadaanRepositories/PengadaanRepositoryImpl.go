@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	gormhelpers "github.com/lenna-ai/bni-iproc/helpers/gormHelpers"
 	detailmodel "github.com/lenna-ai/bni-iproc/models/pegadaanModel"
-	"gorm.io/gorm"
 )
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
@@ -40,17 +39,24 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 			return *dataFilterDetailPengadaan, err
 		}
 
-		err = repository.DB.Model(dataFilterDetailPengadaan).Scopes(gormhelpers.Paginate(c)).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
-			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		// err = repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
+		// 	return db.Order("ID DESC") // Change "created_at" to the field you want to order by
+		// }).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		// if err != nil {
+		// 	log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
+		// 	return *dataFilterDetailPengadaan, err
+		// }
+		err = repository.DB.Scopes(gormhelpers.Paginate(c)).Model(detailmodel.PengadaanFilter{}).Preload("MonitoringProses").Select("PENGADAAN_FILTER.*, MONITORING_PROSES_PENGADAAN_NEW.*").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON PENGADAAN_FILTER.PROCUREMENT_ID = MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID").Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID,0) DESC").Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
 		}
 	}else{
-		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
-			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		// err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
+		// 	return db.Order("ID DESC") // Change "created_at" to the field you want to order by
+		// }).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		err := repository.DB.Model(detailmodel.PengadaanFilter{}).Preload("MonitoringProses").Select("PENGADAAN_FILTER.*, MONITORING_PROSES_PENGADAAN_NEW.*").Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW ON PENGADAAN_FILTER.PROCUREMENT_ID = MONITORING_PROSES_PENGADAAN_NEW.PROCUREMENT_ID").Order("NVL(MONITORING_PROSES_PENGADAAN_NEW.ID,0) DESC").Where(stringWhere).Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
