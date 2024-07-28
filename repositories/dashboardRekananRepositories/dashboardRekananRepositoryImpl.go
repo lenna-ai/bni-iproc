@@ -44,8 +44,8 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 		// 	log.Printf("dashboardRekananRepositoryImpl.DB.Scopes(gormhelpers.Paginate(c)).Table(PEMBAYARAN p).Select(p.NAMA_VENDOR ,COUNT(p.NAMA_PEKERJAAN) as calculate_job_name, sum(p.NILAI_KONTRAK) AS total_pekerjaan).Group(p.NAMA_VENDOR).Where(p.JENIS_PENGADAAN = ?,param).Find(rekananData).Error")
 		// 	return err
 		// }
-		dashboardRekananRepositoryImpl.DB.Table("PENGADAAN_FILTER p").Scopes(gormhelpers.Paginate(c)).Select("NAMA_VENDOR, NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,COUNT(*) AS jumlah_pengadaan_vendor").Where(whereQuery).Group("p.NAMA_VENDOR").Count(totalCount)
-		if err := dashboardRekananRepositoryImpl.DB.Table("PENGADAAN_FILTER p ").Select("NAMA_VENDOR, NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,COUNT(*) AS jumlah_pengadaan_vendor").Where(whereQuery).Group("p.NAMA_VENDOR").Find(rekananData).Error; err!= nil{
+		dashboardRekananRepositoryImpl.DB.Table("PENGADAAN_FILTER p").Select("NAMA_VENDOR, NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,COUNT(*) AS jumlah_pengadaan_vendor").Where(whereQuery).Group("p.NAMA_VENDOR").Count(totalCount)
+		if err := dashboardRekananRepositoryImpl.DB.Table("PENGADAAN_FILTER p ").Scopes(gormhelpers.Paginate(c)).Select("NAMA_VENDOR, NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,COUNT(*) AS jumlah_pengadaan_vendor").Where(whereQuery).Group("p.NAMA_VENDOR").Find(rekananData).Error; err!= nil{
 			return err
 		}
 	}else{
