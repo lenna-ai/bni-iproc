@@ -11,6 +11,7 @@ import (
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.PengadaanFilter)
+	stringWhere += " AND STATUS IN ('Done','On Progress','revision','waiting approval')"
 	
 	if usePagination {
 		repository.DB.Where(stringWhere).Find(dataFilterDetailPengadaan).Count(totalCount)
