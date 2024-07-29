@@ -81,8 +81,10 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 	for _, v := range *dataTempProsesPengadaanModel {
 		date, _ := time.Parse(layoutFormat, t.Format(time.DateTime))
 		v.DELETED_AT = &date
+		v.DELETED_BY = prosesPengadaanModel.DELETED_BY
 		monitoringProsesPengadaanImpl.DB.Save(v)
 	}
+	prosesPengadaanModel.DELETED_BY = nil
 	createProsesPengadaanModel := monitoringProsesPengadaanImpl.DB.Create(prosesPengadaanModel)
 	if err := createProsesPengadaanModel.Error; err != nil {
 		log.Println("createProsesPengadaanModel.Error; err")

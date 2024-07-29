@@ -90,13 +90,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	log.Printf("userAccountControl => %v\n", entry.GetAttributeValue("userAccountControl"))
 	if entry.GetAttributeValue("userAccountControl") == "" {
 		log.Printf("entry.GetAttributeValue(userAccountControl) => %v", entry.GetAttributeValue("userAccountControl"))
-		log.Println(err.Error())
+		log.Println(err)
         return false, nil,"", errors.New("invalid username/password")
 	}
 
+	log.Printf("mail => %v\n", entry.GetAttributeValue("mail"))
 	if entry.GetAttributeValue("mail") == "" {
 		log.Println("entry.GetAttributeValue(mail)")
-		log.Println(err.Error())
+		log.Println(err)
         return false, nil,"", errors.New("invalid username/password")
 	}
 
@@ -114,9 +115,32 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
-		log.Println(err.Error())
+		log.Println(err)
         return false, nil,"", errors.New("invalid username/password")
 	}
+
+	// log.Printf("lastLogonTimestamp => %v\n",entry.GetAttributeValue("lastLogonTimestamp"))
+	// log.Println(entry.GetAttributeValue("lastLogonTimestamp"))
+	// if entry.GetAttributeValue("lastLogonTimestamp") == "" {
+	// 	log.Println("entry.GetAttributeValue(lastLogonTimestamp)")
+	// 	log.Println(err)
+    //     return false, nil,"", errors.New("invalid username/password")
+	// }
+
+	// log.Printf("badPwdCount => %v\n",entry.GetAttributeValue("badPwdCount"))
+	// log.Println(entry.GetAttributeValue("badPwdCount"))
+	// if entry.GetAttributeValue("badPwdCount") == "" {
+	// 	log.Println("entry.GetAttributeValue(badPwdCount)")
+	// 	log.Println(err)
+    //     return false, nil,"", errors.New("invalid username/password")
+	// }
+
+	// log.Printf("physicalDeliveryOfficeName => %v\n",entry.GetAttributeValue("physicalDeliveryOfficeName"))
+	// if entry.GetAttributeValue("physicalDeliveryOfficeName") == "" {
+	// 	log.Println("entry.GetAttributeValue(physicalDeliveryOfficeName)")
+	// 	log.Println(err)
+    //     return false, nil,"", errors.New("invalid username/password")
+	// }
 
 	userInfo := map[string]string{
 		"displayName":        entry.GetAttributeValue("displayName"),
@@ -127,6 +151,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		"userAccountControl": entry.GetAttributeValue("userAccountControl"),
 		"userMail":           entry.GetAttributeValue("mail"),
 		"promotsRole":        entry.GetAttributeValue("promotsrole"),
+	// 	"badPwdCount":           entry.GetAttributeValue("badPwdCount"),
+	// 	"physicalDeliveryOfficeName":        entry.GetAttributeValue("physicalDeliveryOfficeName"),
 	}
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)
 	return true, claims,token, nil

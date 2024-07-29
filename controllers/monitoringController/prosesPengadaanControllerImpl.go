@@ -62,11 +62,12 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPen
 			return helpers.MessageErrorValidation(c, jsonTag, valueError.Tag(), valueError.Param())
 		}
 	}
-
 	var dataMe = new(map[string]any)
 	jwthelpers.MeJwt(c,dataMe)
 	data,_ := json.Marshal(dataMe)
-	putPengadaanFormatter.DELETED_BY = string(data)
+	datame := string(data)
+	putPengadaanFormatter.DELETED_BY = &datame
+	*putPengadaanFormatter.DELETED_BY = string(data)
 	if err := monitoringProsesPengadaanImpl.MonitoringProsesPengadaan.PutProsesPengadaan(c, putPengadaanFormatter); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
