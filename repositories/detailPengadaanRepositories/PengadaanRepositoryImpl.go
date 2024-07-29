@@ -32,6 +32,7 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanUmum(c *fiber.Ctx,useP
 
 func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error) {
 	dataFilterDetailPengadaan := new([]detailmodel.PengadaanFilter)
+	stringWhere += " AND STATUS IN ('Done','On Progress','revision','waiting approval')"
 	// Hitung total jumlah data tanpa pagination
 	if usePagination {
 		err := repository.DB.Where(stringWhere).Model(&detailmodel.PengadaanFilter{}).Count(totalCount).Error

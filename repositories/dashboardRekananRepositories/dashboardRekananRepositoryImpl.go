@@ -52,6 +52,8 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 
 func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,jenis_pengadaan string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter, totalCount *int64) error  {
 	var whereQuery string 
+	// whereQuery = fmt.Sprintf("STATUS IN ('Done','On Progress','revision','waiting approval')")
+
 	if strings.ToLower(param) == "non it"{
 		whereQuery = "jenis_pengadaan not in ('IT','Premises') "
 	}else{
