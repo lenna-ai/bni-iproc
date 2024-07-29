@@ -11,8 +11,8 @@ func (dashboardRekananServiceImpl *DashboardRekananServiceImpl) Rekanan(c *fiber
 	}
 	return nil
 }
-func (dashboardRekananServiceImpl *DashboardRekananServiceImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter,totalCount *int64) error {
-	if err := dashboardRekananServiceImpl.DashboardRekananRepository.BreakdownRekanan(c,usePagination,param,filterNamaPekerjaan,breakdownRekananData,totalCount); err != nil{
+func (dashboardRekananServiceImpl *DashboardRekananServiceImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,jenis_pengadaan string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter,totalCount *int64) error {
+	if err := dashboardRekananServiceImpl.DashboardRekananRepository.BreakdownRekanan(c,usePagination,param,jenis_pengadaan,filterNamaPekerjaan,breakdownRekananData,totalCount); err != nil{
 		return err
 	}
 	return nil

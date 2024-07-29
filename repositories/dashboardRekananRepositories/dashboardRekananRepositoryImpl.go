@@ -23,17 +23,6 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 	if filterNamaVendor != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_VENDOR LIKE '%%%s%%'", filterNamaVendor)
 	}
-	// query := fmt.Sprintf(`
-	// 	SELECT 
-	// 	p.NAMA_VENDOR, 
-	// 	NVL(SUM(p.NILAI_SPK), 0) AS nilai_kontrak,
-	// 	COUNT(*) AS jumlah_pengadaan_vendor
-	// FROM 
-	// 	PENGADAAN_FILTER p
-	// %v
-	// GROUP BY 
-	// 	p.NAMA_VENDOR
-	// `,whereQuery)
 
 	if usePagination {
 		// dashboardRekananRepositoryImpl.DB.Raw(query).Count(totalCount)
@@ -61,12 +50,17 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 	return nil
 }
 
-func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter, totalCount *int64) error  {
+func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownRekanan(c *fiber.Ctx,usePagination bool,param string,jenis_pengadaan string,filterNamaPekerjaan string,breakdownRekananData *[]pegadaanmodel.PengadaanFilter, totalCount *int64) error  {
 	var whereQuery string 
-	whereQuery = fmt.Sprintf("NAMA_VENDOR = '%v' AND STATUS IN ('Done','On Progress','revision','waiting approval')",param)
-	if filterNamaPekerjaan != "" {
-		whereQuery += fmt.Sprintf(" and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
+	if strings.ToLower(param) == "non it"{
+		whereQuery = "jenis_pengadaan not in ('IT','Premises') "
+	}else{
+		whereQuery = fmt.Sprintf(`lower(jenis_pengadaan) = '%v' `, strings.ToLower(jenis_pengadaan))
 	}
+	if filterNamaPekerjaan != "" {
+		whereQuery += fmt.Sprintf("and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
+	}
+	whereQuery += fmt.Sprintf("AND NAMA_VENDOR = '%v'",param)
 
 	if usePagination {
 		dashboardRekananRepositoryImpl.DB.Model(breakdownRekananData).Where(whereQuery).Count(totalCount)

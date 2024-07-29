@@ -45,6 +45,7 @@ func (dashboardRekananImpl *DashboardRekananImpl) BreakdownRekanan(c *fiber.Ctx)
 
 
 	param, err := url.QueryUnescape(c.Params("nama_pt"))
+	jenis_pengadaan, err := url.QueryUnescape(c.Params("jenis_pengadaan"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 	if page != 0 && pageSize != 0 {
@@ -55,7 +56,7 @@ func (dashboardRekananImpl *DashboardRekananImpl) BreakdownRekanan(c *fiber.Ctx)
 	if err != nil {
 		helpers.ResultFailedJsonApi(c,nil,err.Error())
 	}
-	if err :=dashboardRekananImpl.DashboardRekananService.BreakdownRekanan(c,pagination,param,filterNamaPekerjaan,dashboardRekananData, totalCount); err != nil {
+	if err :=dashboardRekananImpl.DashboardRekananService.BreakdownRekanan(c,pagination,param,jenis_pengadaan,filterNamaPekerjaan,dashboardRekananData, totalCount); err != nil {
 		helpers.ResultFailedJsonApi(c,nil,err.Error())
 	}
 
