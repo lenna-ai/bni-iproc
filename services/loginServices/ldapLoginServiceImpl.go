@@ -147,6 +147,10 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		log.Println(err)
         return false, nil,"", errors.New("badPwdCount tidak ditemukan")
 	}
+	var roleMenuView = new([]loginmodel.RoleMenuView)
+	if err := ldapLoginServiceImpl.LoginRepository.RoleMenuView(f,roleMenuView,entry.GetAttributeValue("promotsrole")); err != nil{
+		return false, nil,"", errors.New("error role menu view")
+	}
 
 	userInfo := map[string]string{
 		"displayName":        entry.GetAttributeValue("displayName"),
@@ -162,6 +166,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		"physicalDeliveryOfficeName":        entry.GetAttributeValue("physicalDeliveryOfficeName"),
 	}
 	token,claims, _ := ldapLoginServiceImpl.JWTTokenClaims(f,userInfo)
+	
 	return true, claims,token, nil
 }
 
