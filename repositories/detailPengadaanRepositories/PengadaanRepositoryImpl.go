@@ -100,3 +100,10 @@ func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectS
 	}
 	return *dataSumDetailPengadaan, nil
 }
+
+func (repository *PengadaanRepositoryImpl) DynamicPengadaan(c *fiber.Ctx,table string, dataResult *[]map[string]any) error {
+	if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Table(table).Find(dataResult).Error; err != nil  {
+		return err
+	}
+	return nil
+}

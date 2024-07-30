@@ -16,6 +16,7 @@ type PengadaanDoneController interface {
 	FilterPengadaan(c *fiber.Ctx) error
 	SumPengadaan(c *fiber.Ctx) error
 	EfisiensiPengadaan(c *fiber.Ctx) error
+	DynamicPengadaan(c *fiber.Ctx) error
 }
 
 func NewDetailPengadaanController(DetailPengadaanFilterService detailpengadaanservices.PengadaanService) *PengadaanControllerImpl {

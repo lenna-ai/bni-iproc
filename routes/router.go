@@ -55,6 +55,7 @@ func Router(app *fiber.App) {
 	pengadaan.Get("/filter", allControllers.PengadaanControllerImpl.FilterPengadaan)
 	pengadaan.Get("/sum", allControllers.PengadaanControllerImpl.SumPengadaan)
 	pengadaan.Get("/efisiensi", allControllers.PengadaanControllerImpl.EfisiensiPengadaan)
+	pengadaan.Get("/dynamic/table", allControllers.PengadaanControllerImpl.DynamicPengadaan)
 
 	pengadaan.Get("/status", allControllers.PengadaanControllerImpl.IndexStatus)
 	pengadaan.Get("/type_pengadaan", allControllers.PengadaanControllerImpl.IndexType)

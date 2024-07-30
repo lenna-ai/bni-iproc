@@ -90,3 +90,10 @@ func (repository *PengadaanServiceImpl) EfisiensiPengadaan(c *fiber.Ctx, estimas
 
 	return resultSisaAnggaran, resultEfisiensi
 }
+
+func (repository *PengadaanServiceImpl) DynamicPengadaan(c *fiber.Ctx,table string, dataResult *[]map[string]any) error {
+	if err := repository.PengadaanFilterRepository.DynamicPengadaan(c,table,dataResult); err != nil {
+		return err
+	}
+	return nil
+}

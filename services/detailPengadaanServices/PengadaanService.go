@@ -17,6 +17,7 @@ type PengadaanService interface {
 	FilterPengadaan(c *fiber.Ctx,usePagination bool, filter map[string]string,totalCount *int64) ([]detailmodel.PengadaanFilter, error)
 	SumPengadaan(c *fiber.Ctx, SUM1 string, SUM2 string, GROUP_BY string, WHERE_KEY string, WHERE_VALUE string, WHERE_AND string) ([]detailmodel.DataResultSumPengadaan, error)
 	EfisiensiPengadaan(c *fiber.Ctx, estimasi_nilai_pengadaan int, nilai_spk int) (resultSisaAnggaran int, resultEfisiensi float64)
+	DynamicPengadaan(c *fiber.Ctx,table string, dataResult *[]map[string]any) error
 }
 
 func NewDetailPengadaanService(repository detailpengadaanrepositories.PengadaanRepository) *PengadaanServiceImpl {

@@ -114,3 +114,13 @@ func (FilterController *PengadaanControllerImpl) EfisiensiPengadaan(c *fiber.Ctx
 	}
 	return helpers.ResultSuccessJsonApi(c, data)
 }
+
+func (FilterController *PengadaanControllerImpl) DynamicPengadaan(c *fiber.Ctx) error  {
+	defer helpers.RecoverPanicContext(c)
+	var dataResult = new([]map[string]any)
+	table := c.Query("table")
+	if err := FilterController.PengadaanFilterService.DynamicPengadaan(c,table,dataResult); err != nil {
+		return helpers.ResultFailedJsonApi(c, dataResult, err.Error())
+	}
+	return helpers.ResultSuccessJsonApi(c, dataResult)
+}

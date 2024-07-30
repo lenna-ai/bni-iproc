@@ -17,6 +17,7 @@ type PengadaanRepository interface {
 	FilterPengadaanUmum(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error)
 	FilterPengadaanMonitoringPengadaan(c *fiber.Ctx,usePagination bool, stringWhere string,totalCount *int64) ([]detailmodel.PengadaanFilter, error)
 	SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error)
+	DynamicPengadaan(c *fiber.Ctx,table string, dataResult *[]map[string]any) error
 }
 
 func NewDetailPengadaanRepository(db *gorm.DB) *PengadaanRepositoryImpl {
