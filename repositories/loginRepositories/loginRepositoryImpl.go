@@ -24,7 +24,15 @@ func (loginRepositoryImpl LoginRepositoryImpl) CheckUser(f *fiber.Ctx,reqLogin *
 }
 
 func (loginRepositoryImpl LoginRepositoryImpl) ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage) error {
-	if err := loginRepositoryImpl.DB.Find(dataCode).Error; err != nil {
+	if err := loginRepositoryImpl.DB.Where("ATTRIBUTE = userAccountControl").Find(dataCode).Error; err != nil {
+		log.Println("loginRepositoryImpl.DB.Find(dataCode).Error")
+		return errors.New(err.Error())
+	}
+	return nil
+}
+
+func (loginRepositoryImpl LoginRepositoryImpl) UnitRole(f *fiber.Ctx, UnitRole *[]loginmodel.UnitRole,physicalDeliveryOfficeName string) error {
+	if err := loginRepositoryImpl.DB.Where("KODE_UNIT = ?",physicalDeliveryOfficeName).Find(UnitRole).Error; err != nil {
 		log.Println("loginRepositoryImpl.DB.Find(dataCode).Error")
 		return errors.New(err.Error())
 	}

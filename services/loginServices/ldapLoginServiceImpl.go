@@ -22,7 +22,6 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	var (
 		ldapServer,ldapPort,ldapBindDN,ldapPassword,ldapSearchDN    string
 	)
-	var adCodeMessage = new([]loginmodel.ADCodeMessage)
 	if reqLogin.LocationDepartment == "HQ" {
 		ldapServer   = os.Getenv("LDAP_SERVER_HQ")
 		ldapPort     = os.Getenv("LDAP_PORT_HQ")
@@ -57,7 +56,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		ldapSearchDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf("(sAMAccountName=%s)", reqLogin.Username),
-		[]string{"dn", "displayName", "department", "maverickApps", "whenChanged", "sAMAccountName", "userAccountControl", "mail","promotsrole","lastLogonTimestamp","badPwdCount","physicalDeliveryOfficeName"},
+		[]string{"dn", "displayName", "department", "whenChanged", "sAMAccountName", "userAccountControl", "mail","promotsrole","lastLogonTimestamp","badPwdCount","physicalDeliveryOfficeName"},
 		nil,
 	)
 
@@ -82,25 +81,22 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	entry := sr.Entries[0]
-	// if entry.GetAttributeValue("maverickApps") == "" {
-	// 	log.Println("entry.GetAttributeValue(maverickApps)")
-	// 	return false, nil,"", err
-	// }
 
 	log.Printf("userAccountControl => %v\n", entry.GetAttributeValue("userAccountControl"))
 	if entry.GetAttributeValue("userAccountControl") == "" {
 		log.Printf("entry.GetAttributeValue(userAccountControl) => %v", entry.GetAttributeValue("userAccountControl"))
 		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
+        return false, nil,"", errors.New("userAccountControl tidak ditemukan")
 	}
 
 	log.Printf("mail => %v\n", entry.GetAttributeValue("mail"))
 	if entry.GetAttributeValue("mail") == "" {
 		log.Println("entry.GetAttributeValue(mail)")
 		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
+        return false, nil,"", errors.New("mail tidak ditemukan")
 	}
 
+	var adCodeMessage = new([]loginmodel.ADCodeMessage)
 	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage)
 	log.Println(adCodeMessage)
 	for _, v := range *adCodeMessage {
@@ -111,12 +107,29 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 			}
 		}
 	}
+	
+	log.Printf("physicalDeliveryOfficeName => %v\n",entry.GetAttributeValue("physicalDeliveryOfficeName"))
+	if entry.GetAttributeValue("physicalDeliveryOfficeName") == "" {
+		log.Println("entry.GetAttributeValue(physicalDeliveryOfficeName)")
+		log.Println(err)
+        return false, nil,"", errors.New("kode unit tidak terdaftar")
+	}
+
+	/**
+
+	Unit Role Validation
+	var unitRole = new([]loginmodel.UnitRole)
+	ldapLoginServiceImpl.LoginRepository.UnitRole(f,unitRole, entry.GetAttributeValue("physicalDeliveryOfficeName"))
+	if len(*unitRole) < 1 {
+		return false, nil,"", errors.New("physicalDeliveryOfficeName/unitRoles tidak ditemukan")
+	}
+	*/
 
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
 		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
+        return false, nil,"", errors.New("role tidak terdaftar")
 	}
 
 	log.Printf("lastLogonTimestamp => %+v\n",entry.GetAttributeValue("lastLogonTimestamp"))
@@ -124,7 +137,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	if entry.GetAttributeValue("lastLogonTimestamp") == "" {
 		log.Println("entry.GetAttributeValue(lastLogonTimestamp)")
 		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
+        return false, nil,"", errors.New("lastLogonTimestamp tidak ditemukan")
 	}
 
 	log.Printf("badPwdCount => %+v\n",entry.GetAttributeValue("badPwdCount"))
@@ -132,14 +145,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	if entry.GetAttributeValue("badPwdCount") == "" {
 		log.Println("entry.GetAttributeValue(badPwdCount)")
 		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
-	}
-
-	log.Printf("physicalDeliveryOfficeName => %v\n",entry.GetAttributeValue("physicalDeliveryOfficeName"))
-	if entry.GetAttributeValue("physicalDeliveryOfficeName") == "" {
-		log.Println("entry.GetAttributeValue(physicalDeliveryOfficeName)")
-		log.Println(err)
-        return false, nil,"", errors.New("invalid username/password")
+        return false, nil,"", errors.New("badPwdCount tidak ditemukan")
 	}
 
 	userInfo := map[string]string{

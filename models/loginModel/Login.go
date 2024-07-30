@@ -30,3 +30,8 @@ type ADCodeMessage struct {
     Message string
     IsSuccess bool
 }
+
+type UnitRole struct {
+    GroupRoleName string
+    KodeUnit int
+}
