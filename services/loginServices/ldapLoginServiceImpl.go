@@ -119,7 +119,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
         return false, nil,"", errors.New("invalid username/password")
 	}
 
-	// log.Printf("lastLogonTimestamp => %v\n",entry.GetAttributeValue("lastLogonTimestamp"))
+	log.Printf("lastLogonTimestamp => %+v\n",entry.GetAttributeValue("lastLogonTimestamp"))
 	// log.Println(entry.GetAttributeValue("lastLogonTimestamp"))
 	// if entry.GetAttributeValue("lastLogonTimestamp") == "" {
 	// 	log.Println("entry.GetAttributeValue(lastLogonTimestamp)")
@@ -127,7 +127,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
     //     return false, nil,"", errors.New("invalid username/password")
 	// }
 
-	// log.Printf("badPwdCount => %v\n",entry.GetAttributeValue("badPwdCount"))
+	log.Printf("badPwdCount => %+v\n",entry.GetAttributeValue("badPwdCount"))
 	// log.Println(entry.GetAttributeValue("badPwdCount"))
 	// if entry.GetAttributeValue("badPwdCount") == "" {
 	// 	log.Println("entry.GetAttributeValue(badPwdCount)")
