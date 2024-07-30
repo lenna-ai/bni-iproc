@@ -15,10 +15,10 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) Rekanan(c 
 
 	if strings.ToLower(param) == "non it"{
 		// whereQuery = "where p.jenis_pengadaan not in ('IT','Premises') and p.NAMA_VENDOR is not null"
-		whereQuery = "p.jenis_pengadaan not in ('IT','Premises') and p.NAMA_VENDOR is not null"
+		whereQuery = "p.jenis_pengadaan not in ('IT','Premises') and p.NAMA_VENDOR is not null AND STATUS_PENGADAAN = 'Done' AND NILAI_SPK IS NOT NULL"
 	}else{
 		// whereQuery = fmt.Sprintf(`where lower(p.jenis_pengadaan) = '%v' and p.NAMA_VENDOR is not null`, strings.ToLower(param))
-		whereQuery = fmt.Sprintf(`lower(p.jenis_pengadaan) = '%v' and p.NAMA_VENDOR is not null`, strings.ToLower(param))
+		whereQuery = fmt.Sprintf(`lower(p.jenis_pengadaan) = '%v' and p.NAMA_VENDOR is not null AND STATUS_PENGADAAN = 'Done' AND NILAI_SPK IS NOT NULL`, strings.ToLower(param))
 	}
 	if filterNamaVendor != "" {
 		whereQuery += fmt.Sprintf(" and NAMA_VENDOR LIKE '%%%s%%'", filterNamaVendor)
@@ -62,7 +62,7 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownR
 	if filterNamaPekerjaan != "" {
 		whereQuery += fmt.Sprintf("and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
 	}
-	whereQuery += fmt.Sprintf("AND NAMA_VENDOR = '%v'AND STATUS_PENGADAAN = 'Done' AND NILAI_SPK IS NOT NULL",param)
+	whereQuery += fmt.Sprintf("AND NAMA_VENDOR = '%v' AND STATUS_PENGADAAN = 'Done' AND NILAI_SPK IS NOT NULL",param)
 
 	if usePagination {
 		dashboardRekananRepositoryImpl.DB.Model(breakdownRekananData).Where(whereQuery).Count(totalCount)
