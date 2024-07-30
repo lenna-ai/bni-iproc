@@ -101,9 +101,16 @@ func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectS
 	return *dataSumDetailPengadaan, nil
 }
 
-func (repository *PengadaanRepositoryImpl) DynamicPengadaan(c *fiber.Ctx,table string, dataResult *[]map[string]any) error {
-	if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Table(table).Find(dataResult).Error; err != nil  {
-		return err
+func (repository *PengadaanRepositoryImpl) DynamicPengadaan(c *fiber.Ctx,pagination bool,table string, dataResult *[]map[string]any,totalCount *int64) error {
+	if pagination {
+		repository.DB.Table(table).Count(totalCount)
+		if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Table(table).Find(dataResult).Error; err != nil  {
+			return err
+		}
+	}else{
+		if err := repository.DB.Table(table).Find(dataResult).Error; err != nil  {
+			return err
+		}
 	}
 	return nil
 }

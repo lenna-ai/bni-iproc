@@ -119,8 +119,18 @@ func (FilterController *PengadaanControllerImpl) DynamicPengadaan(c *fiber.Ctx) 
 	defer helpers.RecoverPanicContext(c)
 	var dataResult = new([]map[string]any)
 	table := c.Query("table")
-	if err := FilterController.PengadaanFilterService.DynamicPengadaan(c,table,dataResult); err != nil {
+
+	var totalCount = new(int64)
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	var pagination bool 
+
+	if page != 0 && pageSize != 0 {
+		pagination = true
+	}
+
+	if err := FilterController.PengadaanFilterService.DynamicPengadaan(c,pagination,table,dataResult,totalCount); err != nil {
 		return helpers.ResultFailedJsonApi(c, dataResult, err.Error())
 	}
-	return helpers.ResultSuccessJsonApi(c, dataResult)
+	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,dataResult))
 }
