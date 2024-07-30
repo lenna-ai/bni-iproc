@@ -62,7 +62,7 @@ func (dashboardRekananRepositoryImpl *DashboardRekananRepositoryImpl) BreakdownR
 	if filterNamaPekerjaan != "" {
 		whereQuery += fmt.Sprintf("and NAMA_PEKERJAAN LIKE '%%%s%%'", filterNamaPekerjaan)
 	}
-	whereQuery += fmt.Sprintf("AND NAMA_VENDOR = '%v'AND STATUS_PENGADAAN = 'Done'",param)
+	whereQuery += fmt.Sprintf("AND NAMA_VENDOR = '%v'AND STATUS_PENGADAAN = 'Done' AND NILAI_SPK IS NOT NULL",param)
 
 	if usePagination {
 		dashboardRekananRepositoryImpl.DB.Model(breakdownRekananData).Where(whereQuery).Count(totalCount)
