@@ -126,7 +126,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		}
 	}
 	if isSuccessPhysicalDeliveryOfficeName {
-		return false, nil, "", errors.New(entry.GetAttributeValue("physicalDeliveryOfficeName") + " tidak ditemukan di sistem kami")
+		return false, nil, "", errors.New("physicalDeliveryOfficeName: " + entry.GetAttributeValue("physicalDeliveryOfficeName") + " tidak ditemukan di sistem kami")
 	}
 	
 
