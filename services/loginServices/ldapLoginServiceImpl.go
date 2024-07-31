@@ -126,7 +126,6 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	*/
 
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
-	fmt.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
 		log.Println(err)
@@ -135,14 +134,16 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"promotsrole")
 	var isSuccessPromotsRole = true
+
 	for _, v := range *adCodeMessage {
 		if v.Code == entry.GetAttributeValue("promotsrole") {
-			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(promotsrole)")
+			log.Println("Code:", v.Code, "matches", entry.GetAttributeValue("promotsrole"))
 			isSuccessPromotsRole = false
 		}
 	}
+
 	if isSuccessPromotsRole {
-		return false, nil,"", errors.New("role tidak terdaftar di sistem kami")
+		return false, nil, "", errors.New(entry.GetAttributeValue("promotsrole") + " tidak ditemukan di sistem kami")
 	}
 
 	log.Printf("lastLogonTimestamp => %+v\n",entry.GetAttributeValue("lastLogonTimestamp"))
