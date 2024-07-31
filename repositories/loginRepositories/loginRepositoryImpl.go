@@ -31,8 +31,8 @@ func (loginRepositoryImpl LoginRepositoryImpl) ADCodeMessage(f *fiber.Ctx, dataC
 	return nil
 }
 
-func (loginRepositoryImpl LoginRepositoryImpl) UnitRole(f *fiber.Ctx, unitRole *[]loginmodel.UnitRole,physicalDeliveryOfficeName string) error {
-	if err := loginRepositoryImpl.DB.Where("KODE_UNIT = ?",physicalDeliveryOfficeName).Find(unitRole).Error; err != nil {
+func (loginRepositoryImpl LoginRepositoryImpl) UnitRole(f *fiber.Ctx, unitRole *[]loginmodel.UnitRole,physicalDeliveryOfficeName string, roleName string) error {
+	if err := loginRepositoryImpl.DB.Where("KODE_UNIT = ? and GROUP_ROLE_NAME = ?",physicalDeliveryOfficeName, roleName).Find(unitRole).Error; err != nil {
 		log.Println("loginRepositoryImpl.DB.Find(dataCode).Error")
 		return errors.New(err.Error())
 	}

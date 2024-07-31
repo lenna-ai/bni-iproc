@@ -115,20 +115,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
         return false, nil,"", errors.New("kode unit tidak terdaftar")
 	}
 
-
 	// Unit Role Validation
-	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"physicalDeliveryOfficeName")
-	var isSuccessPhysicalDeliveryOfficeName = true
-	for _, v := range *adCodeMessage {
-		if v.Code == entry.GetAttributeValue("physicalDeliveryOfficeName") {
-			log.Println("Code:", v.Code, "physicalDeliveryOfficeName : ", entry.GetAttributeValue("physicalDeliveryOfficeName"))
-			isSuccessPhysicalDeliveryOfficeName = false
-		}
+	unitRole := new([]loginmodel.UnitRole)
+	ldapLoginServiceImpl.LoginRepository.UnitRole(f,unitRole,entry.GetAttributeValue("physicalDeliveryOfficeName"),entry.GetAttributeValue("promotsrole"))
+	log.Println("promotsrole => "+ entry.GetAttributeValue("promotsrole"))
+	log.Println("physicalDeliveryOfficeName - "+entry.GetAttributeValue("physicalDeliveryOfficeName"))
+	if len(*unitRole) < 1 {
+		return false, nil, "", errors.New("kode unit: " + entry.GetAttributeValue("physicalDeliveryOfficeName") + " dan promotRole "+ entry.GetAttributeValue("promotsrole") +" tidak ditemukan di sistem kami")
 	}
-	if isSuccessPhysicalDeliveryOfficeName {
-		return false, nil, "", errors.New("kode unit: " + entry.GetAttributeValue("physicalDeliveryOfficeName") + " tidak ditemukan di sistem kami")
-	}
-	
 
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
