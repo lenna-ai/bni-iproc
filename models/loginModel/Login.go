@@ -26,7 +26,7 @@ type ResponseDataUserLogin struct {
 }
 
 type ADCodeMessage struct {
-    Code int
+    Code string
     Message string
     IsSuccess bool
 }

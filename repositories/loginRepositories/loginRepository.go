@@ -13,7 +13,7 @@ type LoginRepositoryImpl struct {
 
 type LoginRepository interface {
 	CheckUser(f *fiber.Ctx,reqLogin *loginmodel.RequestLogin,users *[]usermodel.Users)(error)
-	ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage) error
+	ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage,attribute string) error
 	UnitRole(f *fiber.Ctx, UnitRole *[]loginmodel.UnitRole, physicalDeliveryOfficeName string) error
 	RoleMenuView(f *fiber.Ctx, roleMenuView *[]loginmodel.RoleMenuView,roleName string) error
 }

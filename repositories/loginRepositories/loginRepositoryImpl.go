@@ -23,8 +23,8 @@ func (loginRepositoryImpl LoginRepositoryImpl) CheckUser(f *fiber.Ctx,reqLogin *
 	return nil
 }
 
-func (loginRepositoryImpl LoginRepositoryImpl) ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage) error {
-	if err := loginRepositoryImpl.DB.Where("ATTRIBUTE = userAccountControl").Find(dataCode).Error; err != nil {
+func (loginRepositoryImpl LoginRepositoryImpl) ADCodeMessage(f *fiber.Ctx, dataCode *[]loginmodel.ADCodeMessage,attribute string) error {
+	if err := loginRepositoryImpl.DB.Where("ATTRIBUTE = ?",attribute).Find(dataCode).Error; err != nil {
 		log.Println("loginRepositoryImpl.DB.Find(dataCode).Error")
 		return errors.New(err.Error())
 	}

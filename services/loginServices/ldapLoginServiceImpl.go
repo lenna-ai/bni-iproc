@@ -81,6 +81,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	entry := sr.Entries[0]
+	var adCodeMessage = new([]loginmodel.ADCodeMessage)
+
 
 	log.Printf("userAccountControl => %v\n", entry.GetAttributeValue("userAccountControl"))
 	if entry.GetAttributeValue("userAccountControl") == "" {
@@ -89,23 +91,21 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
         return false, nil,"", errors.New("userAccountControl tidak ditemukan")
 	}
 
+	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"userAccountControl")
+	for _, v := range *adCodeMessage {
+		if v.Code == entry.GetAttributeValue("userAccountControl") {
+			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(userAccountControl)")
+			if !v.IsSuccess {
+				return false, nil,"", errors.New(v.Message +" - Status Code: " + v.Code)
+			}
+		}
+	}
+
 	log.Printf("mail => %v\n", entry.GetAttributeValue("mail"))
 	if entry.GetAttributeValue("mail") == "" {
 		log.Println("entry.GetAttributeValue(mail)")
 		log.Println(err)
         return false, nil,"", errors.New("mail tidak ditemukan")
-	}
-
-	var adCodeMessage = new([]loginmodel.ADCodeMessage)
-	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage)
-	log.Println(adCodeMessage)
-	for _, v := range *adCodeMessage {
-		if strconv.Itoa(v.Code) == entry.GetAttributeValue("userAccountControl") {
-			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(userAccountControl)")
-			if !v.IsSuccess {
-				return false, nil,"", errors.New(v.Message +" - Status Code: " + strconv.Itoa(v.Code))
-			}
-		}
 	}
 	
 	log.Printf("physicalDeliveryOfficeName => %v\n",entry.GetAttributeValue("physicalDeliveryOfficeName"))
@@ -126,10 +126,23 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	*/
 
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
+	fmt.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
 		log.Println(err)
         return false, nil,"", errors.New("role tidak terdaftar")
+	}
+
+	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"promotsrole")
+	var isSuccessPromotsRole = true
+	for _, v := range *adCodeMessage {
+		if v.Code == entry.GetAttributeValue("promotsrole") {
+			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(promotsrole)")
+			isSuccessPromotsRole = false
+		}
+	}
+	if isSuccessPromotsRole {
+		return false, nil,"", errors.New("role tidak terdaftar di sistem kami")
 	}
 
 	log.Printf("lastLogonTimestamp => %+v\n",entry.GetAttributeValue("lastLogonTimestamp"))
