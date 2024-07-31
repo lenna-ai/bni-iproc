@@ -104,7 +104,7 @@ func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectS
 func (repository *PengadaanRepositoryImpl) DynamicPengadaan(c *fiber.Ctx,pagination bool,table string,filter map[string]string,stringWhere string, dataResult *[]map[string]any,totalCount *int64) error {
 	if len(filter) > 0 {
 		if pagination {
-			repository.DB.Table(table).Count(totalCount)
+			repository.DB.Table(table).Where(stringWhere).Count(totalCount)
 			if err := repository.DB.Scopes(gormhelpers.Paginate(c)).Table(table).Where(stringWhere).Find(dataResult).Error; err != nil  {
 				return err
 			}
