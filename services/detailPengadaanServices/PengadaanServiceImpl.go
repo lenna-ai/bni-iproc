@@ -91,8 +91,19 @@ func (repository *PengadaanServiceImpl) EfisiensiPengadaan(c *fiber.Ctx, estimas
 	return resultSisaAnggaran, resultEfisiensi
 }
 
-func (repository *PengadaanServiceImpl) DynamicPengadaan(c *fiber.Ctx,pagination bool,table string, dataResult *[]map[string]any,totalCount *int64) error {
-	if err := repository.PengadaanFilterRepository.DynamicPengadaan(c,pagination,table,dataResult,totalCount); err != nil {
+func (repository *PengadaanServiceImpl) DynamicPengadaan(c *fiber.Ctx,pagination bool,table string, filter map[string]string, dataResult *[]map[string]any,totalCount *int64) error {
+	var stringWhere string
+	var loopFilter int
+	for k, v := range filter {
+		if loopFilter < len(filter)-1 {
+			stringWhere += fmt.Sprintf("%v = '%v' AND ", k, v)
+			loopFilter++
+		} else {
+			stringWhere += fmt.Sprintf("%v = '%v'", k, v)
+		}
+	}
+
+	if err := repository.PengadaanFilterRepository.DynamicPengadaan(c,pagination,table,filter,stringWhere,dataResult,totalCount); err != nil {
 		return err
 	}
 	return nil

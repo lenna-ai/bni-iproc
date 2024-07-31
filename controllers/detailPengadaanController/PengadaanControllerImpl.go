@@ -120,6 +120,7 @@ func (FilterController *PengadaanControllerImpl) DynamicPengadaan(c *fiber.Ctx) 
 	var dataResult = new([]map[string]any)
 	table := c.Query("table")
 
+	status_pengadaan := c.Query("filter")
 	var totalCount = new(int64)
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
@@ -129,7 +130,14 @@ func (FilterController *PengadaanControllerImpl) DynamicPengadaan(c *fiber.Ctx) 
 		pagination = true
 	}
 
-	if err := FilterController.PengadaanFilterService.DynamicPengadaan(c,pagination,table,dataResult,totalCount); err != nil {
+	filter := make(map[string]string)
+	for _, valueSplitStatusPengadaan := range strings.Split(status_pengadaan, ",") {
+		for i := 0; i < len(strings.Split(valueSplitStatusPengadaan, "="))/2; i++ {
+			filter[strings.Split(valueSplitStatusPengadaan, "=")[i]] = strings.Split(valueSplitStatusPengadaan, "=")[i+1]
+		}
+	}
+
+	if err := FilterController.PengadaanFilterService.DynamicPengadaan(c,pagination,table,filter,dataResult,totalCount); err != nil {
 		return helpers.ResultFailedJsonApi(c, dataResult, err.Error())
 	}
 	return helpers.ResultSuccessJsonApi(c,gormhelpers.PaginatedResponse(page,pageSize,*totalCount,dataResult))
