@@ -62,13 +62,13 @@ func InitControllerServiceRepository(allControllers *controllers.AllControllers)
 	pembayaranPrestasiController := pembayaranprestasicontroller.NewPembayaranPrestasiController(pembayaranPrestasiServices)
 
 	allControllers.LoginController = loginController
-	allControllers.DashboardControllerImpl = dashboardcontroller
+	allControllers.DashboardController = dashboardcontroller
 	allControllers.DashboardRekananController = dashboardRekanan
-	allControllers.MonitoringProsesPengadaanImpl = monitoringProsesPengadaanController
-	allControllers.PembayaranMonitoringControllerImpl = dashboardMonitoringController
-	allControllers.PembayaranRutinControllerImpl = PembayaranRutinController
-	allControllers.PengadaanControllerImpl = detailPengadaanFilterController
-	allControllers.PembayaranPrestasiControllerImpl = pembayaranPrestasiController
+	allControllers.MonitoringProsesPengadaan = monitoringProsesPengadaanController
+	allControllers.PembayaranMonitoringController = dashboardMonitoringController
+	allControllers.PembayaranRutinController = PembayaranRutinController
+	allControllers.PengadaanController = detailPengadaanFilterController
+	allControllers.PembayaranPrestasiController = pembayaranPrestasiController
 
 	// cannot use pembayaranMonitoringServices (variable of type *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl) as dashboardpembayaraanservices.PembayaranMonitoringServices value in argument to dashboardpembayaraancontroller.NewPembayaranMonitoringController: *dashboardpembayaraanservices.PembayaranMonitoringServicesImpl does not implement dashboardpembayaraanservices.PembayaranMonitoringServices (missing method IndexPengadaan)
 	// return allControllers

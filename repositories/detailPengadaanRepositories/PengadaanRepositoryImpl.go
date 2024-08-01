@@ -43,7 +43,7 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 
 		err = repository.DB.Scopes(gormhelpers.Paginate(c)).Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
 			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		}).Where(stringWhere).Order("ORDER BY TO_TIMESTAMP(NVL(SCHEDULE_END_DATE, '1900-01-01 00:00:00.0000000'), 'YYYY-MM-DD HH24:MI:SS.FF7') DESC").Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err
@@ -52,7 +52,7 @@ func (repository *PengadaanRepositoryImpl) FilterPengadaanMonitoringPengadaan(c 
 	}else{
 		err := repository.DB.Model(dataFilterDetailPengadaan).Preload("MonitoringProses",func(db *gorm.DB) *gorm.DB {
 			return db.Order("ID DESC") // Change "created_at" to the field you want to order by
-		}).Where(stringWhere).Find(dataFilterDetailPengadaan).Error
+		}).Where(stringWhere).Order("TO_TIMESTAMP(NVL(SCHEDULE_END_DATE, '1900-01-01 00:00:00.0000000'), 'YYYY-MM-DD HH24:MI:SS.FF7') DESC").Find(dataFilterDetailPengadaan).Error
 		if err != nil {
 			log.Printf("error PengadaanRepositoryImpl.FilterPengadaan %v\n", err)
 			return *dataFilterDetailPengadaan, err

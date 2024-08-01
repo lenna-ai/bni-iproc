@@ -16,6 +16,10 @@ func main() {
 	app.Use(cors.New())
 	config.Logger(app)
 	routes.Router(app)
+
+	// testLoginController := injector.InitializeController()
+	// fmt.Println(testLoginController)
+
 	if err := app.Listen(":3000"); err != nil {
 		panic(err.Error())
 	}

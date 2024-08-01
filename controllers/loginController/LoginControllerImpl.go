@@ -2,6 +2,7 @@ package loginController
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -44,7 +45,7 @@ func (loginControllerImpl *LoginControllerImpl) Ldap(c *fiber.Ctx) error {
 }
 
 func (loginControllerImpl *LoginControllerImpl) Vendor(c *fiber.Ctx) error {
-	defer helpers.RecoverPanicContext(c)
+	// defer helpers.RecoverPanicContext(c)
 	reqLogin := new(loginmodel.RequestLogin)
 	if err := c.BodyParser(reqLogin); err != nil {
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
@@ -58,6 +59,7 @@ func (loginControllerImpl *LoginControllerImpl) Vendor(c *fiber.Ctx) error {
 
 	token,data,err := loginControllerImpl.LdapLoginService.AuthVendor(c,reqLogin)
 	if err != nil {
+		fmt.Println(err)
 		return helpers.ResultFailedJsonApi(c, nil, err.Error())
 	}
 
@@ -84,5 +86,9 @@ func (loginControllerImpl *LoginControllerImpl) ErrorHandler(c *fiber.Ctx,err er
 	if err != nil {
 		return helpers.ResultUnauthorizedJsonApi(c,nil, errors.New("invalid or expired JWT").Error())
 	}
+	return nil
+}
+func (loginControllerImpl *LoginControllerImpl) Arifin(c *fiber.Ctx) error {
+	fmt.Println("arifin")
 	return nil
 }
