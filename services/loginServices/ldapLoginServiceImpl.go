@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-ldap/ldap/v3"
@@ -14,6 +16,7 @@ import (
 	"github.com/lenna-ai/bni-iproc/helpers/jwtHelpers/decrypt"
 	loginmodel "github.com/lenna-ai/bni-iproc/models/loginModel"
 	usermodel "github.com/lenna-ai/bni-iproc/models/userModel"
+	"github.com/shirou/gopsutil/host"
 )
 
 
@@ -218,8 +221,6 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthVendor(f *fiber.Ctx,reqLog
 	return token, dataUserResult, nil
 }	
 
-
-
 func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,data any) (string, jwt.MapClaims, error) {
 	time_env := os.Getenv("TIME_JWT_EXP")
 	secret_token := os.Getenv("SECRET_TOKEN")
@@ -244,4 +245,49 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) JWTTokenClaims(f *fiber.Ctx,da
 	}
 
 	return t,claims,nil
+}
+
+func getDataRequestLogin(c *fiber.Ctx) error {
+	// Get IP address
+	ipAddress := c.IP()
+
+	// Get MAC address
+	macAddress := getMacAddress()
+
+	// Get hostname
+	hostname, _ := os.Hostname()
+
+	// Get browser agent
+	browserAgent := c.Get("User-Agent")
+	// curl -H "User-Agent: MyCustomUserAgent/1.0" http://localhost:3000/testing/login
+
+	// Get OS version
+	osVersion, _ := getOSVersion()
+
+	response := fmt.Sprintf("IP Address: %s\nMAC Address: %s\nHostname: %s\nBrowser Agent: %s\nOS Version: %s\n",
+		ipAddress, macAddress, hostname, browserAgent, osVersion)
+	fmt.Println(response)
+	return nil
+}
+
+func getMacAddress() string {
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return ""
+	}
+
+	for _, interf := range interfaces {
+		if interf.Flags&net.FlagUp != 0 && !strings.HasPrefix(interf.Name, "lo") {
+			return interf.HardwareAddr.String()
+		}
+	}
+	return ""
+}
+
+func getOSVersion() (string, error) {
+	info, err := host.Info()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s %s", info.Platform, info.PlatformVersion), nil
 }
