@@ -73,14 +73,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	if len(sr.Entries) == 0 {
 		log.Println("len(sr.Entries) == 0")
-		return false, nil,"", errors.New("user not found")
+		return false, nil,"", errors.New("Status User Disable")
 	}
 
 	userDn := sr.Entries[0].DN
 	err = l.Bind(userDn, reqLogin.Password)
 	if err != nil {
 		log.Println(err.Error())
-		return false, nil,"", errors.New("invalid username/password")
+		return false, nil,"", errors.New("User anda Terkunci, Silahkan hubungi Admin")
 	}
 
 	entry := sr.Entries[0]
@@ -99,7 +99,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		if v.Code == entry.GetAttributeValue("userAccountControl") {
 			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(userAccountControl)")
 			if !v.IsSuccess {
-				return false, nil,"", errors.New(v.Message +" - Status Code: " + v.Code)
+				// return false, nil,"", errors.New(v.Message +" - Status Code: " + v.Code)
+				return false, nil,"", errors.New("Password Expired")
 			}
 		}
 	}
@@ -115,7 +116,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	if entry.GetAttributeValue("physicalDeliveryOfficeName") == "" {
 		log.Println("entry.GetAttributeValue(physicalDeliveryOfficeName)")
 		log.Println(err)
-        return false, nil,"", errors.New("kode unit tidak terdaftar")
+        return false, nil,"", errors.New("Kode Unit null/kosong")
 	}
 
 	// Unit Role Validation
@@ -124,14 +125,15 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	log.Println("promotsrole => "+ entry.GetAttributeValue("promotsrole"))
 	log.Println("physicalDeliveryOfficeName - "+entry.GetAttributeValue("physicalDeliveryOfficeName"))
 	if len(*unitRole) < 1 {
-		return false, nil, "", errors.New("kode unit: " + entry.GetAttributeValue("physicalDeliveryOfficeName") + " dan promotRole "+ entry.GetAttributeValue("promotsrole") +" tidak ditemukan di sistem kami")
+		// return false, nil, "", errors.New("kode unit: " + entry.GetAttributeValue("physicalDeliveryOfficeName") + " dan promotRole "+ entry.GetAttributeValue("promotsrole") +" tidak ditemukan di sistem kami")
+		return false, nil, "", errors.New("Kode unit tidak terdaftar")
 	}
 
 	log.Printf("promotsrole => %v\n",entry.GetAttributeValue("promotsrole"))
 	if entry.GetAttributeValue("promotsrole") == "" {
 		log.Println("entry.GetAttributeValue(promotsrole)")
 		log.Println(err)
-        return false, nil,"", errors.New("role tidak terdaftar")
+        return false, nil,"", errors.New("User tidak memiliki hak akses, Silahkan hubungi Admin")
 	}
 
 	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"promotsrole")
@@ -145,7 +147,8 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	if isSuccessPromotsRole {
-		return false, nil, "", errors.New(entry.GetAttributeValue("promotsrole") + " tidak ditemukan di sistem kami")
+		// return false, nil, "", errors.New(entry.GetAttributeValue("promotsrole") + " tidak ditemukan di sistem kami")
+		return false, nil, "", errors.New("Kewenangan tidak terdaftar")
 	}
 
 	log.Printf("lastLogonTimestamp => %+v\n",entry.GetAttributeValue("lastLogonTimestamp"))
