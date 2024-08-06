@@ -75,13 +75,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		log.Println("len(sr.Entries) == 0")
 		return false, nil,"", errors.New("user tidak ditemukan")
 	}
-
-	userDn := sr.Entries[0].DN
-	err = l.Bind(userDn, reqLogin.Password)
-	if err != nil {
-		log.Println(err.Error())
-		return false, nil,"", errors.New("invalid username/password")
-	}
+	
 
 	entry := sr.Entries[0]
 	var adCodeMessage = new([]loginmodel.ADCodeMessage)
@@ -171,6 +165,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		log.Println("entry.GetAttributeValue(badPwdCount) 10")
 		log.Println(err)
         return false, nil,"", errors.New("User anda Terkunci, Silahkan hubungi Admin")
+	}
+
+
+	userDn := sr.Entries[0].DN
+	err = l.Bind(userDn, reqLogin.Password)
+	if err != nil {
+		log.Println(err.Error())
+		return false, nil,"", errors.New("invalid username/password")
 	}
 
 	var roleMenuView = new([]loginmodel.RoleMenuView)
