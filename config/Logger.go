@@ -59,7 +59,6 @@ func Logger(app *fiber.App) {
             c.Response().StatusCode(), c.IP(), c.Method(), c.OriginalURL(), c.Path(), c.Route().Path, err,
             c.Response().Body(), latencyStr,
         )
-        fmt.Print(logEntry) // Print to console
         _, err = file.WriteString(logEntry) // Write to general log file
         if err != nil {
             return err
