@@ -44,9 +44,16 @@ func Logger(app *fiber.App) {
 		return c.Next()
 	})
 
+
+	// app.Use(logger.New(logger.Config{
+	// 	Output: io.MultiWriter(file, generalLogFile),
+	// 	Format: fmt.Sprintf("body : ${locals:body} | queryParams : ${queryParams} | reqHeaders : ${reqHeaders} | time : ${time} | date : %s | status : ${status} | responseTime : ${locals:latency} | ip : ${ip} | ${method} | url : ${url} | path : ${path} | route : ${route} | error : ${error}\n",currentDate),
+	// }))
 	app.Use(logger.New(logger.Config{
 		Output: io.MultiWriter(file, generalLogFile),
-		Format: fmt.Sprintf("body : ${locals:body} | queryParams : ${queryParams} | reqHeaders : ${reqHeaders} | time : ${time} | date : %s | status : ${status} | responseTime : ${latency} | ip : ${ip} | ${method} | url : ${url} | path : ${path} | route : ${route} | error : ${error}\n",currentDate),
+		Format: fmt.Sprintf(`body : ${locals:body} | queryParams : "${queryParams}" | reqHeaders : "${reqHeaders}" | time : ${time} | date : %s | status : ${status} | responseTime : ${latency} | ip : ${ip} | ${method} | url : "${url}" | path : ${path} | route : ${route} | error : ${error}\n`, currentDate),
+		TimeZone: "Local",
+		TimeFormat: "15:04:05",
 	}))
 	
 	log.SetOutput(generalLogFile)
