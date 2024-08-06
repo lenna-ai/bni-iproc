@@ -45,28 +45,16 @@ func Logger(app *fiber.App) {
 	})
 
 
-	// Middleware untuk menghitung latensi dan menyimpannya dalam konteks lokal
-    app.Use(func(c *fiber.Ctx) error {
-        start := time.Now()
-        err := c.Next()
-        latency := time.Since(start)
-        latencyStr := fmt.Sprintf("%d", latency.Nanoseconds())
-        c.Locals("latency", latencyStr)
-        fmt.Printf("Latensi yang dihitung: %s\n", latencyStr)
-        return err
-    })
-
 	app.Use(func(c *fiber.Ctx) error {
         start := time.Now()
         err := c.Next()
         latency := time.Since(start)
-        latencyStr := fmt.Sprintf("%d", latency.Nanoseconds())
+        latencyStr := fmt.Sprintf("%d", latency.Milliseconds())
         c.Locals("latency", latencyStr)
-        fmt.Printf("Latensi yang dihitung: %s\n", latencyStr)
 
         // Catat log di sini setelah latensi dihitung
         logEntry := fmt.Sprintf(
-            "body : %s | queryParams : %s | reqHeaders : %v | time : %s | date : %s | status : %d | ip : %s | method : %s | url : %s | path : %s | route : %s | error : %v | resBody: %s | responseTime : %s\n",
+            "body : %s | queryParams : %s | reqHeaders : %v | time : %s | date : %s | status : %d | ip : %s | method : %s | url : %s | path : %s | route : %s | error : %v | resBody : %s | responseTime : %s\n",
             c.Locals("body"), c.OriginalURL(), c.GetReqHeaders(), time.Now().Format("15:04:05"), currentDate,
             c.Response().StatusCode(), c.IP(), c.Method(), c.OriginalURL(), c.Path(), c.Route().Path, err,
             c.Response().Body(), latencyStr,
