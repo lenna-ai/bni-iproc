@@ -62,7 +62,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 		[]string{"dn", "displayName", "department", "whenChanged", "sAMAccountName", "userAccountControl", "mail","promotsrole","lastLogonTimestamp","badPwdCount","physicalDeliveryOfficeName"},
 		nil,
 	)
-
+	
 	sr, err := l.Search(searchRequest)
 	
 	if err != nil {
@@ -73,7 +73,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	if len(sr.Entries) == 0 {
 		log.Println("len(sr.Entries) == 0")
-		return false, nil,"", errors.New("Status User Disable")
+		return false, nil,"", errors.New("user tidak ditemukan")
 	}
 
 	userDn := sr.Entries[0].DN
@@ -85,7 +85,6 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	entry := sr.Entries[0]
 	var adCodeMessage = new([]loginmodel.ADCodeMessage)
-
 
 	log.Printf("userAccountControl => %v\n", entry.GetAttributeValue("userAccountControl"))
 	if entry.GetAttributeValue("userAccountControl") == "" {
@@ -100,7 +99,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 			log.Println("strconv.Itoa(v.Code) == entry.GetAttributeValue(userAccountControl)")
 			if !v.IsSuccess {
 				// return false, nil,"", errors.New(v.Message +" - Status Code: " + v.Code)
-				return false, nil,"", errors.New("Password Expired")
+				return false, nil,"", errors.New(v.Message)
 			}
 		}
 	}
@@ -168,7 +167,7 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 	}
 
 	badPwdCountInt,_ := strconv.Atoi(entry.GetAttributeValue("badPwdCount"))
-	if badPwdCountInt > 10 {
+	if badPwdCountInt >= 10 {
 		log.Println("entry.GetAttributeValue(badPwdCount) 10")
 		log.Println(err)
         return false, nil,"", errors.New("User anda Terkunci, Silahkan hubungi Admin")
