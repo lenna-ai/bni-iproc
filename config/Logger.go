@@ -13,7 +13,7 @@ import (
 )
 
 func generalLogFile() *os.File {
-	generalLogFile, err := os.OpenFile("./storage/logs/general_log/"+time.Now().Format("01-02-2006")+".log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0777)
+	generalLogFile, err := os.OpenFile("./storage/logs/general_log/"+time.Now().Format("01-02-2006")+".log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0764)
     if err != nil {
 		log.Fatalf("error opening file: %v", err)
     }
@@ -26,7 +26,7 @@ func Logger(app *fiber.App) {
 	generalLogFile := generalLogFile()
 
 	currentDate := time.Now().Format("01-02-2006")
-	file, err := os.OpenFile("./storage/logs/"+time.Now().Format("01-02-2006")+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+	file, err := os.OpenFile("./storage/logs/"+time.Now().Format("01-02-2006")+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0764)
 	if err != nil {
 		panic(fmt.Sprintf("error opening file: %v", err))
 	}
@@ -86,7 +86,7 @@ func Logger(app *fiber.App) {
 func createDirStorageLogs() {
 	dir := "./storage/logs/general_log"
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err := os.MkdirAll(dir, 0777)
+		err := os.MkdirAll(dir, 0764)
 		if err != nil {
 			fmt.Println(dir, "can't created directory")
 		}
