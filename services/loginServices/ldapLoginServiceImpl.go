@@ -160,11 +160,14 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
         return false, nil,"", errors.New("badPwdCount tidak ditemukan")
 	}
 
-	badPwdCountInt,_ := strconv.Atoi(entry.GetAttributeValue("badPwdCount"))
-	if badPwdCountInt >= 10 {
-		log.Println("entry.GetAttributeValue(badPwdCount) 10")
-		log.Println(err)
-        return false, nil,"", errors.New("User anda Terkunci, Silahkan hubungi Admin")
+	ldapLoginServiceImpl.LoginRepository.ADCodeMessage(f,adCodeMessage,"badPwdCount")
+	fmt.Println(entry.GetAttributeValue("badPwdCount"))
+	if len(*adCodeMessage) > 0 {
+		if (*adCodeMessage)[0].Code == entry.GetAttributeValue("badPwdCount") {
+			log.Println("entry.GetAttributeValue(badPwdCount) 10")
+			log.Println(err)
+			return false, nil,"", errors.New("User anda Terkunci, Silahkan hubungi Admin")
+		}
 	}
 
 
