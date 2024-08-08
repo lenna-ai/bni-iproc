@@ -1,6 +1,7 @@
 package detailpengadaanrepositories
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -91,14 +92,24 @@ func (repository *PengadaanRepositoryImpl) IndexType(c *fiber.Ctx) ([]detailmode
 	return *dataListType, nil
 }
 
-func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, sumSelectStringDetailPengadaan string) ([]detailmodel.DataResultSumPengadaan, error) {
-	dataSumDetailPengadaan := new([]detailmodel.DataResultSumPengadaan)
-	err := repository.DB.Raw(sumSelectStringDetailPengadaan).Scan(&dataSumDetailPengadaan).Error
+func (repository *PengadaanRepositoryImpl) SumPengadaan(c *fiber.Ctx, SUM1, SUM2, GROUP_BY, tempWhereClauses string) ([]detailmodel.DataResultSumPengadaan, error) {
+	var dataSumDetailPengadaan []detailmodel.DataResultSumPengadaan
+
+	// Membuat query dengan menggunakan GORM
+	query := repository.DB.
+		Table("PENGADAAN").
+		Select(fmt.Sprintf("SUM(%v) AS ESTIMASI_NILAI_PENGADAAN, SUM(%v) AS NILAI_SPK, %v", SUM1, SUM2, GROUP_BY)).
+		Where(tempWhereClauses).
+		Group(GROUP_BY)
+
+	// Menjalankan query dan menyimpan hasilnya ke dalam slice
+	err := query.Scan(&dataSumDetailPengadaan).Error
 	if err != nil {
 		log.Printf("error PengadaanRepositoryImpl.SumPengadaan.Scan(dataSumDetailPengadaan).Error %v\n", err)
-		return *dataSumDetailPengadaan, err
+		return dataSumDetailPengadaan, err
 	}
-	return *dataSumDetailPengadaan, nil
+
+	return dataSumDetailPengadaan, nil
 }
 
 func (repository *PengadaanRepositoryImpl) DynamicPengadaan(c *fiber.Ctx,pagination bool,table string,filter map[string]string,stringWhere string, dataResult *[]map[string]any,totalCount *int64) error {

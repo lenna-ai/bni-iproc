@@ -1,7 +1,6 @@
 package monitoringrepositories
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -22,55 +21,58 @@ func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) JenisPengada
 	return jenisPengadaan, nil
 }
 
-func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx,totalCount *int64,jenis_pengadaan string,whereQuery string) (*[]map[string]interface{}, error) {
+func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) GetProsesPengadaan(c *fiber.Ctx, totalCount *int64, jenis_pengadaan string, whereQuery string) (*[]map[string]interface{}, error) {
 	data := new([]map[string]interface{})
 
-    // Query dasar tanpa LIMIT dan OFFSET
-    query := fmt.Sprintf(`SELECT * FROM (
-SELECT
-	NVL(MPPN.ID, 0) mmpnId,
-	p.PROCUREMENT_ID,
-	P.JENIS_PENGADAAN,
-	P.NAMA,
-	P.METODE,
-	P.TAHAPAN,
-	P.SLA_IN_DAYS,
-	TO_CHAR(P.SCHEDULE_START_DATE) START_DATE,
-	TO_CHAR(P.SCHEDULE_END_DATE) END_DATE,
-	MPPN.STATUS,
-	MPPN.STATUS_PENGADAAN_PROMOTS,
-	MPPN.KETERANGAN_JIKA_TERLAMBAT
-FROM
-	PENGADAAN p
-LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON
-	p.PROCUREMENT_ID = MPPN.PROCUREMENT_ID
-%v
-GROUP BY
-	p.PROCUREMENT_ID,
-	P.JENIS_PENGADAAN,
-	P.NAMA,
-	P.METODE,
-	P.TAHAPAN,
-	P.SLA_IN_DAYS,
-	TO_CHAR(P.SCHEDULE_START_DATE),
-	TO_CHAR(P.SCHEDULE_END_DATE),
-	MPPN.ID,
-	MPPN.STATUS,
-	MPPN.STATUS_PENGADAAN_PROMOTS,
-	MPPN.KETERANGAN_JIKA_TERLAMBAT) newtable
-ORDER BY mmpnId desc`,whereQuery)
-    
-    // Menghitung total jumlah data tanpa pagination
-    monitoringProsesPengadaanImpl.DB.Raw(query).Count(totalCount)
+	// Membuat subquery dasar tanpa LIMIT dan OFFSET
+	subQuery := monitoringProsesPengadaanImpl.DB.
+		Select(`NVL(MPPN.ID, 0) as mmpnId,
+				p.PROCUREMENT_ID,
+				P.JENIS_PENGADAAN,
+				P.NAMA,
+				P.METODE,
+				P.TAHAPAN,
+				P.SLA_IN_DAYS,
+				TO_CHAR(P.SCHEDULE_START_DATE) as START_DATE,
+				TO_CHAR(P.SCHEDULE_END_DATE) as END_DATE,
+				MPPN.STATUS,
+				MPPN.STATUS_PENGADAAN_PROMOTS,
+				MPPN.KETERANGAN_JIKA_TERLAMBAT`).
+		Table("PENGADAAN p").
+		Joins("LEFT JOIN MONITORING_PROSES_PENGADAAN_NEW mppn ON p.PROCUREMENT_ID = MPPN.PROCUREMENT_ID").
+		Where(whereQuery).
+		Group(`p.PROCUREMENT_ID,
+				P.JENIS_PENGADAAN,
+				P.NAMA,
+				P.METODE,
+				P.TAHAPAN,
+				P.SLA_IN_DAYS,
+				TO_CHAR(P.SCHEDULE_START_DATE),
+				TO_CHAR(P.SCHEDULE_END_DATE),
+				MPPN.ID,
+				MPPN.STATUS,
+				MPPN.STATUS_PENGADAAN_PROMOTS,
+				MPPN.KETERANGAN_JIKA_TERLAMBAT`)
 
+	// Membungkus subquery dan membuat query utama
+	query := monitoringProsesPengadaanImpl.DB.
+		Table("(?) as newtable", subQuery).
+		Order("mmpnId desc")
+
+	// Menghitung total jumlah data tanpa pagination
+	if err := query.Count(totalCount).Error; err != nil {
+		log.Println("Error counting total records: ", err)
+		return data, err
+	}
+
+	// Pagination
 	pageSize, offset := gormhelpers.PaginateRaw(c)
-	paginatedQuery := query + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
-    if err := monitoringProsesPengadaanImpl.DB.Raw(paginatedQuery,pageSize, offset).Scan(data).Error; err != nil {
-        log.Println("monitoringProsesPengadaanImpl.DB.Scopes(gormhelpers.Paginate(c)).Raw(query).Scan(data).Error: ", err)
-        return data, err
-    }
+	if err := query.Offset(offset).Limit(pageSize).Scan(data).Error; err != nil {
+		log.Println("Error in executing paginated query: ", err)
+		return data, err
+	}
 
-    return data, nil
+	return data, nil
 }
 
 func (monitoringProsesPengadaanImpl *MonitoringProsesPengadaanImpl) PutProsesPengadaan(c *fiber.Ctx, prosesPengadaanModel *formatterProsesPengadaanModel.PutPengadaanFormatter) error {

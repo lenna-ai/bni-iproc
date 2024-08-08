@@ -41,8 +41,9 @@ func (ldapLoginServiceImpl *LdapLoginServiceImpl) AuthUsingLDAP(f *fiber.Ctx,req
 
 	tcpdial :=  fmt.Sprintf("%s:%v", ldapServer, ldapPort)
 	l, err := ldap.Dial("tcp", tcpdial)
+	// l, err := ldap.DialURL("ldap://" + tcpdial)
     if err != nil {
-		log.Println("INI HANYA LOG TIDAK MENGELUARKAN APAPUN => ldap.Dial(tcp, log.Sprintf(s:v, ldapServer, ldapPort))")
+		log.Println("INI HANYA LOG TIDAK MENGELUARKAN APAPUN => tcp, log.Sprintf(s:v, ldapServer, ldapPort)")
 		log.Println(err.Error())
         return false, nil,"", errors.New("invalid username/password")
     }

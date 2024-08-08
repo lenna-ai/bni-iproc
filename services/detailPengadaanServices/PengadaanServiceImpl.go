@@ -74,8 +74,7 @@ func (repository *PengadaanServiceImpl) SumPengadaan(c *fiber.Ctx, SUM1 string, 
 
 	var tempWhereClauses = splitStringWhere(whereKeySplit, whereValueSplit, whereSymbolSplit)
 
-	var sumSelectStringDetailPengadaan = fmt.Sprintf("SELECT sum(%v) AS ESTIMASI_NILAI_PENGADAAN, SUM(%v) AS NILAI_SPK,%v FROM PENGADAAN WHERE %v GROUP BY %v", SUM1, SUM2, GROUP_BY, tempWhereClauses, GROUP_BY)
-	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.SumPengadaan(c, sumSelectStringDetailPengadaan)
+	dataFilterDetailPengadaan, err := repository.PengadaanFilterRepository.SumPengadaan(c, SUM1, SUM2, GROUP_BY, tempWhereClauses)
 	if err != nil {
 		log.Printf("error PengadaanFilterRepository.FilterPengadaan %v\n", err)
 		return dataFilterDetailPengadaan, err
