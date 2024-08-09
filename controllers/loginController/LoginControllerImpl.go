@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lenna-ai/bni-iproc/helpers"
 	jwthelpers "github.com/lenna-ai/bni-iproc/helpers/jwtHelpers"
+	"github.com/lenna-ai/bni-iproc/helpers/jwtHelpers/decrypt"
 	loginmodel "github.com/lenna-ai/bni-iproc/models/loginModel"
 )
 
@@ -89,6 +91,31 @@ func (loginControllerImpl *LoginControllerImpl) ErrorHandler(c *fiber.Ctx,err er
 	return nil
 }
 func (loginControllerImpl *LoginControllerImpl) Arifin(c *fiber.Ctx) error {
-	fmt.Println("arifin")
+	// Load the environment variables (make sure to use a library like godotenv or set them manually)
+	// Assuming the environment variables are already loaded
+	secret_key_login := os.Getenv("SECRET_KEY_LOGIN")
+	key := []byte(secret_key_login)
+
+	// The original data you want to encrypt
+	origData := []byte("system")
+
+	// Encrypt the original data
+	crypted, err := decrypt.AesEncrypt(origData, key)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(crypted)
+
+	// Base64 encode the encrypted data
+	// encoded := base64.StdEncoding.EncodeToString(crypted)
+	fmt.Println("Encrypted and Base64 encoded data:", crypted)
+
+	// You can then decrypt it back to verify
+	decrypted, err := decrypt.DecryptAesFrontend(crypted)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Decrypted data:", decrypted)
 	return nil
 }

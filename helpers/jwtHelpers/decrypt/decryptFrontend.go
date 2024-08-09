@@ -28,11 +28,11 @@ func DecryptAesFrontend(encryptText string ) (string, error) {
 	return string(origData), nil
 }
 
-func AesEncrypt(origData, key []byte) ([]byte, error) {
+func AesEncrypt(origData, key []byte) (string, error) {
 	block, err := aes.NewCipher(key)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	blockSize := block.BlockSize()
 	origData = PKCS5Padding(origData, blockSize)
@@ -40,7 +40,7 @@ func AesEncrypt(origData, key []byte) ([]byte, error) {
 	blockMode := cipher.NewCBCEncrypter(block, iv)
 	crypted := make([]byte, len(origData))
 	blockMode.CryptBlocks(crypted, origData)
-	return crypted, nil
+	return base64.StdEncoding.EncodeToString(crypted), nil
 }
 
 func AesDecrypt(crypted, key []byte) ([]byte, error) {
